@@ -3,6 +3,8 @@
 ## Members
 
 - Benjamin Teh
+- Timothy Liu
+- Hong Wei Tan
 
 ## Links
 
