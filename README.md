@@ -3,8 +3,15 @@
 ## Members
 
 - Benjamin Teh
+- Bryan Galenius
+- Eunice Ong
+- Fan Zifu
+- Kelvin Lee
+- Chen Lee
 - Timothy Liu
 - Hong Wei Tan
+- Wilsen Lotan
+- Wilson
 
 ## Links
 
