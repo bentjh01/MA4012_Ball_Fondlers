@@ -18,4 +18,4 @@ typedef struct {
 typedef struct {
 	float rpm_R;
 	float rpm_L;
-} motor;
+} robot_wheel;
