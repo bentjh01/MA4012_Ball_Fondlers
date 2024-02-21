@@ -2,6 +2,7 @@
 
 void init_main(void){
 	init_hw();
+	pinMode(13, INPUT);
 }
 
 void main_run(void){
