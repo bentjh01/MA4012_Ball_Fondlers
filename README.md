@@ -19,7 +19,10 @@
 - Week 4 - Vehicle Design and Drive System
 - Week 6 - Power supply and sensor strategy
 - Week 7 - Software strategy for power, sensing, and navigation.
-- Week 8-10 - Prototype build
+- Recess -
+- Week 8 - independant/unit test ()
+- week 9 - a moving thing
+- Week 10 - Prototype ready, additonal strategies
 - Week 11 - Testing, tuning and optimization
 - Week 12 - Trial run
 
