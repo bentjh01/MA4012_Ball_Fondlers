@@ -20,7 +20,8 @@ motor control(twist cmd_vel){
 	robot_wheel wheel;
 	wheel.rpm_R = (cmd_vel.linear_velocity + cmd_vel.angular_velocity*track/2)/(wheel_diameter/2);
 	wheel.rpm_L = (cmd_vel.linear_velocity - cmd_vel.angular_velocity*track/2)/(wheel_diameter/2);
-	return wheel
+	return wheel;
+}
 
 pose forward_kinematics(pose initial_pose, twist cmd_vel, float dt){
 	pose final_pose;
@@ -29,4 +30,5 @@ pose forward_kinematics(pose initial_pose, twist cmd_vel, float dt){
 	final_pose.yaw = initial_pose.yaw + cmd_vel.angular_velocity * dt;
 	final_pose.linear_velocity = cmd_vel.linear_velocity;
 	final_pose.angular_velocity = cmd_vel.linear_velocity;
-	return final_pose
+	return final_pose;
+}
