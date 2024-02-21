@@ -2,7 +2,6 @@
 #define SENSORS_H
 
 #include <Arduino.h>
-#include <Wire.h>
 #include <math.h>
 #include "../config.h"
 #include "../hardware/hardware.h"
