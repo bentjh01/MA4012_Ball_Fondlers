@@ -13,6 +13,30 @@
 - Wilsen Lotan
 - Wilson
 
+## GitHub Cheatsheet
+
+### Setup
+
+1. Install Github
+2. Download the repository `git clone https://github.com/bentjh01/MA4012_Ball_Fondlers.git`
+3. Create your own branch `git checkout -b my_branch`
+4. Update the repository with new branch `git push --set-upstream origin my_branch`
+5. switch to your branch `git checkout my_branch`
+
+### Saving and Uploading to github
+
+1. Update local repository `git pull`
+2. Checking branch and changes `git status`
+3. Stage changes `git add directory_of_changed_file`
+4. Commit changes `git commit -m "some description under 5 words"`
+5. Upload to the cloud `git push`
+
+### Making Pull Requests
+
+1. Update branch with `main` branch. `git merge main`
+2. Resolve conflicts if any.
+3. Make a pull request on the github page.
+
 ## Timeline
 
 - Week 3 - Collector Design and Strategy
