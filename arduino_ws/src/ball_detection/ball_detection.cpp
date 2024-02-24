@@ -6,8 +6,9 @@
 #define SHORT_DIST_THRESHOLD 20 //upper threshold of short dist sensor 20 cm (example only). Make this <= LOWER_THRESHOLD
 #define VOLTAGE_SCALE (5.0/1023.0)
 #define RAD_TO_DEG (180.0 / PI)
-#define x 15 //approx distance between the object detected by the left/right sensor wrt the center of ball collection mechanism in an axis perpendicular to robot direction. 15 cm is example only.
-#define TOLERANCE 3.0
+#define x 15.0 //approx distance between the object detected by the left/right sensor wrt the center of ball collection mechanism in an axis perpendicular to robot direction. 15 cm is example only.
+#define TOLERANCE 5.0
+#define CLOSENESS 0.90
 
 float sense_long_distance(int pin_num){
   float dist;
@@ -63,11 +64,6 @@ int detect_ball(bool startup_phase){
     move_robot(lin_vel = 0, ang_vel = 120, lin_dir = 0, ang_dir = 0); //where lin_dir = 1 means go forward, 0 means backward, and ang_dir = 1 is ccw, 0 means cw from top to bottom
     search_timer = millis();
   }
-
-  //Timeout
-  if(millis()-search_timer > 3000){
-    return 0;
-  }
   
   //Read distance sensors
   l_status = read_long_status(l_long_pin);
@@ -76,11 +72,12 @@ int detect_ball(bool startup_phase){
   c_bot_status = read_short_status(c_short_pin);
 
   //Find and go to ball, try to ignore opp robot
+
   if(abs(sense_short_distance(c_short_pin) - sense_long_distance) > TOLERANCE && c_bot_status == 1){ //ball immediately in front
     move_robot(lin_vel = 0, ang_vel = 0, lin_dir = 0, ang_dir = 0); //stop movement
     return 4;
-    
-  }else if(l_status!=0 || r_status != 0){
+
+  }else if(abs(sense_short_distance(c_short_pin) - sense_long_distance) > TOLERANCE && (l_status!=0 || r_status != 0)){
     //2 different objects detected, left and right, check the closer one first
     if(l_status!=0 && r_status != 0){
       if(sense_long_distance(r_long_pin) < sense_long_distance(l_long_pin)){
@@ -134,57 +131,77 @@ int detect_ball(bool startup_phase){
 
 
 int go_to_detection(int status, bool startup_phase){
-  if(startup_phase){
-    search_timer = millis();
-  }
-
-  //Timeout
-  if(millis()-search_timer > 1000){
-    return 0;
-  }
-  
   if(status//10 == 2){ //ball on the right
+    
     if(status%10 == 1){ //ball is close
         move_robot(lin_vel = 0, ang_vel = 90, lin_dir = 0, ang_dir = 0); //rotate cw
-  
-        //found condition
-        if(abs(sense_short_distance(c_short_pin) - sense_long_distance) > TOLERANCE && c_bot_status == 1){ //ball immediately in front
-          move_robot(lin_vel = 0, ang_vel = 0, lin_dir = 0, ang_dir = 0); //stop movement
-          return 4;
-        }else if(abs(sense_short_distance(c_short_pin) - sense_long_distance) < TOLERANCE && c_bot_status == 1){ //most likely opp
-          return 5;
-        }else{
-          return 6;
-        }
+        float time_setting = 1200;
+    
     }else{ //ball is within optimum range
         float y = sense_long_distance(r_long_pin);
-        double radian = atan(x/y);
-        double degree = radian * RAD_TO_DEG;
+    
         //math to go to the detection
+        double radian = atan(x/y);
+        //double degree = radian * RAD_TO_DEG;
+        float radius = y*y/x;
+        radius += x;
+
+        float v_translation = round(PI/2*radius, 3);
+        float time_setting = radian * CLOSENESS / PI * 2;
+        move_robot(lin_vel = v_translation, ang_vel = 90, lin_dir = 0, ang_dir = 0); //rotate cw
     }
   }else if(status//10 == 3){ //ball on the left
     if(status%10 == 1){ //ball is close
         move_robot(lin_vel = 0, ang_vel = 90, lin_dir = 0, ang_dir = 1); //rotate ccw
-  
-        //found condition
-        if(abs(sense_short_distance(c_short_pin) - sense_long_distance) > TOLERANCE && c_bot_status == 1){ //ball immediately in front
-          move_robot(lin_vel = 0, ang_vel = 0, lin_dir = 0, ang_dir = 0); //stop movement
-          return 4;
-        }else if(abs(sense_short_distance(c_short_pin) - sense_long_distance) < TOLERANCE && c_bot_status == 1){ //most likely opp
-          return 5;
-        }else{
-          return 6;
-        }
+        float time_setting = 1200;
     }else{ //ball is within optimum range
-          float y = sense_long_distance(r_long_pin);
-          double radian = atan(x/y);
-          double degree = radian * RAD_TO_DEG;
-          //math to go to the detection
+        float y = sense_long_distance(r_long_pin);
+    
+        //math to go to the detection
+        double radian = atan(x/y);
+        //double degree = radian * RAD_TO_DEG;
+        float radius = y*y/x;
+        radius += x;
+
+        float v_translation = round(PI/2*radius, 3);
+        float time_setting = radian * CLOSENESS / PI * 2;
+        move_robot(lin_vel = v_translation, ang_vel = 90, lin_dir = 0, ang_dir = 1); //rotate ccw
+    }
+  }
+
+  if(startup_phase){
+    search_timer = millis();
+    robot_moving_timeout = time_setting;
+  }
+
+
+  if(millis()-search_timer > robot_moving_timeout){
+    move_robot(lin_vel = 0, ang_vel = 0, lin_dir = 0, ang_dir = 0); //stop movement
+
+    //Final check after arriving at the destination
+    //found condition
+    if(abs(sense_short_distance(c_short_pin) - sense_long_distance) > TOLERANCE && c_bot_status == 1){ //ball immediately in front
+      move_robot(lin_vel = 0, ang_vel = 0, lin_dir = 0, ang_dir = 0); //stop movement
+      return 4;
+    }else if(abs(sense_short_distance(c_short_pin) - sense_long_distance) < TOLERANCE && c_bot_status == 1){ //most likely opp
+      return 5;
+    }else{
+      return 0; //Timeout without any detection
+    }
+  }else{ //if found on the way
+    //found condition
+    if(abs(sense_short_distance(c_short_pin) - sense_long_distance) > TOLERANCE && c_bot_status == 1){ //ball immediately in front
+      move_robot(lin_vel = 0, ang_vel = 0, lin_dir = 0, ang_dir = 0); //stop movement
+      return 4;
+    }else if(abs(sense_short_distance(c_short_pin) - sense_long_distance) < TOLERANCE && c_bot_status == 1){ //most likely opp
+      return 5;
+    }else{
+      return 6;
     }
   }
   //return codes
   //0 -> Timeout -> main code should execute change_search_position()
   //4 -> Ready for collection -> main code should execute ball_collection()
-  //5 -> Opponent Robot Detected
+  //5 -> False detection. It is opponent's robot most likely
   //6 -> In process of moving
 }
