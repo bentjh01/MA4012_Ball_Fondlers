@@ -10,9 +10,9 @@
 #include "arduino_ws/src/hardware/hardware.h"
 
 
-extern int Edge_detected_value
+extern int Edge_detected_value;
 
-void edge_detected();
+bool edge_detected();
 void avoid_edge();
 
 //void Turn_Right();
