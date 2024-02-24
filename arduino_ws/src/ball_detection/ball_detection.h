@@ -9,6 +9,7 @@ extern int l_long_pin;
 extern int r_long_pin;
 extern int c_long_pin;
 extern int c_short_pin;
+extern robot_moving_timeout;
 
 float sense_long_distance(int pin_num);
 float sense_short_distance(int pin_num);
