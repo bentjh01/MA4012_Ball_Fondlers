@@ -6,13 +6,22 @@ void init_main(void){
 
 void main_run(void){
 	blink_led(1000);
-void main_run(void){
-	blink_led(1000);
-	/*
+
 	if (edge_detected()){
 	 	avoid_edge();
 	}
 	else{
+	switch (task_state):
+		case SEARCH_TASK:
+			search_ball();
+		case GOTO_BALL_TASK:
+			goto_ball();
+		case COLLECT_BALL_TASK:
+			collect_ball();
+		case DELIVER_BALL_TASK:
+	}
+}
+	/*
 	switch (robot_task):
 		case 1:
 			executed_velicty = search_ball_vel();
@@ -43,4 +52,3 @@ void main_run(void){
 	send(angZ)
 	// this if statement and all computations are to be non-blocking
 	 */
-}
