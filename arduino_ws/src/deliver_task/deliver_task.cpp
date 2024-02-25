@@ -7,7 +7,10 @@ void deliver_task(void){
     robot_move(0, 0);
     // Deliver the package
     // ...
-    task_state = SEARCH_TASK;
+    if (limit_switch_chamber == LOW){
+      // The package has been delivered
+      task_state = SEARCH_TASK;
+    }
   }
   else{
     // Move the robot to the delivery location
