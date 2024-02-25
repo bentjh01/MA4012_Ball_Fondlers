@@ -11,14 +11,14 @@ void main_run(void){
 	 	avoid_edge();
 	}
 	else{
-	switch (robot_task):
-		case 1:
+	switch (task_state):
+		case SEARCH_TASK:
 			search_ball();
-		case 2:
+		case GO_TO_BALL_TASK:
 			goto_ball();
-		case 3:
+		case COLLECT_BALL_TASK:
 			collect_ball();
-		case 4:
+		case DELIVER_BALL_TASK:
 			deliver_ball();
 	// this if statement and all computations are to be non-blocking
 	 */
