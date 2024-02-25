@@ -12,13 +12,15 @@
 
 #define PI 3.14159265
 
-// typedef struct {
-// 	float x;
-// 	float y;
-// 	float yaw;
-// 	float linear_velocity;
-// 	float angular_velocity;
-// } pose;
+typedef struct {
+	float x;
+	float y;
+	float yaw;
+	float linear_velocity;
+	float angular_velocity;
+} pose;
+
+extern pose robot_pose;
 
 void robot_move(float linear_velocity, float angular_velocity);
 
