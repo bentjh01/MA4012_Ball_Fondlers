@@ -11,15 +11,17 @@
 
 
 extern int Edge_detected_value;
+extern int Motor_On_Time
+extern int Time_1cm = 45;
+extern int Time_1Degree =30;
 
 bool edge_detected();
 void avoid_edge();
 
-//void Turn_Right();
-//void Turn_Left();
-//void Move_Forward();
-//void Move_Backward();
-//void Stop();
-
+void move_forward(int dist)
+void move_backward(int dist)
+void turn_left(int degree)
+void turn_right(int degree)
+void stop_motors()
 
 #endif
