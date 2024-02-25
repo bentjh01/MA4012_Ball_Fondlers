@@ -27,8 +27,10 @@
 7. Include header file in source file i.e. `#include "feature_name.h"`
 8. Start coding in source file
 9. Add functions and variables to header file e.g. `void blink_led(int duration)`
+10. Please make pull requests once a feature is complete. 
 
 ## Dependencies
 
 - Arduino.h
 - Wire.h
+- math.h
