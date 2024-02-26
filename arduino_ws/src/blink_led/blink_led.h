@@ -7,15 +7,17 @@
 #include "../hardware/hardware.h" 
 
 typedef struct LED{
-  int t;
+  int pin;
+  int blink_period;
+  int last_state;
+  long last_time;
 } LED;
 
 extern LED* test_led;
 
 // function prototype
+void setup_led(LED* led, int pin, int period);
+void init_led(LED* led);
 void blink_led(LED* led);
-void set_led(LED* led, int duration);
-void incrementInteger(int* num);
-
 
 #endif // BLINK_LED_H
