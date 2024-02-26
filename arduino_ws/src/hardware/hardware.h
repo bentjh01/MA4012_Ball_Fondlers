@@ -4,7 +4,12 @@
 #include <Arduino.h>
 #include <Wire.h>
 
+#include "../support/pid.h"
+#include "../config.h"
+
 constexpr int led_pin = 16;
+
+extern PIDController* delivery_yaw_pid;
 
 // TODO: Add pin numbers for all sensors
 
@@ -35,5 +40,6 @@ constexpr int magnetometer_pin4 = 12;
 
 
 void init_hardware(void);
+void init_controllers(void);
 
 #endif // HARDWARE_H

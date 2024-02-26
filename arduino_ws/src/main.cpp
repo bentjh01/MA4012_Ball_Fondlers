@@ -4,7 +4,7 @@ int task_state = SEARCH_TASK;
 
 void init_main(void){
 	init_hardware();
-	pid_init(delivery_yaw_pid, 0.1, 0.0, 0.0, DELIVERY_AREA_DIRECTION);
+	init_controllers();
 	Serial.begin(9600);
 	set_led(test_led, 1000);
 }

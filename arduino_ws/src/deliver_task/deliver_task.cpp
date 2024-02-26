@@ -1,7 +1,5 @@
 #include "deliver_task.h"
 
-PIDController* delivery_yaw_pid;
-
 void deliver_task(void){
   // Check if the robot is at the delivery location
   if (limit_switch_BL && limit_switch_BR){

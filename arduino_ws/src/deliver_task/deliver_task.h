@@ -9,8 +9,6 @@
 #include "../motors/motors.h"
 #include "../support/pid.h"
 
-extern PIDController* delivery_yaw_pid;
-
 void deliver_task(void);
 
 #endif // DELIVER_TASK_H
