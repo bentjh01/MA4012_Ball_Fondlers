@@ -1,4 +1,4 @@
-ifndef DELIVER_TASK_H
+#ifndef DELIVER_TASK_H
 #define DELIVER_TASK_H
 #include <Arduino.h>
 
@@ -8,6 +8,8 @@ ifndef DELIVER_TASK_H
 #include "../sensors/sensors.h"
 #include "../motors/motors.h"
 #include "../support/pid.h"
+
+extern PIDController* delivery_yaw_pid;
 
 void deliver_task(void);
 

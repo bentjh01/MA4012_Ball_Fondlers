@@ -2,8 +2,9 @@
 #define HARDWARE_H
 
 #include <Arduino.h>
+#include <Wire.h>
 
-constexpr int led_pin = 13;
+constexpr int led_pin = 16;
 
 // TODO: Add pin numbers for all sensors
 

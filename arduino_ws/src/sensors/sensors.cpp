@@ -1,5 +1,19 @@
 #include "sensors.h"
 
+int line_sensor_FL;
+int line_sensor_BL;
+int line_sensor_BR;
+int line_sensor_FR;
+
+float long_distance_sensor_FL;
+float long_distance_sensor_FR;
+float long_distance_sensor_TP;
+float short_distance_sensor;
+
+int limit_switch_chamber;
+int limit_switch_BL;
+int limit_switch_BR;
+
 void read_compass(void);
 void read_line_sensors(void);
 void read_distance_sensors(void);
@@ -88,11 +102,11 @@ void read_line_sensors(void){
 }
 
 float long_distance_convert(int sensor_value){
-  float si_value = sensor_value * 5.0 / 1023.0
+  float si_value = sensor_value * 5.0 / 1023.0;
   return si_value;
 }
 float short_distance_convert(int sensor_value){
-  float si_value = sensor_value * 5.0 / 1023.0
+  float si_value = sensor_value * 5.0 / 1023.0;
   return si_value;
 }
 

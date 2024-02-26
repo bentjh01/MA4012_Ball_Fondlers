@@ -1,26 +1,31 @@
 #include "main.h"
 
+int task_state = SEARCH_TASK;
+
 void init_main(void){
-	init_hw();
+	init_hardware();
+	pid_init(delivery_yaw_pid, 0.1, 0.0, 0.0, DELIVERY_AREA_DIRECTION);
+	Serial.begin(9600);
 }
 
-void main_run(void){
+void run_main(void){
 	blink_led(1000);
-
-	if (edge_detected()){
-	 	avoid_edge();
-	}
-	else{
-	switch (task_state):
-		case SEARCH_TASK:
-			search_ball();
-		case GOTO_BALL_TASK:
-			goto_ball();
-		case COLLECT_BALL_TASK:
-			collect_ball();
-		case DELIVER_BALL_TASK:
-	}
+	Serial.println(time_elapsed);
+	// if (edge_detected()){
+	//  	avoid_edge();
+	// }
+	// else{
+	// switch (task_state):
+	// 	case SEARCH_TASK:
+	// 		search_ball();
+	// 	case GOTO_BALL_TASK:
+	// 		goto_ball();
+	// 	case COLLECT_BALL_TASK:
+	// 		collect_ball();
+	// 	case DELIVER_BALL_TASK:
+	// }
 }
+
 	/*
 	switch (robot_task):
 		case 1:

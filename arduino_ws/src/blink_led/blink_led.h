@@ -6,6 +6,13 @@
 // .. means go up one directory.
 #include "../hardware/hardware.h" 
 
+extern unsigned long time_elapsed; 
+
+// function prototype
 void blink_led(int duration);
+
+typedef struct{
+  int duration;
+} BlinkLed;
 
 #endif // BLINK_LED_H

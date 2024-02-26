@@ -1,7 +1,9 @@
 #include "motors.h"
 
+void motor_request(float rpm_R, float rpm_L);
+
 void robot_move(float linear_velocity, float angular_velocity){
-	float radian_per_sec = angular_velocity/180 * PI
+	float radian_per_sec = angular_velocity/180 * PI;
 	float rpm_R = (linear_velocity + radian_per_sec*robot_track/2)/(wheel_diameter/2);
 	float rpm_L = (linear_velocity - radian_per_sec*robot_track/2)/(wheel_diameter/2);
 	motor_request(rpm_R, rpm_L);
