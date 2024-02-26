@@ -6,11 +6,11 @@ void init_main(void){
 	init_hardware();
 	pid_init(delivery_yaw_pid, 0.1, 0.0, 0.0, DELIVERY_AREA_DIRECTION);
 	Serial.begin(9600);
+	set_led(test_led, 1000);
 }
 
 void run_main(void){
-	blink_led(1000);
-	Serial.println(time_elapsed);
+	blink_led(test_led);
 	// if (edge_detected()){
 	//  	avoid_edge();
 	// }

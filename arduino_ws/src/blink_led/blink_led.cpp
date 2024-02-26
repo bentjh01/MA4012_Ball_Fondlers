@@ -1,22 +1,15 @@
 #include "blink_led.h"
 
-long start_time = millis();
-unsigned long time_elapsed; 
-void blink_led(int duration){
-	time_elapsed = millis() - start_time;
+LED* test_led = new LED;
+
+void blink_led(LED* led){
+	delay(led->t);
 	digitalWrite(led_pin, HIGH);
-	delay(duration);
-	time_elapsed = millis() - start_time;
+	delay(led->t);
 	digitalWrite(led_pin, LOW);
-	delay(duration);
 }
 
-void blink_led_pointer(int* duration){
-	time_elapsed = millis() - start_time;
-	digitalWrite(led_pin, HIGH);
-	delay(duration);
-	time_elapsed = millis() - start_time;
-	digitalWrite(led_pin, LOW);
-	delay(duration);
+void set_led(LED* led, int duration){
+	led->t = duration;
+	Serial.println(led->t);
 }
-
