@@ -6,14 +6,11 @@ void init_main(void){
 	init_hardware();
 	init_controllers();
 	Serial.begin(9600);
-
-	create_led();
-	setup_led(test_led, 16, 1000);
-	init_led(test_led);
 }
 
 void run_main(void){
 	blink_led(test_led);
+	// increment_counter();
 	// if (edge_detected()){
 	//  	avoid_edge();
 	// }
