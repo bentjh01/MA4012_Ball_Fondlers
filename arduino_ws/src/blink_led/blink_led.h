@@ -13,11 +13,21 @@ typedef struct LED{
   long last_time;
 } LED;
 
+typedef struct dummy{
+  int count = 0;
+  long last_time;
+} dummy;
+
 extern LED* test_led;
+extern dummy counter;
+
 
 // function prototype
 void setup_led(LED* led, int pin, int period);
 void init_led(LED* led);
 void blink_led(LED* led);
+
+void increment_counter(dummy counter);
+void increment_counter_ptr(dummy* counter);
 
 #endif // BLINK_LED_H

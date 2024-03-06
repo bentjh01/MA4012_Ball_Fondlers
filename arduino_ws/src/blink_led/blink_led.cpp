@@ -1,6 +1,7 @@
 #include "blink_led.h"
 
 LED* test_led = new LED;
+dummy counter;
 
 void setup_led(LED* led, int pin, int period){
 	led->pin = pin;
@@ -22,4 +23,14 @@ void blink_led(LED* led){
 		}
 		digitalWrite(led->pin, led->last_state);
 	}
+}
+
+void increment_counter(dummy counter){
+	counter.count++;
+	Serial.println(counter.count);
+}
+
+void increment_counter(dummy* counter){
+	counter->count++;
+	Serial.println(counter->count);
 }
