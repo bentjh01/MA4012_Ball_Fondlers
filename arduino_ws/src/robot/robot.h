@@ -3,6 +3,7 @@
 
 #include <math.h>
 #include "../motors/motors.h"
+#include "../sensors/sensors.h"
 
 #define ROBOT_TRACK 0.171674 // [m]
 
