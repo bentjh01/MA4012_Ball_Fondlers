@@ -1,34 +1,37 @@
 #include "ball_detection.h"
 #include "motors.h"
 
-float read_long_sensor_distance(int pin_num){
+float read_long_sensor_distance_CM(int pin_num){
+  //convert voltage reading from long dist sensor into distance in cm
   float voltage = analogRead(pin_num) * VOLTAGE_SCALE;
   
   //step-by-step calculation as arduino cannot handle PEMDAS
-  float ln_sharp_dist_reading = log(sharp_dist_reading);
-  float ln_sharp_dist_reading_square = ln_sharp_dist_reading*ln_sharp_dist_reading;
-  float term_1 = 29.971*ln_sharp_dist_reading;
-  float term_2 = 55.047*(ln_sharp_dist_reading*ln_sharp_dist_reading);
+  float ln_voltage = log(voltage);
+  float ln_voltage_square = ln_voltage*ln_voltage;
+  float term_1 = 29.971*ln_voltage;
+  float term_2 = 55.047*ln_voltage_square;
   float term_3 = 57.931*sharp_dist_reading;
   float distance_cm = term_1 + term_2 - term_3 + 84.019;
-  
   return distance_cm;
 }
 
-float read_short_sensor_distance(int pin_num){
+float read_short_sensor_distance_CM(int pin_num){
+  //convert voltage reading from short dist sensor into distance in cm
   float voltage = analogRead(pin_num) * VOLTAGE_SCALE;
   
   //calculation for the short distance sensor here
-  float distance_cm = pow(voltage/11.033, -1/0.95);
+  float exponent = -1/0.95;
+  float base = voltage/11.033;
+  float distance_cm = pow(base, exponent);
   return distance_cm;
 }
 
 int read_digitized_long_sensor_distance(int pin_num){
-  //read_long_sensor_distance is a function that returns the distance (in cm) of the long range analog sensor reading
-  if(read_long_sensor_distance(pin_num) <= LONG_DIST_LOWER_THRESHOLD_CM){
+  //read_long_sensor_distance_CM is a function that returns the distance (in cm) of the long range analog sensor reading
+  if(read_long_sensor_distance_CM(pin_num) <= LONG_DIST_LOWER_THRESHOLD_CM){
     return 1; //close range
   }
-  else if(read_long_sensor_distance(pin_num) > LONG_DIST_UPPER_THRESHOLD_CM){
+  else if(read_long_sensor_distance_CM(pin_num) > LONG_DIST_UPPER_THRESHOLD_CM){
     return 0; //far, ignore detection
   }
   else{
@@ -37,8 +40,8 @@ int read_digitized_long_sensor_distance(int pin_num){
 }
 
 int read_digitized_short_sensor_distance(int pin_num){
-  //read_short_sensor_distance is a function that returns the distance (in cm) of the long range analog sensor reading
-  if(read_short_sensor_distance(pin_num) <= SHORT_DIST_THRESHOLD_CM){
+  //read_short_sensor_distance_CM is a function that returns the distance (in cm) of the long range analog sensor reading
+  if(read_short_sensor_distance_CM(pin_num) <= SHORT_DIST_THRESHOLD_CM){
     return 1; //detected
   }
   else{
@@ -46,15 +49,102 @@ int read_digitized_short_sensor_distance(int pin_num){
   }
 }
 
-
-void change_search_position(){
-  //After not detecting any ball, move to a different spot.
-  //This will depend on our strategy and edge detection, etc later on
+int check_status_from_left_right_sensor(int long_distance_sensor_FL_status, int long_distance_sensor_FR_status){
+  /*
+  Check which direction to go to (left or right) and whether only rotation is needed or need translation too
+  21 -> Potential ball found on the right, only rotation needed -> main code should execute go_to_detection(21)
+  22 -> Potential ball found on the right, need translation and rotation -> main code should execute go_to_detection(22)
+  31 -> Potential ball found on the left, only rotation needed -> main code should execute go_to_detection(31)
+  32 -> Potential ball found on the left, need translation and rotation -> main code should execute go_to_detection(32)
+  */
+  if(long_distance_sensor_FL_status!=0 && long_distance_sensor_FR_status != 0){
+    //both have detection, go to the closer one
+    if(read_long_sensor_distance_CM(long_distance_sensor_FR_pin) < read_long_sensor_distance_CM(long_distance_sensor_FL_pin)){
+      //stop movement
+      robot_move(linear_velocity = 0, angular_velocity = 0); 
+      //check if the ball is close enough for just pure rotation
+      if(long_distance_sensor_FR_status == 1){
+        return 21;
+      }
+      else{
+        return 22;
+      }
+    }
+    else{
+      //stop movement
+      robot_move(linear_velocity = 0, angular_velocity = 0);
+      //check if the ball is close enough for just pure rotation
+      if(long_distance_sensor_FL_status == 1){
+        return 31;
+      }
+      else{
+        return 32;
+      }
+    }
+  }
+  else if(long_distance_sensor_FL_status!=0){ //object detected on the left
+    //stop movement
+    robot_move(linear_velocity = 0, angular_velocity = 0);
+    //check if the ball is close enough for just pure rotation
+    if(long_distance_sensor_FL_status == 1){
+      return 31;
+    }
+    else{
+      return 32;
+    } 
+  }
+  else{ //object detected on the right
+    //stop movement
+    robot_move(linear_velocity = 0, angular_velocity = 0);
+    //check if the ball is close enough for just pure rotation
+    if(long_distance_sensor_FR_status == 1){
+      return 21;
+    }
+    else{
+      return 22;
+    }
+  }
 }
 
+circular_path calculate_translation_angular_speed(int pin_num, float angular_velocity_DegPerSec){
+  circular_path path;
+  float dist_from_robot = read_long_sensor_distance_CM(pin_num);
 
-int scan(bool startup_phase)
-{
+  //math to go to the detection
+  double radian = atan(BALL_TO_ROBOT_CENTER/dist_from_robot);
+  float radius = dist_from_robot*dist_from_robot/BALL_TO_ROBOT_CENTER;
+  radius += BALL_TO_ROBOT_CENTER;
+
+  path.angular_velocity = angular_velocity_DegPerSec;
+  float omega = abs(angular_velocity_DegPerSec/180.0*PI);
+  path.linear_velocity = round(omega*radius, 3);
+  path.time_setting_milisecond = round(radian * FRACTIONAL_CLOSENESS_TO_BALL / omega * 1000, 3); //t = theta/omega, correct to 3 dp
+  return path;
+}
+
+int change_search_position(bool startup_phase){
+  //optimal detection range for both long distance sensor is only up to 45 cm.
+  //giving arnd 10 cm overlap between 2 consecutive scan areas, we can move the robot 80 cm forward, and set that position as the new search position
+  if(startup_phase){
+    robot_move(linear_velocity = 50, angular_velocity = 0); //move forward
+    search_timer = millis();
+    robot_moving_timeout_milisecond = 1600;
+  }
+
+  if(millis()-search_timer > robot_moving_timeout_milisecond){
+    //movement finished
+    return 0;
+  }
+  else{
+    return 1;
+  }
+
+  //return codes
+  //0 -> Timeout (position reached) -> main code should execute scan(1)
+  //1 -> Still moving
+}
+
+int scan(bool startup_phase){
   //In the main code, declare a boolean for startup_phase parameter.
   //Pass true if we just started this function for timing purposes. Afterwards, pass false for the same searching instant
   
@@ -65,148 +155,90 @@ int scan(bool startup_phase)
   }
   
   //Read distance sensors
-  l_status = read_digitized_long_sensor_distance(l_long_pin);
-  r_status = read_digitized_long_sensor_distance(r_long_pin);
-  c_top_status = read_digitized_long_sensor_distance(c_long_pin);
-  c_bot_status = read_digitized_short_sensor_distance(c_short_pin);
+  long_distance_sensor_FL_status = read_digitized_long_sensor_distance(long_distance_sensor_FL_pin);
+  long_distance_sensor_FR_status = read_digitized_long_sensor_distance(long_distance_sensor_FR_pin);
+  //long_distance_sensor_TP_status = read_digitized_long_sensor_distance(long_distance_sensor_TP_pin);
+  short_distance_sensor_status = read_digitized_short_sensor_distance(short_distance_sensor_pin);
 
+  
   //Find and go to ball, try to ignore opp robot
-
-  if(abs(read_short_sensor_distance(c_short_pin) - read_long_sensor_distance(c_top_status)) > TOLERANCE_CM && c_bot_status == 1){
+  if(abs(read_short_sensor_distance_CM(short_distance_sensor_pin) - read_long_sensor_distance_CM(long_distance_sensor_TP_pin)) > TOLERANCE_CM && short_distance_sensor_status == 1){
     //if ball immediately in front
     robot_move(linear_velocity = 0, angular_velocity = 0); //stop movement
     return 4;
   }
-  else if(abs(read_short_sensor_distance(c_short_pin) - read_long_sensor_distance(c_top_status)) > TOLERANCE_CM && (l_status!=0 || r_status != 0)){
+  else if(abs(read_short_sensor_distance_CM(short_distance_sensor_pin) - read_long_sensor_distance_CM(long_distance_sensor_TP_pin)) > TOLERANCE_CM && (long_distance_sensor_FL_status!=0 || long_distance_sensor_FR_status != 0)){
     //if ball is detected on left or right
-
-    //Check which direction to turn to: left or right (if any)
-    if(l_status!=0 && r_status != 0){
-      //both have detection, go to the closer one
-      if(read_long_sensor_distance(r_long_pin) < read_long_sensor_distance(l_long_pin)){
-        robot_move(linear_velocity = 0, angular_velocity = 0); //stop movement
-
-        //check if the ball is close enough for just pure rotation
-        if(r_status == 1){
-          return 21;
-        }
-        else{
-          return 22;
-        }
-      }
-      else{
-        robot_move(linear_velocity = 0, angular_velocity = 0); //stop movement
-        if(l_status == 1){
-          return 31;
-        }
-        else{
-          return 32;
-        }
-      }
-    }
-    else if(l_status!=0){ //object detected on the left
-      robot_move(linear_velocity = 0, angular_velocity = 0); //stop movement
-      if(l_status == 1){
-        return 31;
-      }
-      else{
-        return 32;
-      } 
-    }
-    else{ //object detected on the right
-      robot_move(linear_velocity = 0, angular_velocity = 0); //stop movement
-        
-      if(r_status == 1){
-        return 21;
-      }
-      else{
-        return 22;
-      }
-    }
+    return check_status_from_left_right_sensor(long_distance_sensor_FL_status, long_distance_sensor_FR_status)
   }
-  else{ //no ball detected, continue searching
-    return 1;
+  else{
+    //no ball detected, check if timeout. Else continue searching
+    if(millis()-search_timer > 3000){
+      return 0
+    }
+    else{
+      return 1;
+    }
   }
   //return codes
   //0 -> Timeout -> main code should execute change_search_position()
   //1 -> Searching
-  //21 -> Potential ball found on the right -> main code should execute go_to_detection(21)
-  //22 -> Potential ball found on the right -> main code should execute go_to_detection(22)
-  //31 -> Potential ball found on the left -> main code should execute go_to_detection(31)
-  //32 -> Potential ball found on the left -> main code should execute go_to_detection(32)
+  //21 -> Potential ball found on the right, only rotation needed -> main code should execute go_to_detection(21,1)
+  //22 -> Potential ball found on the right, need translation and rotation -> main code should execute go_to_detection(22,1)
+  //31 -> Potential ball found on the left, only rotation needed -> main code should execute go_to_detection(31,1)
+  //32 -> Potential ball found on the left, need translation and rotation -> main code should execute go_to_detection(32,1)
   //4 -> Ready for collection -> main code should execute ball_collection()
 }
 
 
 int go_to_detection(int status, bool startup_phase){
-  if(status//10 == 2){ //ball on the right
-    
-    if(status%10 == 1){ //ball is close
-        robot_move(linear_velocity = 0, angular_velocity = -90); //rotate cw
-        float time_setting = 1200;
-    
-    }else{ //ball is within optimum range
-        float y = read_long_sensor_distance(r_long_pin);
-    
-        //math to go to the detection
-        double radian = atan(BALL_TO_ROBOT_CENTER/y);
-        //double degree = radian * RAD_TO_DEG;
-        float radius = y*y/BALL_TO_ROBOT_CENTER;
-        radius += BALL_TO_ROBOT_CENTER;
-
-        float v_translation = round(PI/2*radius, 3);
-        float time_setting = radian * FRACTIONAL_CLOSENESS_TO_BALL / PI * 2;
-        robot_move(linear_velocity = v_translation, angular_velocity = -90); //rotate cw
-    }
-  }else if(status//10 == 3){ //ball on the left
-    if(status%10 == 1){ //ball is close
-        robot_move(linear_velocity = 0, angular_velocity = 90); //rotate ccw
-        float time_setting = 1200;
-    }else{ //ball is within optimum range
-        float y = read_long_sensor_distance(r_long_pin);
-    
-        //math to go to the detection
-        double radian = atan(BALL_TO_ROBOT_CENTER/y);
-        //double degree = radian * RAD_TO_DEG;
-        float radius = y*y/BALL_TO_ROBOT_CENTER;
-        radius += BALL_TO_ROBOT_CENTER;
-
-        float v_translation = round(PI/2*radius, 3);
-        float time_setting = radian * FRACTIONAL_CLOSENESS_TO_BALL / PI * 2;
-        robot_move(linear_velocity = v_translation, angular_velocity = 90); //rotate ccw
-    }
-  }
-
   if(startup_phase){
     search_timer = millis();
-    robot_moving_timeout = time_setting;
+    switch(status){
+      case 21:
+      {
+        //ball on the right, only rotation needed
+        robot_move(linear_velocity = 0, angular_velocity = -90); //rotate cw
+        robot_moving_timeout_milisecond = 1200;
+      }
+      case 22:
+      {
+        circular_path path = calculate_translation_angular_speed(long_distance_sensor_FR_pin,-90);
+        robot_moving_timeout_milisecond = path.time_setting_milisecond;
+        robot_move(linear_velocity = path.linear_velocity, angular_velocity = path.angular_velocity); //rotate cw
+      }
+      case 31:
+      {
+        robot_move(linear_velocity = 0, angular_velocity = 90); //rotate ccw
+        robot_moving_timeout_milisecond = 1200;
+      }
+      case 32:
+      {
+        circular_path path = calculate_translation_angular_speed(long_distance_sensor_FL_pin,90);
+        robot_moving_timeout_milisecond = path.time_setting_milisecond;
+        robot_move(linear_velocity = path.linear_velocity, angular_velocity = path.angular_velocity); //rotate cw
+      }
+    }
   }
 
-
-  if(millis()-search_timer > robot_moving_timeout){
+  //found condition
+  //ball immediately in front
+  if(abs(read_short_sensor_distance_CM(short_distance_sensor_pin) - read_long_sensor_distance_CM(long_distance_sensor_TP_pin)) > TOLERANCE_CM && short_distance_sensor_status == 1){
     robot_move(linear_velocity = 0, angular_velocity = 0); //stop movement
-
-    //Final check after arriving at the destination
-    if(abs(read_short_sensor_distance(c_short_pin) - read_long_sensor_distance(c_top_status)) > TOLERANCE_CM && c_bot_status == 1){ //ball immediately in front
-      return 4;
-    }
-    else if(abs(read_short_sensor_distance(c_short_pin) - read_long_sensor_distance(c_top_status)) < TOLERANCE_CM && c_bot_status == 1){ //most likely opp
-      return 5;
-    }
-    else{
-      return 0; //Timeout without any detection
-    }
+    return 4;
   }
-  else{ //if found on the way
-    //found condition
-    if(abs(read_short_sensor_distance(c_short_pin) - sense_long_distance) > TOLERANCE_CM && c_bot_status == 1){ //ball immediately in front
+  //most likely blocked by opp
+  else if(abs(read_short_sensor_distance_CM(short_distance_sensor_pin) - read_long_sensor_distance_CM(long_distance_sensor_TP_pin)) < TOLERANCE_CM && short_distance_sensor_status == 1){
+    robot_move(linear_velocity = 0, angular_velocity = 0); //stop movement
+    return 5;
+  }
+  else{
+    //Timeout
+    if(millis()-search_timer > robot_moving_timeout_milisecond){
       robot_move(linear_velocity = 0, angular_velocity = 0); //stop movement
-      return 4;
+      return 0;
     }
-    else if(abs(read_short_sensor_distance(c_short_pin) - sense_long_distance) < TOLERANCE_CM && c_bot_status == 1 && read_short_sensor_distance(c_short_pin) < 3.0){ //most likely blocked by opp
-      robot_move(linear_velocity = 0, angular_velocity = 0); //stop movement
-      return 5;
-    }
+    //still in progress of moving
     else{
       return 6;
     }
