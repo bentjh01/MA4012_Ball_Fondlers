@@ -3,8 +3,8 @@
 
 #include <Arduino.h>
 #include <math.h>
+#include "../pinout.h"
 #include "../config.h"
-#include "../hardware/hardware.h"
 
 extern int line_sensor_FL;
 extern int line_sensor_BL;
@@ -28,10 +28,15 @@ extern int limit_switch_BR;
 #define SOUTH_WEST 135
 #define WEST 90
 #define NORTH_WEST 45
-#define INVALID 360
 
 extern int compass_bearing;
 
-void read_sensors();
+void init_sensors();
+void read_all_sensors();
+
+void read_line_sensors(void);
+void read_distance_sensors(void);
+void read_limit_switches(void);
+void read_compass(void);
 
 #endif // SENSORS_H

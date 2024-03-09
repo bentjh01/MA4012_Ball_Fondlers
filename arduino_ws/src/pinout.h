@@ -1,17 +1,7 @@
-#ifndef HARDWARE_H
-#define HARDWARE_H
-
-#include <Arduino.h>
-#include <Wire.h>
-
-#include "../support/pid.h"
-#include "../config.h"
+#ifndef PINOUT_H
+#define PINOUT_H
 
 constexpr int led_pin = 16;
-
-extern PIDController* delivery_yaw_pid;
-
-// TODO: Add pin numbers for all sensors
 
 // IR Line Tracking Sensor
 constexpr int line_sensor_FL_pin = 2;
@@ -36,10 +26,6 @@ constexpr int magnetometer_pin2 = 10;
 constexpr int magnetometer_pin3 = 11;
 constexpr int magnetometer_pin4 = 12;
 
-// I2C
+// UART
 
-
-void init_hardware(void);
-void init_controllers(void);
-
-#endif // HARDWARE_H
+#endif // PINOUT_H

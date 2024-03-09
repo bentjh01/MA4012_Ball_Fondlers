@@ -1,11 +1,10 @@
 #ifndef MOTORS_H
 #define MOTORS_H
 
-#include <Arduino.h>
-#include <Wire.h>
 #include <math.h>
 
 #include "../config.h"
+#include "../pinout.h"
 
 #define MOTOR_L 0
 #define MOTOR_R 1

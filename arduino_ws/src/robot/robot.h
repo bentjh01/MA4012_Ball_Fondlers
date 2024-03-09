@@ -7,8 +7,8 @@
 
 #define ROBOT_TRACK 0.171674 // [m]
 
-#define ENCODER_FILTER_GAIN 0.5
-#define MAGNETO_FILTER_GAIN 0.5
+#define ENCODER_FILTER_GAIN 0.25
+#define MAGNETO_FILTER_GAIN 0.0222
 
 typedef struct {
 	float x;

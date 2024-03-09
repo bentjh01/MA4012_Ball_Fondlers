@@ -1,7 +1,7 @@
 #ifndef MAIN_H
 #define MAIN_H
 
-#include "hardware/hardware.h"
+#include "config.h"
 #include "deliver_task/deliver_task.h"
 #include"blink_led/blink_led.h"
 
