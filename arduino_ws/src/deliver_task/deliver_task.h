@@ -4,7 +4,6 @@
 
 #include "../config.h"
 #include "../main.h"
-#include "../hardware/hardware.h"
 #include "../sensors/sensors.h"
 #include "../motors/motors.h"
 #include "../support/pid.h"

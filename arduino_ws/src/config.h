@@ -6,12 +6,16 @@
 #include <Wire.h>
 
 // TUNABLE PARAMETERS
+// DELIVER TASK
+constexpr float delivery_pid_kp = 1.0;
+constexpr float delivery_pid_ki = 0.0;
+constexpr float delivery_pid_kd = 0.0;
 
 // May need to add for each individual sensor
 #define LINE_SENSOR_THRESHOLD 512
 
 // Direction of delivery area
-#define DELIVERY_AREA_DIRECTION 50 // [degrees]
+#define DELIVERY_AREA_BEARING 50 // [degrees]
 
 // PID controller parameters
 // pid_init(delivery_yaw_pid, 1.0, 0.0, 0.0, DELIVERY_AREA_DIRECTION);
