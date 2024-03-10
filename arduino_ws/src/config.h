@@ -27,8 +27,12 @@ extern int dt;
 
 // CONSTANTS
 constexpr int period = 20;
-constexpr float max_speed = 1.0; //m/s
+constexpr float max_wheel_rpm = 100; // rpm
 constexpr float wheel_diameter = 0.05; //m
 constexpr float robot_track = 0.3; //m
+
+#define MAX_SPEED wheel_diameter * max_wheel_rpm/ (4 * M_PI * 60)
+#define MAX_ANGULAR_SPEED (2 * MAX_SPEED) / robot_track
+#define ALLOWABLE_SPEED (angular_speed) (MAX_SPEED - angular_speed*robot_track/2)
 
 #endif // CONFIG_H

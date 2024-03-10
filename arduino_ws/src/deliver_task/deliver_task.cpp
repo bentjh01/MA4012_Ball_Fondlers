@@ -18,6 +18,6 @@ void deliver_task(void){
   else{
     // Move the robot to the delivery location
     float angular_velocity = pid_update(delivery_yaw_pid, robot_pose.yaw);
-    robot_move(max_speed, angular_velocity);
+    robot_move(ALLOWABLE_SPEED(angular_velocity), angular_velocity);
   }
 }
