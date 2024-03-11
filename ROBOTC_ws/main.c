@@ -12,7 +12,7 @@ task main()
 {
 	startTask(task_sensors);
 while (1){
-	while (time1[timer_main] < period); // wait for the next period
+	while (time1[timer_main] < period){}; // wait for the next period
 
 	if (edge_detected()){
 		avoid_edge();
