@@ -1,29 +1,37 @@
 #include "main.h"
 
 int task_state = SEARCH_TASK;
+unsigned long last_time = millis();
 
 void init_main(void){
 	init_hardware();
 	init_controllers();
-	Serial.begin(9600);
-	set_led(test_led, 1000);
 }
 
 void run_main(void){
-	blink_led(test_led);
-	// if (edge_detected()){
-	//  	avoid_edge();
-	// }
-	// else{
-	// switch (task_state):
-	// 	case SEARCH_TASK:
-	// 		search_ball();
-	// 	case GOTO_BALL_TASK:
-	// 		goto_ball();
-	// 	case COLLECT_BALL_TASK:
-	// 		collect_ball();
-	// 	case DELIVER_BALL_TASK:
-	// }
+	// Tasks to run unlimited
+	read_all_sensors();
+	dt = millis() - last_time;
+	if (dt >= period){
+		if (edge_detected()){
+			avoid_edge();
+		}
+		else{
+			switch (task_state){
+				case SEARCH_TASK:
+					search_ball();
+				case GOTO_BALL_TASK:
+					goto_ball();
+				case COLLECT_BALL_TASK:
+					collect_ball();
+				case DELIVER_BALL_TASK:
+					deliver_ball();
+			}
+		}
+		// send(linX)
+		// send(angZ)
+		last_time = millis();
+	}
 }
 
 	/*

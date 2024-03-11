@@ -1,15 +1,36 @@
 #include "blink_led.h"
 
 LED* test_led = new LED;
+dummy counter;
 
-void blink_led(LED* led){
-	delay(led->t);
-	digitalWrite(led_pin, HIGH);
-	delay(led->t);
-	digitalWrite(led_pin, LOW);
+void setup_led(LED* led, int pin, int period){
+	led->pin = pin;
+	led->blink_period = period;
 }
 
-void set_led(LED* led, int duration){
-	led->t = duration;
-	Serial.println(led->t);
+void init_led(LED* led){
+	pinMode(led->pin, OUTPUT);
+}
+
+void blink_led(LED* led){
+	if (millis() - led->last_time > led->blink_period){
+		led->last_time = millis();
+		if (led->last_state == 0){
+			led->last_state = 1;
+		}
+		else{
+			led->last_state = 0;
+		}
+		digitalWrite(led->pin, led->last_state);
+	}
+}
+
+void increment_counter(dummy counter){
+	counter.count++;
+	Serial.println(counter.count);
+}
+
+void increment_counter(dummy* counter){
+	counter->count++;
+	Serial.println(counter->count);
 }

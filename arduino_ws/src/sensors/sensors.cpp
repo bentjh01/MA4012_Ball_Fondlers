@@ -14,20 +14,61 @@ int limit_switch_chamber;
 int limit_switch_BL;
 int limit_switch_BR;
 
+void init_sensors(void);
 void read_compass(void);
 void read_line_sensors(void);
 void read_distance_sensors(void);
 void read_limit_switches(void);
 
-void read_sensors(){
 
+void init_sensors(void){
+	// blink led example
+	pinMode(led_pin, OUTPUT);
+
+	// IR Line Tracking Sensor
+	// FL = Front Left, BL = Back Right, etc.
+	pinMode(line_sensor_FL_pin, INPUT);
+	pinMode(line_sensor_BL_pin, INPUT);
+	pinMode(line_sensor_BR_pin, INPUT);
+	pinMode(line_sensor_FR_pin, INPUT);
+
+	// Sharp Distance Sensor
+	// TP = Top, etc.
+	pinMode(long_distance_sensor_FL_pin, INPUT);
+	pinMode(long_distance_sensor_FR_pin, INPUT);
+	pinMode(long_distance_sensor_TP_pin, INPUT);
+	pinMode(short_distance_sensor_pin, INPUT);
+
+	// Limit Switches
+	pinMode(limit_switch_chamber_pin, INPUT);
+	pinMode(limit_switch_BL_pin, INPUT);
+	pinMode(limit_switch_BR_pin, INPUT);
+
+	// Magnetometer
+	pinMode(magnetometer_pin1, INPUT);
+	pinMode(magnetometer_pin2, INPUT);
+	pinMode(magnetometer_pin3, INPUT);
+	pinMode(magnetometer_pin4, INPUT);
+}
+
+void read_all_sensors(){
   read_line_sensors();
-
   read_distance_sensors();
-
   read_limit_switches();
-
   read_compass();
+}
+
+void read_distance_sensors(void){
+  long_distance_sensor_FL = long_distance_convert(long_distance_sensor_FL_pin);
+  long_distance_sensor_FR = long_distance_convert(long_distance_sensor_FR_pin);
+  long_distance_sensor_TP = long_distance_convert(long_distance_sensor_TP_pin);
+  short_distance_sensor = short_distance_convert(short_distance_sensor_pin);
+}
+
+void read_limit_switches(void){
+  limit_switch_chamber = digitalRead(limit_switch_chamber_pin);
+  limit_switch_BL = digitalRead(limit_switch_BL_pin);
+  limit_switch_BR = digitalRead(limit_switch_BR_pin);
 }
 
 void read_compass(void){
@@ -64,7 +105,7 @@ void read_compass(void){
     compass_bearing = NORTH_WEST;
     break;
   default:
-    compass_bearing = INVALID;
+    compass_bearing = NULL;
     break;
   }
 }
@@ -108,18 +149,5 @@ float long_distance_convert(int sensor_value){
 float short_distance_convert(int sensor_value){
   float si_value = sensor_value * 5.0 / 1023.0;
   return si_value;
-}
-
-void read_distance_sensors(void){
-  long_distance_sensor_FL = long_distance_convert(long_distance_sensor_FL_pin);
-  long_distance_sensor_FR = long_distance_convert(long_distance_sensor_FR_pin);
-  long_distance_sensor_TP = long_distance_convert(long_distance_sensor_TP_pin);
-  short_distance_sensor = short_distance_convert(short_distance_sensor_pin);
-}
-
-void read_limit_switches(void){
-  limit_switch_chamber = digitalRead(limit_switch_chamber_pin);
-  limit_switch_BL = digitalRead(limit_switch_BL_pin);
-  limit_switch_BR = digitalRead(limit_switch_BR_pin);
 }
 

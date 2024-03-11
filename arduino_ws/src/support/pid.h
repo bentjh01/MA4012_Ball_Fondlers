@@ -12,6 +12,8 @@ typedef struct {
     float error_sum; // Accumulated error
     float prev_error; // Previous error
     float prev_time; // Previous time
+
+    float output; // Output
 } PIDController;
 
 void pid_init(PIDController* pid, float kp, float ki, float kd, float setpoint);
