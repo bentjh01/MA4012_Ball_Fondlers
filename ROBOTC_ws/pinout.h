@@ -1,11 +1,27 @@
-#pragma config(Sensor, in3,    Sharp_Back,     sensorAnalog)
-#pragma config(Sensor, in2,    Sharp_Top_Front, sensorAnalog)
-#pragma config(Sensor, in1,    Sharp_Right,    sensorAnalog)
-#pragma config(Sensor, in4,    IR_Right_Back,  sensorAnalog)
-#pragma config(Sensor, in5,    IR_Right_Front, sensorAnalog)
-#pragma config(Sensor, in6,    IR_Left_Back,   sensorAnalog)
-#pragma config(Sensor, in7,    IR_Left_Front,  sensorAnalog)
-#pragma config(Sensor, in8,    Sharp_Left,     sensorAnalog)
-#pragma config(Sensor, dgtl1,  on_switch,      sensorTouch)
-#pragma config(Sensor, dgtl2,  switch_right,   sensorTouch)
-#pragma config(Sensor, dgtl3,  right_encoder,  sensorQuadEncoder)
+#ifndef PINOUT_H
+#define PINOUT_H
+
+// IR Line Tracking Sensor
+#define LINE_SENSOR_FL_PIN in3
+#define LINE_SENSOR_BL_PIN in3
+#define LINE_SENSOR_BR_PIN in3
+#define LINE_SENSOR_FR_PIN in3
+
+// Sharp Distance Sensor
+#define LONG_DISTANCE_SENSOR_FL_PIN in3
+#define LONG_DISTANCE_SENSOR_FR_PIN in3
+#define LONG_DISTANCE_SENSOR_TP_PIN in3
+#define SHORT_DISTANCE_SENSOR_PIN in3
+
+// Limit Switches
+#define LIMIT_SWITCH_CHAMBER_PIN dgt1
+#define LIMIT_SWITCH_BL_PIN dgt1
+#define LIMIT_SWITCH_BR_PIN dgt1
+
+// Magnetometer
+#define MAGNETOMETER_NORTH_PIN dgt1
+#define MAGNETOMETER_WEST_PIN dgt1
+#define MAGNETOMETER_SOUTH_PIN dgt1
+#define MAGNETOMETER_EAST_PIN dgt1
+
+#endif // PINOUT_H

@@ -1,7 +1,6 @@
 #ifndef SENSORS_H
 #define SENSORS_H
 
-#include <Arduino.h>
 #include <math.h>
 #include "../pinout.h"
 #include "../config.h"
