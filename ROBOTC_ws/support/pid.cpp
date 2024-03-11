@@ -24,11 +24,11 @@ PID pid_update(PIDController pid, float feedback) {
     return output;
 }
 
-PIDController deliver = pid_init(1.0, 0.0, 0.0, 0.0, 0.0);
+// PIDController deliver = pid_init(1.0, 0.0, 0.0, 0.0, 0.0);
 
-void loop(){
-    deliver.setpoint = 0.0;
-    deliver = pid_update(deliver, 0.0);
-    output = pid.output;
-    // motor_request(output, output);
-}
+// void loop(){
+//     deliver.setpoint = 0.0;
+//     deliver = pid_update(deliver, 0.0);
+//     output = pid.output;
+//     // motor_request(output, output);
+// }
