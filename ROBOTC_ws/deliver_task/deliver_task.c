@@ -1,7 +1,6 @@
 #include "deliver_task.h"
 
-PIDController *delivery_yaw_pid = new PIDController;
-pid_init(delivery_yaw_pid, 1.0, 0.0, 0.0, DELIVERY_AREA_BEARING);
+PIDController delivery_yaw_pid = pid_init(1.0, 0.0, 0.0, DELIVERY_AREA_BEARING);
 
 void deliver_task(void){
   // Check if the robot is at the delivery location
@@ -17,7 +16,8 @@ void deliver_task(void){
   }
   else{
     // Move the robot to the delivery location
-    float angular_velocity = pid_update(delivery_yaw_pid, robot_pose.yaw);
+    delivery_yaw_pid = pid_update(delivery_yaw_pid, robot_pose.yaw);
+    float angular_velocity = delivery_yaw_pid.output;
     robot_move(ALLOWABLE_SPEED(angular_velocity), angular_velocity);
   }
 }
