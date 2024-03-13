@@ -6,11 +6,11 @@ void collect_ball(void){
 	motor[collector] = 127;
 	
 	// Check limit switch to see if ball in chamber
-	if (limit_switch_chamber == LOW){
+	if (limit_switch_chamber == 1){
 		motor[collector] = 0;
 		task_state = DELIVER_TASK;
 	}
-	else if (limit_switch_chamber == HIGH){
+	else if (limit_switch_chamber == 0){
 		task_state = SEARCH_TASK;
 	}
 }
