@@ -21,4 +21,10 @@ void robot_move(float linear_velocity, float angular_velocity){
 	float radian_per_sec = angular_velocity/180 * M_PI;
 	float rpm_R = (linear_velocity + radian_per_sec*robot_track/2)/(wheel_diameter/2);
 	float rpm_L = (linear_velocity - radian_per_sec*robot_track/2)/(wheel_diameter/2);
+  float max_rpm = max(abs(rpm_R), abs(rpm_L));
+  float scale = MAX_RPM/max_rpm;
+  rpm_R *= scale;
+  rpm_L *= scale;
+  // motorR.setSpeed(rpm_R);
+  // motorL.setSpeed(rpm_L);
 }
