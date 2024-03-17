@@ -59,10 +59,58 @@ void read_all_sensors(){
 }
 
 void read_distance_sensors(void){
-  long_distance_sensor_FL = long_distance_convert(long_distance_sensor_FL_PIN);
-  long_distance_sensor_FR = long_distance_convert(long_distance_sensor_FR_PIN);
-  long_distance_sensor_TP = long_distance_convert(long_distance_sensor_TP_PIN);
-  short_distance_sensor = short_distance_convert(short_distance_sensor_PIN);
+  long_distance_sensor_FL = distance_voltage(SensorValue(long_distance_sensor_FL_PIN));
+  long_distance_sensor_FR = distance_voltage(SensorValue(long_distance_sensor_FR_PIN));
+  long_distance_sensor_TP = distance_voltage(SensorValue(long_distance_sensor_TP_PIN));
+  short_distance_sensor = distance_voltage(SensorValue(short_distance_sensor_PIN));
+}
+
+float read_long_sensor_distance_CM(int pin_num){
+  //convert voltage reading from long dist sensor into distance in cm
+  float voltage = distance_voltage(SensorValue(pin_num));
+  
+  //step-by-step calculation as arduino cannot handle PEMDAS
+  float ln_voltage = log(voltage);
+  float ln_voltage_square = ln_voltage*ln_voltage;
+  float term_1 = 29.971*ln_voltage;
+  float term_2 = 55.047*ln_voltage_square;
+  float term_3 = 57.931*sharp_dist_reading;
+  float distance_cm = term_1 + term_2 - term_3 + 84.019;
+  return distance_cm;
+}
+
+float read_short_sensor_distance_CM(int pin_num){
+  //convert voltage reading from short dist sensor into distance in cm
+  float voltage = distance_voltage(SensorValue(pin_num));
+  
+  //calculation for the short distance sensor here
+  float exponent = -1/0.95;
+  float base = voltage/11.033;
+  float distance_cm = pow(base, exponent);
+  return distance_cm;
+}
+
+int read_digitized_long_sensor_distance(int pin_num){
+  //read_long_sensor_distance_CM is a function that returns the distance (in cm) of the long range analog sensor reading
+  if(read_long_sensor_distance_CM(pin_num) <= LONG_DIST_LOWER_THRESHOLD_CM){
+    return 1; //close range
+  }
+  else if(read_long_sensor_distance_CM(pin_num) > LONG_DIST_UPPER_THRESHOLD_CM){
+    return 0; //far, ignore detection
+  }
+  else{
+    return 2; //detected in optimum range
+  }
+}
+
+int read_digitized_short_sensor_distance(int pin_num){
+  //read_short_sensor_distance_CM is a function that returns the distance (in cm) of the long range analog sensor reading
+  if(read_short_sensor_distance_CM(pin_num) <= SHORT_DIST_THRESHOLD_CM){
+    return 1; //detected
+  }
+  else{
+    return 0; //no detection
+  }
 }
 
 void read_limit_switches(void){
@@ -142,12 +190,8 @@ void read_line_sensors(void){
   }
 }
 
-float long_distance_convert(int sensor_value){
-  float si_value = sensor_value * 5.0 / 1023.0;
-  return si_value;
-}
-float short_distance_convert(int sensor_value){
-  float si_value = sensor_value * 5.0 / 1023.0;
+float distance_voltage(int sensor_value){
+  float si_value = sensor_value * VOLTAGE_SCALE;
   return si_value;
 }
 
