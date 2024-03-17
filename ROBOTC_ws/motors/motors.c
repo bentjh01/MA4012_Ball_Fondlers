@@ -25,6 +25,9 @@ void robot_move(float linear_velocity, float angular_velocity){
   float scale = MAX_RPM/max_rpm;
   rpm_R *= scale;
   rpm_L *= scale;
+  float linX = 
+  float angZ =
   // motorR.setSpeed(rpm_R);
   // motorL.setSpeed(rpm_L);
+
 }
