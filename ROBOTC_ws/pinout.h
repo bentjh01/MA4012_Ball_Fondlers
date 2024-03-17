@@ -1,6 +1,8 @@
 #ifndef PINOUT_H
 #define PINOUT_H
 
+#define LED_PIN dgt1
+
 // IR Line Tracking Sensor
 #define LINE_SENSOR_FL_PIN in3
 #define LINE_SENSOR_BL_PIN in3
