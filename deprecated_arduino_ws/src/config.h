@@ -2,6 +2,8 @@
 #define CONFIG_H
 
 #include <math.h>
+#include <Arduino.h>
+#include <Wire.h>
 
 // TUNABLE PARAMETERS
 #define LINE_SENSOR_THRESHOLD 512 // may need to tune for every sensor

@@ -12,7 +12,8 @@
 #pragma config(Sensor, dgtl5,  ball_switch,    sensorTouch)
 #pragma config(Sensor, dgtl6,  switch_left,    sensorTouch)
 #pragma config(Sensor, dgtl7,  left_encoder,   sensorQuadEncoder)
-#pragma config(Sensor, dgtl9,  compass1,       sensorDigitalIn)
+#pragma config(Sensor, dgtl9,  discord
+,       sensorDigitalIn)
 #pragma config(Sensor, dgtl10, compass2,       sensorDigitalIn)
 #pragma config(Sensor, dgtl11, compass3,       sensorDigitalIn)
 #pragma config(Sensor, dgtl12, compass4,       sensorDigitalIn)
