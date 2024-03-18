@@ -47,7 +47,7 @@
 // ROBOT PARAMETERS
 #define WHEEL_DIAMETER      0.069 //m
 #define ROBOT_TRACK         0.213 //m
-#define ENCODER_RESOLUTION  90 // [ticks/revolution]
+#define ENCODER_RESOLUTION  360 // [ticks/revolution]
 #define MAX_WHEEL_RPM       100 // [rpm]
 #define MAX_SPEED           WHEEL_DIAMETER * MAX_WHEEL_RPM/ (4 * M_PI * 60) // [m/s]
 #define MAX_ANGULAR_SPEED   (2 * MAX_SPEED) / ROBOT_TRACK // [rad/s]
