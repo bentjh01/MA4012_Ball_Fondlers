@@ -1,5 +1,18 @@
-#include "pinout.h"
+#include "sensor_test.h"
 
+// Params
+#define dt 0.05
+#define PI 3.14159265358979323846
+
+#define CUTOFF_A 10 // [Hz]
+#define ALPHA_A 1/(2*PI*CUTOFF_A*dt)
+
+// support functions
+float low_pass_filter(float input, float prev_input, float alpha){
+    return alpha*input + (1-alpha)*prev_input;
+}
+
+// global variables
 int line_FL_val;
 int line_BL_val;
 int line_BR_val;
@@ -15,6 +28,8 @@ int enR;
 int enL;
 
 float current_time;
+
+// sensors
 
 void read_sensors(){
 	line_FL_val = SensorValue[line_FL];
