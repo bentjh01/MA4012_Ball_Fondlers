@@ -279,8 +279,8 @@ int edge_detected(){
 int edge_avoid(){
 	twist_t twist;
 	motor_rpm_t rpm;
-	twist.linear_x = 0;
-	twist.angular_z = 0;
+	twist.linear_x = 1;
+	twist.angular_z = 1;
 	calcualte_rpm(twist, rpm);
 	calculate_actual_rpm(rpm);
 	calculate_actual_twist(rpm, twist);
