@@ -12,8 +12,6 @@
 #define TOLERANCE_CM 5.0
 #define FRACTIONAL_CLOSENESS_TO_BALL 0.80
 
-extern float search_timer;
-extern robot_moving_timeout_milisecond;
 
 typedef struct {
 	float linear_velocity;
