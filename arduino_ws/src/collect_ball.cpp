@@ -3,7 +3,7 @@
 
 task collect_ball(){
 	// Start Ball Collection
-	motor[collector] = 127;
+	motor[collector] = 50;
 	
 	// Check limit switch to see if ball in chamber
 	if (limit_switch_chamber == 1){
