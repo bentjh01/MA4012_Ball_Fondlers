@@ -106,8 +106,8 @@ void floppy(){
 }
 
 void some_function (int a, int b, some_struct &test_struct){
-	test_struct.a = a;
-	test_struct.b = b;
+	test_struct.a = test_struct.a + a;
+	test_struct.b = test_struct.b + b;
 }
 
 task main()
@@ -126,6 +126,7 @@ task main()
 		for (unsigned int i = 0; i < 1000; i++){
 			floppy();
 		}
+		some_function(1, 1, this_struct);
 		motor[motor_L] = 0;
 		motor[motor_R] = 0;
 		motor[servo] = 0;

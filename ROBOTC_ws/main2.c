@@ -82,8 +82,14 @@ void calculate_actual_rpm(motor_rpm_t &rpm){
 		} else {
 		higher_rpm = rpm.left;
 	}
-	rpm.right= rpm.right/higher_rpm * MAX_WHEEL_RPM;
-	rpm.left = rpm.left/higher_rpm * MAX_WHEEL_RPM;
+	if (higher_rpm == 0){
+		rpm.right= MAX_WHEEL_RPM;
+		rpm.left = MAX_WHEEL_RPM;
+	} else{
+		rpm.right= rpm.right/higher_rpm * MAX_WHEEL_RPM;
+		rpm.left = rpm.left/higher_rpm * MAX_WHEEL_RPM;
+	}
+
 	return;
 }
 
@@ -106,7 +112,6 @@ ROBOT STATE
 _____________________________________________________________________________________________________________________ */
 
 void init_robot_pose(pose_t &pose){
-	pose_t pose;
 	pose.x = 0;
 	pose.y = 0;
 	pose.yaw = 0;
@@ -281,6 +286,8 @@ int edge_avoid(){
 	rpm.left = 0;
 	rpm.right = 0;
 	robot_move(rpm);
+	robot_rpm.left = rpm.left;
+	robot_rpm.right = rpm.right;
 	robot_twist.linear_x = 0;
 	robot_twist.angular_z = 0;
 	return 1;
@@ -300,12 +307,19 @@ int home(){
 		calculate_actual_rpm(rpm);
 		calculate_actual_twist(rpm, twist);
 		robot_move(rpm);
+		robot_rpm.left = rpm.left;
+		robot_rpm.right = rpm.right;
 		robot_twist.linear_x = twist.linear_x;
 		robot_twist.angular_z = twist.angular_z;
 		} else {
 		sucess = 1;
 	}
-	return 2;
+	if (sucess){
+		return 2;
+	} else {
+		return 1;
+	}
+
 }
 
 int search_ball(){
@@ -333,6 +347,8 @@ int deliver_ball(){
 		calculate_actual_rpm(rpm);
 		calculate_actual_twist(rpm, twist);
 		robot_move(rpm);
+		robot_rpm.left = rpm.left;
+		robot_rpm.right = rpm.right;
 		robot_twist.linear_x = twist.linear_x;
 		robot_twist.angular_z = twist.angular_z;
 		// FOR TESTING
@@ -354,7 +370,7 @@ int deliver_ball(){
 task main()
 {
 	init_robot_pose(robot_pose);
-	
+
 	pid_init(delivery_pid_kp, delivery_pid_ki, delivery_pid_kd, 0, delivery_pid);
 	pid_init(1, 0, 0, 0, home_pid);
 
@@ -388,7 +404,6 @@ task main()
 			default:
 				task_state = search_ball();
 			}
-			robot_move(robot_rpm);
 		}
 
 		while (time1[T1] < DT * 1000){}
