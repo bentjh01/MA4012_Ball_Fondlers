@@ -1,27 +1,6 @@
 #ifndef PINOUT_H
 #define PINOUT_H
 
-#pragma config(Sensor, in1,    long_distance_R, sensorAnalog)
-#pragma config(Sensor, in2,    short_distance, sensorAnalog)
-#pragma config(Sensor, in3,    long_distance_L, sensorAnalog)
-#pragma config(Sensor, in4,    long_distance_top, sensorAnalog)
-#pragma config(Sensor, in5,    line_BR,        sensorAnalog)
-#pragma config(Sensor, in6,    line_FR,        sensorAnalog)
-#pragma config(Sensor, in7,    line_FL,        sensorAnalog)
-#pragma config(Sensor, in8,    line_BL,        sensorAnalog)
-#pragma config(Sensor, dgtl2,  wheel_L_encoderA, sensorQuadEncoder)
-#pragma config(Sensor, dgtl4,  wheel_R_encoderA, sensorQuadEncoder)
-// #pragma config(Sensor, dgtl,  touch_BL,       sensorDigitalIn)
-// #pragma config(Sensor, dgtl6,  touch_BR,       sensorDigitalIn)
-// #pragma config(Sensor, dgtl7,  magnetometer_N, sensorDigitalIn)
-// #pragma config(Sensor, dgtl8,  magnetometer_W, sensorDigitalIn)
-// #pragma config(Sensor, dgtl9,  magnetometer_S, sensorDigitalIn)
-// #pragma config(Sensor, dgtl10, magnetometer_E, sensorDigitalIn)
-// #pragma config(Sensor, dgtl12, touch_test,     sensorDigitalIn)
-#pragma config(Motor,  port2,           servo,         tmotorServoStandard, openLoop)
-#pragma config(Motor,  port6,           motor_R,       tmotorVex393_HBridge, PIDControl, encoderPort, dgtl2)
-#pragma config(Motor,  port7,           motor_L,       tmotorVex393_MC29, PIDControl, encoderPort, dgtl4)
-
 #define long_distance_R     in1
 #define short_distance      in2
 #define long_distance_L     in3
