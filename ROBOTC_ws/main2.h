@@ -1,7 +1,7 @@
 #ifndef MAIN2_H
 #define MAIN2_H
 
-#include "pinout.c"
+// #include "pinout.c"
 #include "config.h"
 
 typedef struct {

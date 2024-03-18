@@ -21,39 +21,39 @@ SUPPORT FUNCTIONS
 _____________________________________________________________________________________________________________________ */
 
 float fast_inverse_sqrt(float x) {
-  // Initial estimate based on bit manipulation (common for fast inverse sqrt)
-  float xhalf = 0.5 * x;
-  int i = *(int*) &x;  // reinterpret cast to int, not recommended for portability
-  i = 0x5f355f8b - (i >> 1);  // Adjust the initial guess based on MSB of float
+	// Initial estimate based on bit manipulation (common for fast inverse sqrt)
+	float xhalf = 0.5 * x;
+	int i = *(int*) &x;  // reinterpret cast to int, not recommended for portability
+	i = 0x5f355f8b - (i >> 1);  // Adjust the initial guess based on MSB of float
 
-  // Iterate a few times using Newton-Raphson method for refinement
-  float y = xhalf;
-  for (int n = 0; n < 4; n++) {
-    y = y * (1.5 - (x * y * y));
-  }
-  return y;
+	// Iterate a few times using Newton-Raphson method for refinement
+	float y = xhalf;
+	for (int n = 0; n < 4; n++) {
+		y = y * (1.5 - (x * y * y));
+	}
+	return y;
 }
 
 void pid_init(float Kp, float Ki, float Kd, float setpoint, pid_t &pid) {
-    pid.Kp = Kp;
-    pid.Ki = Ki;
-    pid.Kd = Kd;
-    pid.setpoint = setpoint;
-    pid.integral = 0.0;
-    pid.prev_error = 0.0;
-    pid.prev_time = 0.0;
+	pid.Kp = Kp;
+	pid.Ki = Ki;
+	pid.Kd = Kd;
+	pid.setpoint = setpoint;
+	pid.integral = 0.0;
+	pid.prev_error = 0.0;
+	pid.prev_time = 0.0;
 	pid.output = 0.0;
-    return;
+	return;
 }
 
-pid_t pid_update(pid_t pid, float feedback, float dt) {
-    float error = pid.setpoint - feedback;
-    float derivative = (error - pid.prev_error) / dt;
+void pid_update(float feedback, float dt, pid_t &pid) {
+	float error = pid.setpoint - feedback;
+	float derivative = (error - pid.prev_error) / dt;
 	pid.integral += error * dt;
-    pid.output = pid.Kp * error + pid.Ki * pid.integral + pid.Kd * derivative;
-    pid.prev_error = error;
-    // pid.prev_time = millis()/1000;
-    return pid;
+	pid.output = pid.Kp * error + pid.Ki * pid.integral + pid.Kd * derivative;
+	pid.prev_error = error;
+	// pid.prev_time = millis()/1000;
+	return;
 }
 
 // support functions
@@ -68,31 +68,29 @@ float low_pass_filter(float input, float prev_input, float cutoff){
 MOTORS
 _____________________________________________________________________________________________________________________ */
 
-motor_rpm_t calcualte_rpm(twist_t twist){
-	motor_rpm_t rpm;
+void calcualte_rpm(twist_t twist, motor_rpm_t &rpm){
 	float radian_per_sec = twist.angular_z * DEGREE_TO_RADIAN;
 	rpm.right = (twist.linear_x + radian_per_sec*ROBOT_TRACK/2)/(WHEEL_DIAMETER/2);
 	rpm.left = (twist.linear_x - radian_per_sec*ROBOT_TRACK/2)/(WHEEL_DIAMETER/2);
-	return rpm;
+	return;
 }
 
-motor_rpm_t calculate_actual_rpm(motor_rpm_t rpm){
+void calculate_actual_rpm(motor_rpm_t &rpm){
 	float higher_rpm;
 	if (rpm.right > rpm.left){
 		higher_rpm = rpm.right;
-	} else {
+		} else {
 		higher_rpm = rpm.left;
 	}
 	rpm.right= rpm.right/higher_rpm * MAX_WHEEL_RPM;
 	rpm.left = rpm.left/higher_rpm * MAX_WHEEL_RPM;
-	return rpm;
+	return;
 }
 
-twist_t calculate_actual_twist(motor_rpm_t rpm){
-	twist_t twist;
+void calculate_actual_twist(motor_rpm_t rpm, twist_t &twist){
 	twist.linear_x = (rpm.right + rpm.left) * WHEEL_DIAMETER/4;
 	twist.angular_z = (rpm.right - rpm.left) * WHEEL_DIAMETER/ROBOT_TRACK;
-	return twist;
+	return;
 }
 
 void robot_move(motor_rpm_t rpm){
@@ -118,20 +116,20 @@ pose_t init_robot_pose(void){
 }
 
 pose_t predict_state_model(pose_t last_pose, twist_t cmd_vel, float dt) {
-    pose_t estimated_pose;
-    estimated_pose.x = last_pose.x + last_pose.x * dt * cos(last_pose.yaw);
-    estimated_pose.y = last_pose.y + last_pose.x * dt * sin(last_pose.yaw);
-    estimated_pose.yaw = last_pose.yaw + last_pose.angular_z * dt;
-    estimated_pose.linear_x = cmd_vel.linear_x;
-    estimated_pose.angular_z = cmd_vel.angular_z;
-    return estimated_pose;
+	pose_t estimated_pose;
+	estimated_pose.x = last_pose.x + last_pose.x * dt * cos(last_pose.yaw);
+	estimated_pose.y = last_pose.y + last_pose.x * dt * sin(last_pose.yaw);
+	estimated_pose.yaw = last_pose.yaw + last_pose.angular_z * dt;
+	estimated_pose.linear_x = cmd_vel.linear_x;
+	estimated_pose.angular_z = cmd_vel.angular_z;
+	return estimated_pose;
 }
 
 pose_t predict_state_encoders(pose_t last_pose, encoder_count_t d_en_count, float dt) {
-    pose_t estimated_pose;
-    int d_en_right = d_en_count.right;
-    int d_en_left = d_en_count.left;
-    // Simple robot model
+	pose_t estimated_pose;
+	int d_en_right = d_en_count.right;
+	int d_en_left = d_en_count.left;
+	// Simple robot model
 	float drad_right = d_en_right / ENCODER_RESOLUTION * 2 * M_PI;
 	float drad_left = d_en_left / ENCODER_RESOLUTION * 2 * M_PI;
 
@@ -139,32 +137,32 @@ pose_t predict_state_encoders(pose_t last_pose, encoder_count_t d_en_count, floa
 	float dy = (drad_right + drad_left) * WHEEL_DIAMETER / 4 * sin(last_pose.yaw);
 	float dyaw = (drad_right - drad_left) * WHEEL_DIAMETER / ROBOT_TRACK;
 
-    estimated_pose.x = last_pose.x + dx;
-    estimated_pose.y = last_pose.y + dy;
-    estimated_pose.yaw = last_pose.yaw + dyaw;
-    estimated_pose.linear_x = fast_inverse_sqrt(dx*dx + dy*dy) / dt;
-    estimated_pose.angular_z = dyaw / dt;
-    return estimated_pose;
+	estimated_pose.x = last_pose.x + dx;
+	estimated_pose.y = last_pose.y + dy;
+	estimated_pose.yaw = last_pose.yaw + dyaw;
+	estimated_pose.linear_x = fast_inverse_sqrt(dx*dx + dy*dy) / dt;
+	estimated_pose.angular_z = dyaw / dt;
+	return estimated_pose;
 }
 
 pose_t ab_filter_update(pose_t last_pose, twist_t cmd_vel, encoder_count_t d_en_count, float dt){
 	pose_t pose;
-    pose_t predicted_pose = predict_state_model(last_pose, cmd_vel, dt);
-    pose_t encoder_pose = predict_state_encoders(last_pose, d_en_count, dt);
+	pose_t predicted_pose = predict_state_model(last_pose, cmd_vel, dt);
+	pose_t encoder_pose = predict_state_encoders(last_pose, d_en_count, dt);
 
-    float encoder_x_innovation = encoder_pose.x - predicted_pose.x;
-    float encoder_y_innovation = encoder_pose.y - predicted_pose.y;
-    float encoder_yaw_innovation = encoder_pose.yaw - predicted_pose.yaw;
-    float encoder_linear_velocity_innovation = encoder_pose.linear_x - predicted_pose.linear_x;
-    float encoder_angular_velocity_innovation = encoder_pose.angular_z - predicted_pose.angular_z;
+	float encoder_x_innovation = encoder_pose.x - predicted_pose.x;
+	float encoder_y_innovation = encoder_pose.y - predicted_pose.y;
+	float encoder_yaw_innovation = encoder_pose.yaw - predicted_pose.yaw;
+	float encoder_linear_velocity_innovation = encoder_pose.linear_x - predicted_pose.linear_x;
+	float encoder_angular_velocity_innovation = encoder_pose.angular_z - predicted_pose.angular_z;
 
-    pose.x = predicted_pose.x + ENCODER_FILTER_GAIN * encoder_x_innovation;
-    pose.y = predicted_pose.y + ENCODER_FILTER_GAIN * encoder_y_innovation;
-    pose.yaw = predicted_pose.yaw + ENCODER_FILTER_GAIN * encoder_yaw_innovation;
-    pose.linear_x = predicted_pose.linear_x + ENCODER_FILTER_GAIN * encoder_linear_velocity_innovation;
-    pose.angular_z = predicted_pose.angular_z + ENCODER_FILTER_GAIN * encoder_angular_velocity_innovation;
+	pose.x = predicted_pose.x + ENCODER_FILTER_GAIN * encoder_x_innovation;
+	pose.y = predicted_pose.y + ENCODER_FILTER_GAIN * encoder_y_innovation;
+	pose.yaw = predicted_pose.yaw + ENCODER_FILTER_GAIN * encoder_yaw_innovation;
+	pose.linear_x = predicted_pose.linear_x + ENCODER_FILTER_GAIN * encoder_linear_velocity_innovation;
+	pose.angular_z = predicted_pose.angular_z + ENCODER_FILTER_GAIN * encoder_angular_velocity_innovation;
 
-    return pose;
+	return pose;
 }
 
 /* _____________________________________________________________________________________________________________________
@@ -239,6 +237,8 @@ void read_sensors(){
 
 	d_enR = getMotorEncoder(motor_R);
 	d_enL = getMotorEncoder(motor_L);
+	resetMotorEncoder(motor_R);
+	resetMotorEncoder(motor_L);
 }
 
 void update_pose(){
@@ -257,22 +257,22 @@ ________________________________________________________________________________
 int edge_detected(){
 	if (line_FL_val > LINE_FL){
 		return 1;
-	} else {
+		} else {
 		return 0;
 	}
 	if (line_BL_val > LINE_BL){
 		return 1;
-	} else {
+		} else {
 		return 0;
 	}
 	if (line_BR_val > LINE_BR){
 		return 1;
-	} else {
+		} else {
 		return 0;
 	}
 	if (line_FR_val > LINE_FR){
 		return 1;
-	} else {
+		} else {
 		return 0;
 	}
 }
@@ -292,14 +292,14 @@ int home(){
 	if (robot_pose.x <= 0.8 && robot_pose.y <= 0.6){
 		twist.linear_x  = MAX_SPEED;
 		home_pid.setpoint = 0.6;
-		home_pid = pid_update(home_pid, robot_pose.y, 0.05);
+		pid_update(robot_pose.y, DT, home_pid);
 		twist.angular_z = home_pid.output;
 
 		rpm =  calcualte_rpm(twist);
 		rpm = calculate_actual_rpm(rpm);
 		twist = calculate_actual_twist(rpm);
 		robot_move(rpm);
-	} else {
+		} else {
 		sucess = 1;
 	}
 	return 2;
@@ -323,7 +323,7 @@ int deliver_ball(){
 	motor_rpm_t rpm;
 	if (1){ // Check if ball is in the robot and if the robot is in the delivery area
 		twist.linear_x  = MAX_SPEED;
-		delivery_pid = pid_update(delivery_pid, robot_pose.yaw, 0.05);
+		pid_update(robot_pose.yaw, DT, delivery_pid);
 		twist.angular_z = delivery_pid.output;
 
 		rpm =  calcualte_rpm(twist);
@@ -335,13 +335,13 @@ int deliver_ball(){
 		robot_angular_z = twist.angular_z;
 		robot_rpm_R = rpm.right;
 		robot_rpm_L = rpm.left;
-	} else {
+		} else {
 		sucess = 1;
 	}
 
 	if (sucess){
 		return 1;
-	} else {
+		} else {
 		return 5;
 	}
 }
@@ -349,8 +349,10 @@ int deliver_ball(){
 task main()
 {
 	robot_pose = init_robot_pose();
-	delivery_pid = pid_init(delivery_pid_kp, delivery_pid_ki, delivery_pid_kd, 0);
-	home_pid = pid_init(1, 0, 0, 0);
+	pid_init(delivery_pid_kp, delivery_pid_ki, delivery_pid_kd, 0, delivery_pid);
+	pid_init(1, 0, 0, 0, home_pid);
+	resetMotorEncoder(motor_R);
+	resetMotorEncoder(motor_L);
 	while(1){
 		clearTimer(T1);
 		// Main Loop
@@ -358,7 +360,7 @@ task main()
 		update_pose();
 		if (edge_detected()){
 			edge_avoid();
-		} else {
+			} else {
 			switch (task_state)
 			{
 			case HOME:
