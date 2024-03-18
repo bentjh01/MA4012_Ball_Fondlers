@@ -34,17 +34,16 @@ float fast_inverse_sqrt(float x) {
   return y;
 }
 
-struct pid_t pid_init(float Kp, float Ki, float Kd, float setpoint) {
-    pid_t new_pid;
-    new_pid.Kp = Kp;
-    new_pid.Ki = Ki;
-    new_pid.Kd = Kd;
-    new_pid.setpoint = setpoint;
-    new_pid.integral = 0.0;
-    new_pid.prev_error = 0.0;
-    new_pid.prev_time = 0.0;
-		new_pid.output = 0.0;
-    return new_pid;
+void pid_init(float Kp, float Ki, float Kd, float setpoint, pid_t &pid) {
+    pid.Kp = Kp;
+    pid.Ki = Ki;
+    pid.Kd = Kd;
+    pid.setpoint = setpoint;
+    pid.integral = 0.0;
+    pid.prev_error = 0.0;
+    pid.prev_time = 0.0;
+	pid.output = 0.0;
+    return;
 }
 
 pid_t pid_update(pid_t pid, float feedback, float dt) {
