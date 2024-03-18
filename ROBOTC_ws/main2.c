@@ -41,7 +41,6 @@ void pid_init(float Kp, float Ki, float Kd, float setpoint, pid_t &pid) {
 	pid.setpoint = setpoint;
 	pid.integral = 0.0;
 	pid.prev_error = 0.0;
-	pid.prev_time = 0.0;
 	pid.output = 0.0;
 	return;
 }
@@ -52,7 +51,6 @@ void pid_update(float feedback, float dt, pid_t &pid) {
 	pid.integral = pid.integral + error * dt;
 	pid.output = pid.Kp * error + pid.Ki * pid.integral + pid.Kd * derivative;
 	pid.prev_error = error;
-	// pid.prev_time = millis()/1000;
 	return;
 }
 

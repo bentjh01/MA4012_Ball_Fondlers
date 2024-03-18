@@ -34,7 +34,6 @@ typedef struct {
     float setpoint;  // Desired setpoint
     float integral; // Accumulated error
     float prev_error; // Previous error
-    float prev_time; // Previous time
 
     float output; // Output
 } pid_t;
