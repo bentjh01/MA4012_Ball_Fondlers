@@ -2,6 +2,7 @@
 #define PINOUT_H
 
 #define LED_PIN dgt1
+#define TOUCH_PIN dgt2
 
 // IR Line Tracking Sensor
 #define LINE_SENSOR_FL_PIN in3

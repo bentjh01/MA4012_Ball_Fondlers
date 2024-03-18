@@ -4,7 +4,7 @@
 #include "../pinout.h"
 #include "../config.h"
 
-void init_led(void);
-void blink_led(unsigned int duration);
+void init_blinky(void);
+void blinky(void);
 
 #endif // BLINK_LED_H
