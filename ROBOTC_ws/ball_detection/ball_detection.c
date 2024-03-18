@@ -15,7 +15,7 @@ int check_status_from_left_right_sensor(int long_distance_sensor_FL_status, int 
     //both have detection, go to the closer one
     if(read_long_sensor_distance_CM(long_distance_sensor_FR_pin) < read_long_sensor_distance_CM(long_distance_sensor_FL_pin)){
       //stop movement
-      robot_move(linear_velocity = 0, angular_velocity = 0); 
+      robot_move(linear_velocity = 0, angular_velocity = 0);
       //check if the ball is close enough for just pure rotation
       if(long_distance_sensor_FR_status == 1){
         return 21;
@@ -86,7 +86,8 @@ int change_search_position(bool startup_phase){
   }
 
   if(time10[centis]-search_timer > robot_moving_timeout_milisecond){
-    //movement finished
+    //movement finished, stop movement
+    robot_move(linear_velocity = 0, angular_velocity = 0);
     return 0;
   }
   else{
@@ -116,7 +117,7 @@ int scan(bool startup_phase){
 
   
   //Find and go to ball, try to ignore opp robot
-  if(abs(read_short_sensor_distance_CM(short_distance_sensor_pin) - read_long_sensor_distance_CM(long_distance_sensor_TP_pin)) > TOLERANCE_CM && short_distance_sensor_status == 1){
+  if(short_distance_sensor_status == 1){
     //if ball immediately in front
     robot_move(linear_velocity = 0, angular_velocity = 0); //stop movement
     return 4;
@@ -177,12 +178,13 @@ int go_to_detection(int status, bool startup_phase){
 
   //found condition
   //ball immediately in front
-  if(abs(read_short_sensor_distance_CM(short_distance_sensor_pin) - read_long_sensor_distance_CM(long_distance_sensor_TP_pin)) > TOLERANCE_CM && short_distance_sensor_status == 1){
+  if(short_distance_sensor_status == 1){
     robot_move(linear_velocity = 0, angular_velocity = 0); //stop movement
     return 4;
   }
   //most likely blocked by opp
   else if(abs(read_short_sensor_distance_CM(short_distance_sensor_pin) - read_long_sensor_distance_CM(long_distance_sensor_TP_pin)) < TOLERANCE_CM && short_distance_sensor_status == 1){
+    //CHANGE THE OPP ROBOT DETECTION
     robot_move(linear_velocity = 0, angular_velocity = 0); //stop movement
     return 5;
   }
