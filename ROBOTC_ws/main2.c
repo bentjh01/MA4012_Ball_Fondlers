@@ -83,8 +83,8 @@ void calculate_actual_rpm(motor_rpm_t &rpm){
 		higher_rpm = rpm.left;
 	}
 	if (higher_rpm == 0){
-		rpm.right= MAX_WHEEL_RPM;
-		rpm.left = MAX_WHEEL_RPM;
+		rpm.right= 0;
+		rpm.left = 0;
 	} else{
 		rpm.right= rpm.right/higher_rpm * MAX_WHEEL_RPM;
 		rpm.left = rpm.left/higher_rpm * MAX_WHEEL_RPM;
@@ -202,12 +202,7 @@ int d_enL;
 int task_state = 1;
 
 twist_t robot_twist;
-float robot_linear_x;
-float robot_angular_z;
-
 motor_rpm_t robot_rpm;
-float robot_rpm_R;
-float robot_rpm_L;
 
 pose_t robot_pose;
 
@@ -282,14 +277,16 @@ int edge_detected(){
 }
 
 int edge_avoid(){
+	twist_t twist;
 	motor_rpm_t rpm;
-	rpm.left = 0;
-	rpm.right = 0;
+	twist.linear_x = 0;
+	twist.angular_z = 0;
+	calcualte_rpm(twist, rpm);
+	calculate_actual_rpm(rpm);
+	calculate_actual_twist(rpm, twist);
 	robot_move(rpm);
-	robot_rpm.left = rpm.left;
-	robot_rpm.right = rpm.right;
-	robot_twist.linear_x = 0;
-	robot_twist.angular_z = 0;
+	robot_rpm = rpm;
+	robot_twist = twist;
 	return 1;
 }
 
@@ -307,14 +304,13 @@ int home(){
 		calculate_actual_rpm(rpm);
 		calculate_actual_twist(rpm, twist);
 		robot_move(rpm);
-		robot_rpm.left = rpm.left;
-		robot_rpm.right = rpm.right;
-		robot_twist.linear_x = twist.linear_x;
-		robot_twist.angular_z = twist.angular_z;
+		robot_rpm = rpm;
+		robot_twist = twist;
+
 		} else {
 		sucess = 1;
 	}
-	if (sucess){
+	if (sucess == 1){
 		return 2;
 	} else {
 		return 1;
@@ -347,20 +343,14 @@ int deliver_ball(){
 		calculate_actual_rpm(rpm);
 		calculate_actual_twist(rpm, twist);
 		robot_move(rpm);
-		robot_rpm.left = rpm.left;
-		robot_rpm.right = rpm.right;
-		robot_twist.linear_x = twist.linear_x;
-		robot_twist.angular_z = twist.angular_z;
-		// FOR TESTING
-		robot_linear_x = twist.linear_x;
-		robot_angular_z = twist.angular_z;
-		robot_rpm_R = rpm.right;
-		robot_rpm_L = rpm.left;
+		robot_rpm = rpm;
+		robot_twist = twist;
+
 		} else {
 		sucess = 1;
 	}
 
-	if (sucess){
+	if (sucess == 1){
 		return 1;
 		} else {
 		return 5;
@@ -380,10 +370,10 @@ task main()
 		clearTimer(T1);
 		// Main Loop
 		read_sensors();
-		update_pose();
 		if (edge_detected()){
 			edge_avoid();
-			} else {
+		} 
+		else {
 			switch (task_state)
 			{
 			case HOME:
@@ -407,5 +397,6 @@ task main()
 		}
 
 		while (time1[T1] < DT * 1000){}
+		update_pose();
 	}
 }
