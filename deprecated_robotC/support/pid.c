@@ -13,8 +13,8 @@ PIDController pid_init(float Kp, float Ki, float Kd, float setpoint) {
     return PIDController;
 }
 
-PIDController pid_update(PIDController pid, float feedback) {
-    // float dt = millis()/1000 - pid->prev_time;
+PID pid_update(PIDController pid, float feedback) {
+    float dt = millis()/1000 - pid->prev_time;
     float error = pid->setpoint - feedback; 
     pid->error_sum += error * dt;
     float derivative = (error - pid->prev_error) / dt;
@@ -23,3 +23,12 @@ PIDController pid_update(PIDController pid, float feedback) {
     pid->prev_time = millis()/1000;
     return output;
 }
+
+// PIDController deliver = pid_init(1.0, 0.0, 0.0, 0.0, 0.0);
+
+// void loop(){
+//     deliver.setpoint = 0.0;
+//     deliver = pid_update(deliver, 0.0);
+//     output = pid.output;
+//     // motor_request(output, output);
+// }

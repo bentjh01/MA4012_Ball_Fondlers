@@ -1,6 +1,8 @@
 #ifndef PID_H
 #define PID_H
 
+#include <Arduino.h>
+
 typedef struct {
     float Kp;  // Proportional gain
     float Ki;  // Integral gain
@@ -14,9 +16,7 @@ typedef struct {
     float output; // Output
 } PIDController;
 
-void pid_init(PIDController pid, float kp, float ki, float kd, float setpoint);
-void pid_setpoint(PIDController pid, float setpoint);
-float pid_update(PIDController pid, float input);
-
+PIDController pid_init(float kp, float ki, float kd, float setpoint);
+PIDController pid_update(PIDController pid, float input);
 
 #endif /* PID_H */
