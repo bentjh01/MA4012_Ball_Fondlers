@@ -1,5 +1,8 @@
 #include "ball_detection.h"
 
+float search_timer;
+float robot_moving_timeout_milisecond;
+
 int check_status_from_left_right_sensor(int long_distance_sensor_FL_status, int long_distance_sensor_FR_status){
   /*
   Check which direction to go to (left or right) and whether only rotation is needed or need translation too
@@ -78,11 +81,11 @@ int change_search_position(bool startup_phase){
   //giving arnd 10 cm overlap between 2 consecutive scan areas, we can move the robot 80 cm forward, and set that position as the new search position
   if(startup_phase){
     robot_move(linear_velocity = 50, angular_velocity = 0); //move forward
-    search_timer = millis();
+    search_timer = time10[centis];
     robot_moving_timeout_milisecond = 1600;
   }
 
-  if(millis()-search_timer > robot_moving_timeout_milisecond){
+  if(time10[centis]-search_timer > robot_moving_timeout_milisecond){
     //movement finished
     return 0;
   }
@@ -102,7 +105,7 @@ int scan(bool startup_phase){
   //Rotate in place and search for ball
   if(startup_phase){
     robot_move(linear_velocity = 0, angular_velocity = 120); //rotate ccw, try find detection
-    search_timer = millis();
+    search_timer = time10[centis];
   }
   
   //Read distance sensors
@@ -124,7 +127,7 @@ int scan(bool startup_phase){
   }
   else{
     //no ball detected, check if timeout. Else continue searching
-    if(millis()-search_timer > 3000){
+    if(time10[centis]-search_timer > 3000){
       return 0
     }
     else{
@@ -144,7 +147,7 @@ int scan(bool startup_phase){
 
 int go_to_detection(int status, bool startup_phase){
   if(startup_phase){
-    search_timer = millis();
+    search_timer = time10[centis];
     switch(status){
       case 21:
       {
@@ -185,7 +188,7 @@ int go_to_detection(int status, bool startup_phase){
   }
   else{
     //Timeout
-    if(millis()-search_timer > robot_moving_timeout_milisecond){
+    if(time10[centis]-search_timer > robot_moving_timeout_milisecond){
       robot_move(linear_velocity = 0, angular_velocity = 0); //stop movement
       return 0;
     }
