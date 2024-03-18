@@ -105,28 +105,26 @@ void robot_move(motor_rpm_t rpm){
 ROBOT STATE
 _____________________________________________________________________________________________________________________ */
 
-pose_t init_robot_pose(void){
+void init_robot_pose(pose_t &pose){
 	pose_t pose;
 	pose.x = 0;
 	pose.y = 0;
 	pose.yaw = 0;
 	pose.linear_x = 0;
 	pose.angular_z = 0;
-	return pose;
+	return;
 }
 
-pose_t predict_state_model(pose_t last_pose, twist_t cmd_vel, float dt) {
-	pose_t estimated_pose;
-	estimated_pose.x = last_pose.x + last_pose.x * dt * cos(last_pose.yaw);
-	estimated_pose.y = last_pose.y + last_pose.x * dt * sin(last_pose.yaw);
-	estimated_pose.yaw = last_pose.yaw + last_pose.angular_z * dt;
-	estimated_pose.linear_x = cmd_vel.linear_x;
-	estimated_pose.angular_z = cmd_vel.angular_z;
-	return estimated_pose;
+void predict_state_model(pose_t last_pose, twist_t cmd_vel, float dt, pose_t &pose) {
+	pose.x = last_pose.x + last_pose.x * dt * cos(last_pose.yaw);
+	pose.y = last_pose.y + last_pose.x * dt * sin(last_pose.yaw);
+	pose.yaw = last_pose.yaw + last_pose.angular_z * dt;
+	pose.linear_x = cmd_vel.linear_x;
+	pose.angular_z = cmd_vel.angular_z;
+	return;
 }
 
-pose_t predict_state_encoders(pose_t last_pose, encoder_count_t d_en_count, float dt) {
-	pose_t estimated_pose;
+void predict_state_encoders(pose_t last_pose, encoder_count_t d_en_count, float dt, pose_t &pose) {
 	int d_en_right = d_en_count.right;
 	int d_en_left = d_en_count.left;
 	// Simple robot model
@@ -137,18 +135,19 @@ pose_t predict_state_encoders(pose_t last_pose, encoder_count_t d_en_count, floa
 	float dy = (drad_right + drad_left) * WHEEL_DIAMETER / 4 * sin(last_pose.yaw);
 	float dyaw = (drad_right - drad_left) * WHEEL_DIAMETER / ROBOT_TRACK;
 
-	estimated_pose.x = last_pose.x + dx;
-	estimated_pose.y = last_pose.y + dy;
-	estimated_pose.yaw = last_pose.yaw + dyaw;
-	estimated_pose.linear_x = fast_inverse_sqrt(dx*dx + dy*dy) / dt;
-	estimated_pose.angular_z = dyaw / dt;
-	return estimated_pose;
+	pose.x = last_pose.x + dx;
+	pose.y = last_pose.y + dy;
+	pose.yaw = last_pose.yaw + dyaw;
+	pose.linear_x = fast_inverse_sqrt(dx*dx + dy*dy) / dt;
+	pose.angular_z = dyaw / dt;
+	return;
 }
 
-pose_t ab_filter_update(pose_t last_pose, twist_t cmd_vel, encoder_count_t d_en_count, float dt){
-	pose_t pose;
-	pose_t predicted_pose = predict_state_model(last_pose, cmd_vel, dt);
-	pose_t encoder_pose = predict_state_encoders(last_pose, d_en_count, dt);
+void ab_filter_update(pose_t last_pose, twist_t cmd_vel, encoder_count_t d_en_count, float dt, pose_t &pose){
+	pose_t predicted_pose;
+	pose_t encoder_pose;
+	predict_state_model(last_pose, cmd_vel, dt, predicted_pose);
+	predict_state_encoders(last_pose, d_en_count, dt, encoder_pose);
 
 	float encoder_x_innovation = encoder_pose.x - predicted_pose.x;
 	float encoder_y_innovation = encoder_pose.y - predicted_pose.y;
@@ -162,7 +161,7 @@ pose_t ab_filter_update(pose_t last_pose, twist_t cmd_vel, encoder_count_t d_en_
 	pose.linear_x = predicted_pose.linear_x + ENCODER_FILTER_GAIN * encoder_linear_velocity_innovation;
 	pose.angular_z = predicted_pose.angular_z + ENCODER_FILTER_GAIN * encoder_angular_velocity_innovation;
 
-	return pose;
+	return;
 }
 
 /* _____________________________________________________________________________________________________________________
@@ -245,7 +244,7 @@ void update_pose(){
 	encoder_count_t d_en;
 	d_en.left = d_enL;
 	d_en.right = d_enR;
-	robot_pose = ab_filter_update(robot_pose, robot_twist, d_en, DT);
+	ab_filter_update(robot_pose, robot_twist, d_en, DT, robot_pose);
 }
 
 /* _____________________________________________________________________________________________________________________
@@ -282,6 +281,8 @@ int edge_avoid(){
 	rpm.left = 0;
 	rpm.right = 0;
 	robot_move(rpm);
+	robot_twist.linear_x = 0;
+	robot_twist.angular_z = 0;
 	return 1;
 }
 
@@ -295,10 +296,12 @@ int home(){
 		pid_update(robot_pose.y, DT, home_pid);
 		twist.angular_z = home_pid.output;
 
-		rpm =  calcualte_rpm(twist);
-		rpm = calculate_actual_rpm(rpm);
-		twist = calculate_actual_twist(rpm);
+		calcualte_rpm(twist, rpm);
+		calculate_actual_rpm(rpm);
+		calculate_actual_twist(rpm, twist);
 		robot_move(rpm);
+		robot_twist.linear_x = twist.linear_x;
+		robot_twist.angular_z = twist.angular_z;
 		} else {
 		sucess = 1;
 	}
@@ -326,10 +329,12 @@ int deliver_ball(){
 		pid_update(robot_pose.yaw, DT, delivery_pid);
 		twist.angular_z = delivery_pid.output;
 
-		rpm =  calcualte_rpm(twist);
-		rpm = calculate_actual_rpm(rpm);
-		twist = calculate_actual_twist(rpm);
+		calcualte_rpm(twist, rpm);
+		calculate_actual_rpm(rpm);
+		calculate_actual_twist(rpm, twist);
 		robot_move(rpm);
+		robot_twist.linear_x = twist.linear_x;
+		robot_twist.angular_z = twist.angular_z;
 		// FOR TESTING
 		robot_linear_x = twist.linear_x;
 		robot_angular_z = twist.angular_z;
@@ -348,9 +353,11 @@ int deliver_ball(){
 
 task main()
 {
-	robot_pose = init_robot_pose();
+	init_robot_pose(robot_pose);
+	
 	pid_init(delivery_pid_kp, delivery_pid_ki, delivery_pid_kd, 0, delivery_pid);
 	pid_init(1, 0, 0, 0, home_pid);
+
 	resetMotorEncoder(motor_R);
 	resetMotorEncoder(motor_L);
 	while(1){
