@@ -27,6 +27,17 @@ typedef struct {
     int right;
 } encoder_count_t;
 
-#define ENCODER_FILTER_GAIN 0.25
+typedef struct {
+    float Kp;  // Proportional gain
+    float Ki;  // Integral gain
+    float Kd;  // Derivative gain
+
+    float setpoint;  // Desired setpoint
+    float integral; // Accumulated error
+    float prev_error; // Previous error
+    float prev_time; // Previous time
+
+    float output; // Output
+} pid_t;
 
 #endif // MAIN2_H

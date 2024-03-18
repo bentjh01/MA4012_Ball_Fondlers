@@ -3,6 +3,7 @@
 
 // SENSOR PARAMETERS
 #define LINE_SENSOR_THRESHOLD 512 // may need to tune for every sensor
+#define ENCODER_FILTER_GAIN 0.25 // [0,1] takes a value between 0 and 1, the closer to 1 the more filtering
 
 // DELIVER TASK
 #define delivery_pid_kp = 1.0;
@@ -26,10 +27,12 @@
 #define DELIVER_BALL        5
 
 // ROBOT PARAMETERS
-#define MAX_RPM = 100; // rpm
 #define WHEEL_DIAMETER = 0.069; //m
 #define ROBOT_TRACK = 0.213; //m
 #define ENCODER_RESOLUTION = 90; // [ticks/revolution]
+#define MAX_WHEEL_RPM = 100; // [rpm]
+#define MAX_SPEED = WHEEL_DIAMETER * MAX_WHEEL_RPM/ (4 * M_PI * 60); // [m/s]
+#define MAX_ANGULAR_SPEED = (2 * MAX_SPEED) / ROBOT_TRACK; // [rad/s]
 
 // #define MAX_SPEED wheel_diameter * max_wheel_rpm/ (4 * M_PI * 60)
 // #define MAX_ANGULAR_SPEED (2 * MAX_SPEED) / robot_track
