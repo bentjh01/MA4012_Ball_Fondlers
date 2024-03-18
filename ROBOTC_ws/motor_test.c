@@ -7,99 +7,10 @@
 
 #include "config.h"
 
-typedef struct {
-	float linear_x;
-	float angular_z;
-} twist_t;
-
-typedef struct {
-	int left;
-	int right;
-} motor_rpm_t;
-
 /* _____________________________________________________________________________________________________________________
 
-MOTORS
+SENSORS
 _____________________________________________________________________________________________________________________ */
-
-float calcualte_rpm_L(twist_t twist){
-	motor_rpm_t rpm;
-	float radian_per_sec = twist.angular_z * DEGREE_TO_RADIAN;
-	rpm.right = (twist.linear_x + radian_per_sec*ROBOT_TRACK/2)/(WHEEL_DIAMETER/2);
-	rpm.left = (twist.linear_x - radian_per_sec*ROBOT_TRACK/2)/(WHEEL_DIAMETER/2);
-	return rpm.left ;
-}
-
-float calcualte_rpm_R(twist_t twist){
-	motor_rpm_t rpm;
-	float radian_per_sec = twist.angular_z * DEGREE_TO_RADIAN;
-	rpm.right = (twist.linear_x + radian_per_sec*ROBOT_TRACK/2)/(WHEEL_DIAMETER/2);
-	rpm.left = (twist.linear_x - radian_per_sec*ROBOT_TRACK/2)/(WHEEL_DIAMETER/2);
-	return rpm.right;
-}
-
-
-float calculate_actual_rpm_L(motor_rpm_t rpm){
-	float higher_rpm;
-	if (rpm.right > rpm.left){
-		higher_rpm = rpm.right;
-		} else {
-		higher_rpm = rpm.left;
-	}
-	if (higher_rpm == 0){
-		rpm.right= 0;
-		rpm.left = 0;
-		} else{
-		rpm.right= rpm.right/higher_rpm * MAX_WHEEL_RPM;
-		rpm.left = rpm.left/higher_rpm * MAX_WHEEL_RPM;
-	}
-
-	return rpm.left;
-}
-
-float calculate_actual_rpm_R(motor_rpm_t rpm){
-	float higher_rpm;
-	if (rpm.right > rpm.left){
-		higher_rpm = rpm.right;
-		} else {
-		higher_rpm = rpm.left;
-	}
-	if (higher_rpm == 0){
-		rpm.right= 0;
-		rpm.left = 0;
-		} else{
-		rpm.right= rpm.right/higher_rpm * MAX_WHEEL_RPM;
-		rpm.left = rpm.left/higher_rpm * MAX_WHEEL_RPM;
-	}
-
-	return rpm.right;
-}
-
-float calculate_actual_linear_x(motor_rpm_t rpm){
-	twist_t twist;
-	twist.linear_x = (rpm.right + rpm.left) * WHEEL_DIAMETER/4;
-	twist.angular_z = (rpm.right - rpm.left) * WHEEL_DIAMETER/ROBOT_TRACK;
-	return twist.linear_x;
-}
-
-float calculate_actual_angular_z(motor_rpm_t rpm){
-	twist_t twist;
-	twist.linear_x = (rpm.right + rpm.left) * WHEEL_DIAMETER/4;
-	twist.angular_z = (rpm.right - rpm.left) * WHEEL_DIAMETER/ROBOT_TRACK;
-	return twist.angular_z;
-}
-
-// void robot_move(motor_rpm_t rpm){
-void robot_move(float rpm_R, float rpm_L){
-	int motor_power_R = rpm_R/MAX_WHEEL_RPM * 127;
-	int motor_power_L = rpm_L/MAX_WHEEL_RPM * 127;
-	motor[motor_R] = motor_power_R;
-	motor[motor_L] = motor_power_L;
-	return;
-}
-
-twist_t robot_twist;
-motor_rpm_t robot_rpm;
 
 int d_enR;
 int d_enL;
@@ -107,55 +18,145 @@ int d_enL;
 int m_rpmR;
 int m_rpmL;
 
-float linX;
-float angZ;
-float rpmR;
-float rpmL;
+float cmd_linX;
+float cmd_angZ;
+float cmd_rpmR;
+float cmd_rpmL;
 
 unsigned int counter;
-
-void motor_test(){
-	twist_t twist;
-	motor_rpm_t rpm;
-	if (counter < 100){
-		linX = 1;
-		angZ = 0.0;
-	}
-	else {
-		linX = 0.0;
-		angZ = 0.0;
-	}
-	twist.linear_x = linX;
-	twist.angular_z = angZ;
-	rpmL = calcualte_rpm_L(twist);
-	rpmR = calcualte_rpm_R(twist);
-	rpm.left = rpmL;
-	rpm.right = rpmR;
-	// rpmL = calculate_actual_rpm_L(rpm);
-	// rpmR = calculate_actual_rpm_R(rpm);
-	// rpm.left = calculate_actual_rpm_L(rpm);
-	// rpm.right = calculate_actual_rpm_R(rpm);
-	// linX = calculate_actual_linear_x(robot_rpm);
-	// angZ = calculate_actual_angular_z(robot_rpm);
-	// twist.linear_x = calculate_actual_linear_x(robot_rpm);
-	// twist.angular_z = calculate_actual_angular_z(robot_rpm);
-	robot_move(rpmR, rpmL);
-	// robot_twist = twist;
-	// robot_rpm = rpm;
-	// linX = robot_twist.linear_x;
-	// angZ = robot_twist.angular_z;
-	// rpmL = robot_rpm.left;
-	// rpmR = robot_rpm.right;
-}
 
 void read_sensors(){
 	d_enR = getMotorEncoder(motor_R);
 	d_enL = getMotorEncoder(motor_L);
+
+    m_rpmR = d_enR/ENCODER_RESOLUTION * 60/DT;
+    m_rpmL = d_enR/ENCODER_RESOLUTION * 60/DT;
+
 	resetMotorEncoder(motor_R);
 	resetMotorEncoder(motor_L);
+}
 
-	m_rpmR = getMotorVelocity(motor_R);
-  m_rpmL = getMotorVelocity(motor_L);
+/* _____________________________________________________________________________________________________________________
+
+MOTORS CONTROL
+_____________________________________________________________________________________________________________________ */
+
+float motor_R_Kp = 0.5;
+float motor_R_Ki = 0.5;
+float motor_R_Kd = 0.5;
+float motor_R_integral = 0;
+float motor_R_prev_error = 0;
+
+float motor_L_Kp = 0.5;
+float motor_L_Ki = 0.5;
+float motor_L_Kd = 0.5;
+float motor_L_integral = 0;
+float motor_L_prev_error = 0;
+
+float calcualte_rpm_L(float linX, float angZ){
+	float radian_per_sec = angZ * DEGREE_TO_RADIAN;
+	float rpmR = (linX + radian_per_sec*ROBOT_TRACK/2)/(WHEEL_DIAMETER/2);
+	float rpmL = (linX - radian_per_sec*ROBOT_TRACK/2)/(WHEEL_DIAMETER/2);
+	return rpmL ;
+}
+
+float calcualte_rpm_R(float linX, float angZ){
+	float radian_per_sec = angZ * DEGREE_TO_RADIAN;
+	float rpmR = (linX + radian_per_sec*ROBOT_TRACK/2)/(WHEEL_DIAMETER/2);
+	float rpmL = (linX - radian_per_sec*ROBOT_TRACK/2)/(WHEEL_DIAMETER/2);
+	return rpmR;
+}
+
+float calculate_actual_rpm_L(float rpmR, float rpmL){
+	float higher_rpm;
+	if (rpmR > rpmL){
+		higher_rpm = rpmR;
+		} else {
+		higher_rpm = rpmL;
+	}
+	if (higher_rpm == 0){
+		rpmR= 0;
+		rpmL = 0;
+		} else{
+		rpmR= rpmR/higher_rpm * MAX_WHEEL_RPM;
+		rpmL = rpmL/higher_rpm * MAX_WHEEL_RPM;
+	}
+
+	return rpmL;
+}
+
+float calculate_actual_rpm_R(float rpmR, float rpmL){
+	float higher_rpm;
+	if (rpmR > rpmL){
+		higher_rpm = rpmR;
+		} else {
+		higher_rpm = rpmL;
+	}
+	if (higher_rpm == 0){
+		rpmR= 0;
+		rpmL = 0;
+		} else{
+		rpmR= rpmR/higher_rpm * MAX_WHEEL_RPM;
+		rpmL = rpmL/higher_rpm * MAX_WHEEL_RPM;
+	}
+
+	return rpmR;
+}
+
+float calculate_actual_linear_x(float rpm_R, float rpm_L){
+	float linX = (rpm_R + rpm_L) * WHEEL_DIAMETER/4;
+	// angZ= (rpmR - rpmL) * WHEEL_DIAMETER/ROBOT_TRACK;
+	return linX;
+}
+
+float calculate_actual_angular_z(float rpm_R, float rpm_L){
+	// linX = (rpmR + rpmL) * WHEEL_DIAMETER/4;
+	float angZ = (rpm_R - rpm_L) * WHEEL_DIAMETER/ROBOT_TRACK;
+	return angZ;
+}
+
+float pid_R(float rpmR, float setpointR){
+    float error = setpointR - rpmR;
+    motor_R_integral = motor_R_integral + error * DT;
+    float derivative = (error - motor_R_prev_error) / DT;
+    float output = motor_R_Kp * error + motor_R_Ki * motor_R_integral + motor_R_Kd * derivative;
+    motor_R_prev_error = error;
+    return output;
+}
+
+float pid_L(float rpmL, float setpointL){
+    float error = setpointL - rpmL;
+    motor_L_integral = motor_L_integral + error * DT;
+    float derivative = (error - motor_L_prev_error) / DT;
+    float output = motor_L_Kp * error + motor_L_Ki * motor_L_integral + motor_L_Kd * derivative;
+    motor_L_prev_error = error;
+    return output;
+}
+
+// void robot_move(float rpmR, float rpmL){
+void robot_move(float rpm_R, float rpm_L){
+	int motor_power_R = pid_R(m_rpmR, rpm_R);
+	int motor_power_L = pid_L(m_rpmL, rpm_L);
+	motor[motor_R] = motor_power_R;
+	motor[motor_L] = motor_power_L;
+}
+
+void motor_test(){
+	if (counter < 100){
+		cmd_linX = 1;
+		cmd_angZ = 0.0;
+	}
+	else {
+		cmd_linX = 0.0;
+		cmd_angZ = 0.0;
+	}
+	cmd_rpmL = calcualte_rpm_L(cmd_linX, cmd_angZ);
+	cmd_rpmR = calcualte_rpm_R(cmd_linX, cmd_angZ);
+	cmd_rpmL = calculate_actual_rpm_L(cmd_rpmR, cmd_rpmL);
+	cmd_rpmR = calculate_actual_rpm_R(cmd_rpmR, cmd_rpmL);
+	cmd_linX = calculate_actual_linear_x(cmd_rpmR, cmd_rpmL);
+    cmd_angZ = calculate_actual_angular_z(cmd_rpmR, cmd_rpmL);
+	robot_move(cmd_rpmR, cmd_rpmL);
 }
 
 task main()
