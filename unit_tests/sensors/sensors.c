@@ -103,7 +103,7 @@ task main()
 		// Main Loop
 		floppy(1000);
 
-		while (time1[T1] < dt * 1000){}
+		while (time1[T1] < DT * 1000){}
 		loop_ms = time1[T1];
 	}
 }
