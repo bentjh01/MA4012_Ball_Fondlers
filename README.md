@@ -13,6 +13,30 @@
 - Wilsen Lotan
 - Wilson
 
+## Folders
+
+### roboC_ws
+
+- main workspace for the final code of the robot.
+
+### unit_tests
+
+#### motor_control
+
+- tests the motors motion
+- tune the closed loop and open loop control of servo and drive motors
+
+#### localisation
+
+- tests the odometry functionality of the robot
+- tune the filter gains for the alpha-beta filters
+
+### sensors
+
+- tests the sensor readings of all sensors
+- tune the cutoff frequencies of filters
+- tune the threshold values of sensors
+
 ## GitHub Cheatsheet
 
 ### Setup
