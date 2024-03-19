@@ -101,10 +101,7 @@ task main()
 		clearTimer(T1);
 		read_sensors();
 		// Main Loop
-		// Simulating whole robot task as 1000 flops which is assumed to be 1000 lines of code
-		for (unsigned int i = 0; i < 1000; i++){
-			floppy();
-		}
+		floppy(1000);
 
 		while (time1[T1] < dt * 1000){}
 		loop_ms = time1[T1];
