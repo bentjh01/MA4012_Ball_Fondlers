@@ -1,9 +1,37 @@
-#ifndef CONFIG_H
-#define CONFIG_H
+#ifndef LOCALISATION_CONFIG_H
+#define LOCALISATION_CONFIG_H
 
 // SENSOR PARAMETERS
+
+// BENS ROOM
+#define LINE_FL 106
+#define LINE_BL 344
+#define LINE_BR 173
+#define LINE_FR 1385
+
+#define CUTOFF_LINE_FL 	1 // [Hz]
+#define CUTOFF_LINE_BL 	1 // [Hz]
+#define CUTOFF_LINE_BR 	1 // [Hz]
+#define CUTOFF_LINE_FR 	1 // [Hz]
+#define CUTOFF_LONG_L 	1 // [Hz]
+#define CUTOFF_LONG_R 	1 // [Hz]
+#define CUTOFF_LONG_T 	1 // [Hz]
+#define CUTOFF_SHORT 	1 // [Hz]
+
+// ROBOT POSE
 #define ENCODER_FILTER_GAIN 0.25 // [0,1] takes a value between 0 and 1, the closer to 1 the more filtering
-#define MAGNETIC_FILTER_GAIN 0.25 // [0,1] takes a value between 0 and 1, the closer to 1 the more filtering
+#define MAGNETO_FILTER_GAIN 0.25 // [0,1] takes a value between 0 and 1, the closer to 1 the more filtering
+
+// MAGNETOMETER PARAMETERS
+#define NORTH 0
+#define NORTH_WEST 45
+#define WEST 90
+#define SOUTH_WEST 135
+#define SOUTH 180
+#define NORTH_EAST -45
+#define EAST -90
+#define SOUTH_EAST -135
+#define SOUTH 180
 
 // DELIVER TASK
 #define delivery_pid_kp 1.0
@@ -16,6 +44,7 @@
 #define M_PI                3.14159265358979323846
 #define DEGREE_TO_RADIAN    M_PI/180
 #define RADIAN_T0_RPM       30/M_PI
+#define NULL                999
 
 // TASK PARAMETERS
 #define DT                  0.05
@@ -43,4 +72,4 @@
 // #define ALLOWABLE_SPEED (angular_speed) (MAX_SPEED - angular_speed*robot_track/2)
 // #define MAX_RPM 100 // [rpm]
 
-#endif // CONFIG_H
+#endif // LOCALISATION_CONFIG_H
