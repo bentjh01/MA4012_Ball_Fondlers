@@ -1,5 +1,5 @@
-#ifndef CONFIG_H
-#define CONFIG_H
+#ifndef SENSORS_CONFIG_H
+#define SENSORS_CONFIG_H
 
 // SENSOR PARAMETERS
 //TODO-ARENA
@@ -37,4 +37,4 @@
 #define ENCODER_RESOLUTION  360 // [ticks/revolution]
 #define MAX_WHEEL_RPM       100 // [rpm]
 
-#endif // CONFIG_H
+#endif // SENSORS_CONFIG_H
