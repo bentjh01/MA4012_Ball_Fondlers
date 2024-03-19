@@ -10,6 +10,10 @@
 #define MOTOR_R_KI 0.0
 #define MOTOR_R_KD 0.0
 
+// SERVO
+#define SERVO_DISPLACEMNT_FACTOR 1.0 // TODO
+#define SERVO_POWER_FACTOR 1.0 // TODO
+
 // CONSTANTS
 #define M_PI                3.14159265358979323846
 #define DEGREE_TO_RADIAN    M_PI/180

@@ -2,27 +2,8 @@
 #define CONFIG_H
 
 // SENSOR PARAMETERS
-//TODO-ARENA
-// #define LINE_FL 106
-// #define LINE_BL 344
-// #define LINE_BR 173
-// #define LINE_FR 1385
-// BENS ROOM
-#define LINE_FL 106
-#define LINE_BL 344
-#define LINE_BR 173
-#define LINE_FR 1385
-
-#define CUTOFF_LINE_FL 	1 // [Hz]
-#define CUTOFF_LINE_BL 	1 // [Hz]
-#define CUTOFF_LINE_BR 	1 // [Hz]
-#define CUTOFF_LINE_FR 	1 // [Hz]
-#define CUTOFF_LONG_L 	1 // [Hz]
-#define CUTOFF_LONG_R 	1 // [Hz]
-#define CUTOFF_LONG_T 	1 // [Hz]
-#define CUTOFF_SHORT 	1 // [Hz]
-
 #define ENCODER_FILTER_GAIN 0.25 // [0,1] takes a value between 0 and 1, the closer to 1 the more filtering
+#define MAGNETIC_FILTER_GAIN 0.25 // [0,1] takes a value between 0 and 1, the closer to 1 the more filtering
 
 // DELIVER TASK
 #define delivery_pid_kp 1.0
@@ -43,6 +24,11 @@
 #define GOTO_BALL           3
 #define GRAB_BALL           4
 #define DELIVER_BALL        5
+
+// ARENA PARAMETERS
+#define ARENA_X        2.4 // [m] Length
+#define ARENA_Y        1.2 // [m] Width
+#define ARENA_BEARING    0.0 // [degrees] North
 
 // ROBOT PARAMETERS
 #define WHEEL_DIAMETER      0.069 //m

@@ -49,9 +49,11 @@
 #define ROBOT_TRACK         0.213 //m
 #define ENCODER_RESOLUTION  360 // [ticks/revolution]
 #define MAX_WHEEL_RPM       100 // [rpm]
-#define MAX_SPEED           WHEEL_DIAMETER * MAX_WHEEL_RPM/ (4 * M_PI * 60) // [m/s]
-#define MAX_ANGULAR_SPEED   (2 * MAX_SPEED) / ROBOT_TRACK // [rad/s]
 
+// ARENA PARAMETERS
+#define ARENA_X        2.4 // [m] Length
+#define ARENA_Y        1.2 // [m] Width
+#define ARENA_BEARING    0.0 // [degrees] North
 // #define MAX_SPEED wheel_diameter * max_wheel_rpm/ (4 * M_PI * 60)
 // #define MAX_ANGULAR_SPEED (2 * MAX_SPEED) / robot_track
 // #define ALLOWABLE_SPEED (angular_speed) (MAX_SPEED - angular_speed*robot_track/2)

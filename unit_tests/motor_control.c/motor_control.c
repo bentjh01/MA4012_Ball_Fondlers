@@ -31,6 +31,7 @@ float robot_cmd_rpmL;
 
 int loop_ms;
 
+// Updates all sensor values
 void read_sensors(){
 
 	robot_d_enR = getMotorEncoder(motor_R);
@@ -51,17 +52,43 @@ void read_sensors(){
 MOTORS CONTROL
 _____________________________________________________________________________________________________________________ */
 
-
+/**
+ * @brief Open loop control of motor speed rpm
+ * @param rpmR The right motor speed in rpm
+ * @param rpmL The left motor speed in rpm
+*/
 void robot_move_open(float rpmR, float rpmL){
 	motor[motor_R] = rpmR / MAX_WHEEL_RPM * 127;
 	motor[motor_L] = rpmL / MAX_WHEEL_RPM * 127;
 }
 
-void robot_move_control(float en_rpmR, float en_rpmL, float cmd_rpmR, float cmd_rpmL){
+/**
+ * @brief Closed loop control of motor speed rpm
+ * @param en_rpmR The right motor speed in rpm
+ * @param en_rpmL The left motor speed in rpm
+ * @param cmd_rpmR The desired right motor speed in rpm
+ * @param cmd_rpmL The desired left motor speed in rpm
+*/
+void robot_move_closed(float en_rpmR, float en_rpmL, float cmd_rpmR, float cmd_rpmL){
 	int motor_power_R = pid_R(en_rpmR, cmd_rpmR);
 	int motor_power_L = pid_L(en_rpmL, cmd_rpmL);
+	motor_power_R = limit_byte(motor_power_R);
+	motor_power_L = limit_byte(motor_power_L);
 	motor[motor_R] = motor_power_R;
 	motor[motor_L] = motor_power_L;
+}
+
+/**
+ * @brief Open loop control of servo displacement
+ * @param displacement The servo displacement
+*/
+void robot_servo_open(int displacement){
+	int move_time_ms = displacement * SERVO_DISPLACEMNT_FACTOR;
+	int servo_power = limit_byte(displacement * SERVO_POWER_FACTOR);
+	while (time1[T2] < move_time_ms){
+		motor[servo] = servo_power;
+	}
+	motor[servo] = 0;
 }
 
 /* _____________________________________________________________________________________________________________________
@@ -69,42 +96,77 @@ void robot_move_control(float en_rpmR, float en_rpmL, float cmd_rpmR, float cmd_
 TEST SCRIPT
 _____________________________________________________________________________________________________________________ */
 
-void motor_test(){
-	// Sets the motor to a constant speed in an open loop
-	robot_cmd_linX = 0.04;
-	robot_cmd_angZ = 0.0;
+/**
+ * @brief Initialises the robot
+*/
+void init(){
+	resetMotorEncoder(motor_R);
+	resetMotorEncoder(motor_L);
+}
+
+/**
+ * @brief Simulates a robot task by floating point operations
+ * @param n number of operations
+*/
+void floppy(int n){
+	for (unsigned int i = 0; i < n; i++){
+	float ans = 5.0 / 13.0;
+	}
+}
+
+/**
+ * @brief Sets the motor to a constant power
+ * @param motor_power_R The right motor power -127 to 127
+ * @param motor_power_L The left motor power -127 to 127
+*/
+void constant_power(int motor_power_R, int motor_power_L){
+	motor[motor_R] = motor_power_R;
+	motor[motor_L] = motor_power_L;
+}
+
+/**
+ * @brief Sets the motor to a constant capped velocity in a closed loop
+ * @param linX The desired linear velocity, m/s
+ * @param angZ The desired angular velocity, deg/s
+*/
+void constant_velocity(float linX, float angZ){
+	robot_cmd_linX = linX;
+	robot_cmd_angZ = angZ;
 	robot_cmd_rpmR = calcualte_rpmR(robot_cmd_linX, robot_cmd_angZ);
 	robot_cmd_rpmL = calcualte_rpmL(robot_cmd_linX, robot_cmd_angZ);
 	robot_cmd_rpmR = limit_rpmR(robot_cmd_rpmR, robot_cmd_rpmL);
 	robot_cmd_rpmL = limit_rpmL(robot_cmd_rpmR, robot_cmd_rpmL);
-	
 	robot_cmd_linX = calculate_linX(robot_cmd_rpmR, robot_cmd_rpmL);
     robot_cmd_angZ = calculate_angZ(robot_cmd_rpmR, robot_cmd_rpmL);
-	robot_move_open(robot_cmd_rpmR, robot_cmd_rpmL);
+	robot_move_closed(robot_en_rpmR, robot_en_rpmL, robot_cmd_rpmR, robot_cmd_rpmL);
 }
 
-void tune_pid(void){
-	// Sets the motor to a constant speed of 60 [rpm] and activates the PID controller
-	robot_cmd_rpmR = 60;
-	robot_cmd_rpmL = 60;
+/**
+ * @brief Sets the motor to a capped constant rpm in a closed loop
+ * @param rpmR The right motor rpm
+ * @param rpmL The left motor rpm
+*/
+void constant_rpm(float rpmR, float rpmL){
+	robot_cmd_rpmR = rpmR;
+	robot_cmd_rpmL = rpmL;
+	robot_cmd_rpmR = limit_rpmR(robot_cmd_rpmR, robot_cmd_rpmL);
+	robot_cmd_rpmL = limit_rpmL(robot_cmd_rpmR, robot_cmd_rpmL);
 	robot_move_closed(robot_en_rpmR, robot_en_rpmL, robot_cmd_rpmR, robot_cmd_rpmL);
 }
 
 task main()
 {
-	resetMotorEncoder(motor_R);
-	resetMotorEncoder(motor_L);
-	counter = 0;
+	init();
 	while(1){
 		clearTimer(T1);
 		read_sensors();
 		// Main Loop
-		// Simulating whole robot task as 1000 flops which is assumed to be 1000 lines of code
-		for (unsigned int i = 0; i < 1000; i++){
-			floppy();
-		}
 
-		motor_test();
+		floppy();
+
+		// constant_power(127, 127);
+		// constant_velocity(0.1, 0.0);
+		constant_rpm(60, 60);
 
 		while (time1[T1] < DT * 1000){}
 		loop_ms = time1[T1];

@@ -6,6 +6,7 @@ float motor_R_prev_error = 0;
 float motor_L_integral = 0;
 float motor_L_prev_error = 0;
 
+// PID Controller for the right motor
 float pid_R(float rpmR, float setpointR){
     float error = setpointR - rpmR;
     motor_R_integral = motor_R_integral + error * DT;
@@ -15,6 +16,7 @@ float pid_R(float rpmR, float setpointR){
     return output;
 }
 
+// PID Controller for the left motor
 float pid_L(float rpmL, float setpointL){
     float error = setpointL - rpmL;
     motor_L_integral = motor_L_integral + error * DT;

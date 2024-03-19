@@ -59,4 +59,14 @@ float calculate_angZ(float rpmR, float rpmL){
 	return angZ;
 }
 
+// Cut off the power if above 127 or below -127
+int limit_byte(float power){
+	if (power > 127){
+		power = 127;
+		} else if (power < -127){
+		power = -127;
+	}
+	return power;
+}
+
 #endif // MOTORS_H
