@@ -1,5 +1,5 @@
-#ifndef MOTOR_CONTROL_H
-#define MOTOR_CONTROL_H
+#ifndef MOTOR_CONTROL_CONFIG_H
+#define MOTOR_CONTROL_CONFIG_H
 
 // MOTORS
 #define MOTOR_L_KP 0.0
@@ -28,4 +28,4 @@
 #define ENCODER_RESOLUTION  360 // [ticks/revolution]
 #define MAX_WHEEL_RPM       100 // [rpm]
 
-#endif // MOTOR_CONTROL_H
+#endif // MOTOR_CONTROL_CONFIG_H
