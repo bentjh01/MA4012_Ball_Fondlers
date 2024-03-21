@@ -45,9 +45,9 @@ float m_rpmL;
 int loop_ms;
 
 
-float read_long_sensor_distance_CM(int pin_num){
+float read_long_sensor_distance_CM(float sensor_val){
   //convert voltage reading from long dist sensor into distance in cm
-  float voltage = distance_voltage(SensorValue(pin_num));
+  float voltage = sensor_val * BYTE_TO_VOLT;
   
   //step-by-step calculation as arduino cannot handle PEMDAS
   float ln_voltage = log(voltage);
@@ -59,9 +59,9 @@ float read_long_sensor_distance_CM(int pin_num){
   return distance_cm;
 }
 
-float read_short_sensor_distance_CM(int pin_num){
+float read_short_sensor_distance_CM(float sensor_val){
   //convert voltage reading from short dist sensor into distance in cm
-  float voltage = distance_voltage(SensorValue(pin_num));
+  float voltage = sensor_val * BYTE_TO_VOLT;;
   
   //calculation for the short distance sensor here
   float exponent = -1/0.95;
@@ -70,12 +70,12 @@ float read_short_sensor_distance_CM(int pin_num){
   return distance_cm;
 }
 
-int read_digitized_long_sensor_distance(int pin_num){
+int read_digitized_long_sensor_distance(float sensor_val){
   //read_long_sensor_distance_CM is a function that returns the distance (in cm) of the long range analog sensor reading
-  if(read_long_sensor_distance_CM(pin_num) <= LONG_DIST_LOWER_THRESHOLD_CM){
+  if(read_long_sensor_distance_CM(sensor_val) <= LONG_DIST_LOWER_THRESHOLD_CM){
     return 1; //close range
   }
-  else if(read_long_sensor_distance_CM(pin_num) > LONG_DIST_UPPER_THRESHOLD_CM){
+  else if(read_long_sensor_distance_CM(sensor_val) > LONG_DIST_UPPER_THRESHOLD_CM){
     return 0; //far, ignore detection
   }
   else{
@@ -83,9 +83,9 @@ int read_digitized_long_sensor_distance(int pin_num){
   }
 }
 
-int read_digitized_short_sensor_distance(int pin_num){
+int read_digitized_short_sensor_distance(float sensor_val){
   //read_short_sensor_distance_CM is a function that returns the distance (in cm) of the long range analog sensor reading
-  if(read_short_sensor_distance_CM(pin_num) <= SHORT_DIST_THRESHOLD_CM){
+  if(read_short_sensor_distance_CM(sensor_val) <= SHORT_DIST_THRESHOLD_CM){
     return 1; //detected
   }
   else{
