@@ -54,7 +54,7 @@ float read_long_sensor_distance_CM(float sensor_val){
   float ln_voltage_square = ln_voltage*ln_voltage;
   float term_1 = 29.971*ln_voltage;
   float term_2 = 55.047*ln_voltage_square;
-  float term_3 = 57.931*sharp_dist_reading;
+  float term_3 = 57.931*voltage;
   float distance_cm = term_1 + term_2 - term_3 + 84.019;
   return distance_cm;
 }

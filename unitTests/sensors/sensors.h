@@ -3,6 +3,11 @@
 
 
 // SENSOR PARAMETERS
+//sharp distance sensor definitions
+#define LONG_DIST_LOWER_THRESHOLD_CM 25      //lower threshold of long dist sensor 25 cm
+#define LONG_DIST_UPPER_THRESHOLD_CM 45      //upper threshold of long dist sensor 45 cm
+#define SHORT_DIST_THRESHOLD_CM 20 //upper threshold of short dist sensor 20 cm (example only). Make this <= LOWER_THRESHOLD_CM
+#define VOLTAGE_SCALE (5.0/1023.0)
 //TODO-ARENA
 // #define LINE_FL 106
 // #define LINE_BL 344
@@ -38,5 +43,7 @@
 #define ROBOT_TRACK         0.213 //m
 #define ENCODER_RESOLUTION  360.0 // [ticks/revolution]
 #define MAX_WHEEL_RPM       100.0 // [rpm]
+
+
 
 #endif // SENSORS_CONFIG_H
