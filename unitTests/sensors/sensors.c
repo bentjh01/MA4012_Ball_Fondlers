@@ -115,6 +115,9 @@ void read_sensors(){
 	dis_R_val = low_pass_filter(SensorValue[long_distance_R], prev_dis_R_val, CUTOFF_LONG_R);
 	dis_mid_val = low_pass_filter(SensorValue[short_distance], prev_dis_mid_val, CUTOFF_SHORT);
 	dis_top_val = low_pass_filter(SensorValue[long_distance_top], prev_dis_top_val, CUTOFF_LONG_T);
+	dis_mid_val = read_digitized_short_sensor_distance(dis_mid_val);
+	dis_top_val = read_digitized_long_sensor_distance(dis_top_val);
+
 
 	d_enR = getMotorEncoder(motor_R);
 	d_enL = getMotorEncoder(motor_L);
