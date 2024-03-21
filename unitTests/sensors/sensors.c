@@ -32,6 +32,12 @@ int dis_R_val;
 int dis_mid_val;
 int dis_top_val;
 
+int cm_dis_mid_val;
+int cm_dis_top_val;
+
+int case_mid_val;
+int case_top_val;
+
 int prev_dis_L_val;
 int prev_dis_R_val;
 int prev_dis_mid_val;
@@ -48,7 +54,7 @@ int loop_ms;
 float read_long_sensor_distance_CM(float sensor_val){
   //convert voltage reading from long dist sensor into distance in cm
   float voltage = sensor_val * BYTE_TO_VOLT;
-  
+
   //step-by-step calculation as arduino cannot handle PEMDAS
   float ln_voltage = log(voltage);
   float ln_voltage_square = ln_voltage*ln_voltage;
@@ -62,7 +68,7 @@ float read_long_sensor_distance_CM(float sensor_val){
 float read_short_sensor_distance_CM(float sensor_val){
   //convert voltage reading from short dist sensor into distance in cm
   float voltage = sensor_val * BYTE_TO_VOLT;;
-  
+
   //calculation for the short distance sensor here
   float exponent = -1/0.95;
   float base = voltage/11.033;
@@ -115,8 +121,12 @@ void read_sensors(){
 	dis_R_val = low_pass_filter(SensorValue[long_distance_R], prev_dis_R_val, CUTOFF_LONG_R);
 	dis_mid_val = low_pass_filter(SensorValue[short_distance], prev_dis_mid_val, CUTOFF_SHORT);
 	dis_top_val = low_pass_filter(SensorValue[long_distance_top], prev_dis_top_val, CUTOFF_LONG_T);
-	dis_mid_val = read_digitized_short_sensor_distance(dis_mid_val);
-	dis_top_val = read_digitized_long_sensor_distance(dis_top_val);
+
+	cm_dis_mid_val = read_short_sensor_distance_CM(dis_mid_val);
+	cm_dis_top_val = read_long_sensor_distance_CM(dis_top_val);
+
+	case_mid_val = read_digitized_short_sensor_distance(dis_mid_val);
+	case_top_val = read_digitized_long_sensor_distance(dis_top_val);
 
 
 	d_enR = getMotorEncoder(motor_R);
