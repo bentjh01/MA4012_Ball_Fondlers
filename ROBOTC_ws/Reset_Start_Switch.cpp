@@ -18,7 +18,7 @@ void init_robot(void){
 void center_start(){
 	motor[motor_R] = 127;
 	motor[motor_L] = 127;
-	delay(1000);
+	delay(500);
 	motor[motor_R] = 0;
 	motor[motor_L] = 0;
 }
