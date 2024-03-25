@@ -1,5 +1,7 @@
 #include "sensors.h"
 
+//DEFINE PINS
+
 int line_sensor_FL;
 int line_sensor_BL;
 int line_sensor_BR;
@@ -59,30 +61,34 @@ void read_all_sensors(){
 }
 
 void read_distance_sensors(void){
-  long_distance_sensor_FL = distance_voltage(SensorValue(long_distance_sensor_FL_PIN));
-  long_distance_sensor_FR = distance_voltage(SensorValue(long_distance_sensor_FR_PIN));
-  long_distance_sensor_TP = distance_voltage(SensorValue(long_distance_sensor_TP_PIN));
-  short_distance_sensor = distance_voltage(SensorValue(short_distance_sensor_PIN));
+  prev_long_distance_sensor_FL = long_distance_sensor_FL;
+	prev_long_distance_sensor_FR = long_distance_sensor_FR;
+	prev_short_distance_sensor = short_distance_sensor;
+	prev_long_distance_sensor_MID = long_distance_sensor_MID;
+	long_distance_sensor_FL = low_pass_filter(SensorValue[long_distance_L], prev_long_distance_sensor_FL, CUTOFF_LONG_L);
+	long_distance_sensor_FR = low_pass_filter(SensorValue[long_distance_R], prev_long_distance_sensor_FR, CUTOFF_LONG_R);
+	long_distance_sensor_MID = low_pass_filter(SensorValue[long_distance_M], prev_long_distance_sensor_MID, CUTOFF_LONG_T);
+	short_distance_sensor = low_pass_filter(SensorValue[short_distance], prev_short_distance_sensor, CUTOFF_SHORT);
 }
 
-float read_long_sensor_distance_CM(int pin_num){
+float read_long_sensor_distance_CM(float sensor_val){
   //convert voltage reading from long dist sensor into distance in cm
-  float voltage = distance_voltage(SensorValue(pin_num));
-  
+  float voltage = sensor_val * BYTE_TO_VOLT;
+
   //step-by-step calculation as arduino cannot handle PEMDAS
   float ln_voltage = log(voltage);
   float ln_voltage_square = ln_voltage*ln_voltage;
   float term_1 = 29.971*ln_voltage;
   float term_2 = 55.047*ln_voltage_square;
-  float term_3 = 57.931*sharp_dist_reading;
+  float term_3 = 57.931*voltage;
   float distance_cm = term_1 + term_2 - term_3 + 84.019;
   return distance_cm;
 }
 
-float read_short_sensor_distance_CM(int pin_num){
+float read_short_sensor_distance_CM(float sensor_val){
   //convert voltage reading from short dist sensor into distance in cm
-  float voltage = distance_voltage(SensorValue(pin_num));
-  
+  float voltage = sensor_val * BYTE_TO_VOLT;;
+
   //calculation for the short distance sensor here
   float exponent = -1/0.95;
   float base = voltage/11.033;
@@ -90,12 +96,12 @@ float read_short_sensor_distance_CM(int pin_num){
   return distance_cm;
 }
 
-int read_digitized_long_sensor_distance(int pin_num){
+int read_digitized_long_sensor_distance(float sensor_val){
   //read_long_sensor_distance_CM is a function that returns the distance (in cm) of the long range analog sensor reading
-  if(read_long_sensor_distance_CM(pin_num) <= LONG_DIST_LOWER_THRESHOLD_CM){
+  if(read_long_sensor_distance_CM(sensor_val) <= LONG_DIST_LOWER_THRESHOLD_CM){
     return 1; //close range
   }
-  else if(read_long_sensor_distance_CM(pin_num) > LONG_DIST_UPPER_THRESHOLD_CM){
+  else if(read_long_sensor_distance_CM(sensor_val) > LONG_DIST_UPPER_THRESHOLD_CM){
     return 0; //far, ignore detection
   }
   else{
@@ -103,9 +109,9 @@ int read_digitized_long_sensor_distance(int pin_num){
   }
 }
 
-int read_digitized_short_sensor_distance(int pin_num){
+int read_digitized_short_sensor_distance(float sensor_val){
   //read_short_sensor_distance_CM is a function that returns the distance (in cm) of the long range analog sensor reading
-  if(read_short_sensor_distance_CM(pin_num) <= SHORT_DIST_THRESHOLD_CM){
+  if(read_short_sensor_distance_CM(sensor_val) <= SHORT_DIST_THRESHOLD_CM){
     return 1; //detected
   }
   else{
@@ -120,10 +126,11 @@ void read_limit_switches(void){
 }
 
 void read_compass(void){
-  int PIN1 = digitalRead(magnetometer_PIN1);
-  int PIN2 = digitalRead(magnetometer_PIN2);
-  int PIN3 = digitalRead(magnetometer_PIN3);
-  int PIN4 = digitalRead(magnetometer_PIN4);
+  // int PIN1 = digitalRead(magnetometer_PIN1);
+  // int PIN2 = digitalRead(magnetometer_PIN2);
+  // int PIN3 = digitalRead(magnetometer_PIN3);
+  // int PIN4 = digitalRead(magnetometer_PIN4);
+  // NEED TO CHANGE TO VEX!
 
   int combination = PIN1 << 3 + PIN2 << 2 + PIN3 << 1 + PIN4;
   switch (combination)
@@ -159,10 +166,11 @@ void read_compass(void){
 }
 
 void read_line_sensors(void){
-  line_sensor_FL = analogRead(line_sensor_FL_PIN);
-  line_sensor_BL = analogRead(line_sensor_BL_PIN);
-  line_sensor_BR = analogRead(line_sensor_BR_PIN);
-  line_sensor_FR = analogRead(line_sensor_FR_PIN);
+  // line_sensor_FL = analogRead(line_sensor_FL_PIN);
+  // line_sensor_BL = analogRead(line_sensor_BL_PIN);
+  // line_sensor_BR = analogRead(line_sensor_BR_PIN);
+  // line_sensor_FR = analogRead(line_sensor_FR_PIN);
+  // NEED TO CHANGE TO VEX!
 
   if (line_sensor_FL > LINE_SENSOR_THRESHOLD){
     line_sensor_FL = HIGH;

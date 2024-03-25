@@ -30,9 +30,9 @@ extern int limit_switch_BR;
 #define NORTH_WEST 45
 
 //sharp distance sensor definitions
-#define LONG_DIST_LOWER_THRESHOLD_CM 25      //lower threshold of long dist sensor 25 cm
-#define LONG_DIST_UPPER_THRESHOLD_CM 45      //upper threshold of long dist sensor 45 cm
-#define SHORT_DIST_THRESHOLD_CM 20 //upper threshold of short dist sensor 20 cm (example only). Make this <= LOWER_THRESHOLD_CM
+#define LONG_DIST_LOWER_THRESHOLD_CM 25     //lower threshold of long dist sensor 25 cm
+#define LONG_DIST_UPPER_THRESHOLD_CM 45     //upper threshold of long dist sensor 45 cm
+#define SHORT_DIST_THRESHOLD_CM 10          //upper threshold of short dist sensor 10 cm.
 #define VOLTAGE_SCALE (5.0/1023.0)
 
 extern int compass_bearing;
