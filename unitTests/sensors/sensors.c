@@ -27,21 +27,21 @@ int prev_line_BL_val;
 int prev_line_BR_val;
 int	prev_line_FR_val;
 
-int dis_L_val;
-int dis_R_val;
-int dis_mid_val;
-int dis_top_val;
+float dis_L_val;
+float dis_R_val;
+float dis_mid_val;
+float dis_top_val;
 
-int cm_dis_mid_val;
-int cm_dis_top_val;
+float cm_dis_mid_val;
+float cm_dis_top_val;
 
 int case_mid_val;
 int case_top_val;
 
-int prev_dis_L_val;
-int prev_dis_R_val;
-int prev_dis_mid_val;
-int prev_dis_top_val;
+float prev_dis_L_val;
+float prev_dis_R_val;
+float prev_dis_mid_val;
+float prev_dis_top_val;
 
 int d_enR;
 int d_enL;

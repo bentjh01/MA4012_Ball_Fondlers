@@ -20,14 +20,14 @@
 #define LINE_BR 173
 #define LINE_FR 1385
 
-#define CUTOFF_LINE_FL 	1 // [Hz]
-#define CUTOFF_LINE_BL 	1 // [Hz]
-#define CUTOFF_LINE_BR 	1 // [Hz]
-#define CUTOFF_LINE_FR 	1 // [Hz]
-#define CUTOFF_LONG_L 	1 // [Hz]
-#define CUTOFF_LONG_R 	1 // [Hz]
-#define CUTOFF_LONG_T 	1 // [Hz]
-#define CUTOFF_SHORT 	1 // [Hz]
+#define CUTOFF_LINE_FL 	1.0 // [Hz]
+#define CUTOFF_LINE_BL 	1.0 // [Hz]
+#define CUTOFF_LINE_BR 	1.0 // [Hz]
+#define CUTOFF_LINE_FR 	1.0 // [Hz]
+#define CUTOFF_LONG_L 	1.0 // [Hz]
+#define CUTOFF_LONG_R 	1.0 // [Hz]
+#define CUTOFF_LONG_T 	1.0 // [Hz]
+#define CUTOFF_SHORT 	1.0 // [Hz]
 
 // CONSTANTS
 #define M_PI                3.14159265358979323846
