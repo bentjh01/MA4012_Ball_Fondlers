@@ -27,18 +27,18 @@ void init_sensors(void){
 
 	// IR Line Tracking Sensor
 	// FL = Front Left, BL = Back Right, etc.
-  #pragma config(Sensor, LINE_SENSOR_FL_PIN, line_sensor_FL, sensorAnalog)
-  #pragma config(Sensor, LINE_SENSOR_BL_PIN, line_sensor_BL, sensorAnalog)
-  #pragma config(Sensor, LINE_SENSOR_BR_PIN, line_sensor_BR, sensorAnalog)
-  #pragma config(Sensor, LINE_SENSOR_FR_PIN, line_sensor_FR, sensorAnalog)
+  #pragma config(Sensor, in5,    line_BR,        sensorAnalog)
+  #pragma config(Sensor, in6,    line_FR,        sensorAnalog)
+  #pragma config(Sensor, in7,    line_FL,        sensorAnalog)
+  #pragma config(Sensor, in8,    line_BL,        sensorAnalog)
 
   // Long Distance Sensor
-  #pragma config(Sensor, LONG_DISTANCE_SENSOR_FL_PIN, long_distance_sensor_FL, sensorAnalog)
-  #pragma config(Sensor, LONG_DISTANCE_SENSOR_FR_PIN, long_distance_sensor_FR, sensorAnalog)
-  #pragma config(Sensor, LONG_DISTANCE_SENSOR_TP_PIN, long_distance_sensor_TP, sensorAnalog)
+  #pragma config(Sensor, in1,    long_distance_R, sensorAnalog)
+  #pragma config(Sensor, in2,    long_distance_M, sensorAnalog)
+  #pragma config(Sensor, in3,    long_distance_L, sensorAnalog)
 
   // Short Distance Sensor
-  #pragma config(Sensor, SHORT_DISTANCE_SENSOR_PIN,    short_distance_sensor, sensorAnalog)
+  #pragma config(Sensor, in4,    short_distance_T, sensorAnalog)
 
   // Limit Switches
   #pragma config(Sensor, LIMIT_SWITCH_CHAMBER_PIN, limit_switch_chamber, sensorTouch)
@@ -68,12 +68,15 @@ void read_distance_sensors(void){
 	long_distance_sensor_FL = low_pass_filter(SensorValue[long_distance_L], prev_long_distance_sensor_FL, CUTOFF_LONG_L);
 	long_distance_sensor_FR = low_pass_filter(SensorValue[long_distance_R], prev_long_distance_sensor_FR, CUTOFF_LONG_R);
 	long_distance_sensor_MID = low_pass_filter(SensorValue[long_distance_M], prev_long_distance_sensor_MID, CUTOFF_LONG_T);
-	short_distance_sensor = low_pass_filter(SensorValue[short_distance], prev_short_distance_sensor, CUTOFF_SHORT);
+	short_distance_sensor = low_pass_filter(SensorValue[short_distance_T], prev_short_distance_sensor, CUTOFF_SHORT);
+  
+  return	long_distance_sensor_FL, long_distance_sensor_FR, long_distance_sensor_MID, short_distance_sensor
+
 }
 
 float read_long_sensor_distance_CM(float sensor_val){
   //convert voltage reading from long dist sensor into distance in cm
-  float voltage = sensor_val * BYTE_TO_VOLT;
+  float voltage = sensor_val / 1000.0; //convert from mV to V
 
   //step-by-step calculation as arduino cannot handle PEMDAS
   float ln_voltage = log(voltage);
@@ -87,7 +90,7 @@ float read_long_sensor_distance_CM(float sensor_val){
 
 float read_short_sensor_distance_CM(float sensor_val){
   //convert voltage reading from short dist sensor into distance in cm
-  float voltage = sensor_val * BYTE_TO_VOLT;;
+  float voltage = sensor_val / 1000.0; //convert from mV to V
 
   //calculation for the short distance sensor here
   float exponent = -1/0.95;
@@ -96,7 +99,7 @@ float read_short_sensor_distance_CM(float sensor_val){
   return distance_cm;
 }
 
-int read_digitized_long_sensor_distance(float sensor_val){
+int read_discretize_long_sensor_distance(float sensor_val){
   //read_long_sensor_distance_CM is a function that returns the distance (in cm) of the long range analog sensor reading
   if(read_long_sensor_distance_CM(sensor_val) <= LONG_DIST_LOWER_THRESHOLD_CM){
     return 1; //close range
@@ -109,13 +112,16 @@ int read_digitized_long_sensor_distance(float sensor_val){
   }
 }
 
-int read_digitized_short_sensor_distance(float sensor_val){
+int read_discretize_short_sensor_distance(float sensor_val){
   //read_short_sensor_distance_CM is a function that returns the distance (in cm) of the long range analog sensor reading
-  if(read_short_sensor_distance_CM(sensor_val) <= SHORT_DIST_THRESHOLD_CM){
+  if(read_short_sensor_distance_CM(sensor_val) <= SHORT_DIST_LOWER_THRESHOLD_CM){
     return 1; //detected
   }
-  else{
+  else if(read_short_sensor_distance_CM(sensor_val) >= SHORT_DIST_UPPER_THRESHOLD_CM){
     return 0; //no detection
+  }
+  else{
+    return 2; //detected further away
   }
 }
 

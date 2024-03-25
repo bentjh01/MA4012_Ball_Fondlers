@@ -1,10 +1,12 @@
 #include "ball_detection.h"
 
 float search_timer;
-float robot_moving_timeout_milisecond;
+float robot_moving_timeout_centisecond;
 
-int check_opp_robot(int short_distance_sensor_status){
-  
+int handling_opp(int short_distance_sensor_status){
+  if(short_distance_sensor_status == 1){
+    //Theres an opp robot close in front. Do something
+  }
 }
 
 int check_status_from_left_right_sensor(int long_distance_sensor_FL_status, int long_distance_sensor_FR_status){
@@ -64,6 +66,42 @@ int check_status_from_left_right_sensor(int long_distance_sensor_FL_status, int 
   }
 }
 
+int check_for_ball(){
+  //Find and go to ball
+  if(long_distance_sensor_MID_status == 1 && short_distance_sensor_status != 1){
+    //if ball immediately in front
+    robot_move(linear_velocity = 0, angular_velocity = 0); //stop movement
+    return 4;
+  }
+  else if(long_distance_sensor_MID_status == 2 && short_distance_sensor_status < 2){
+    //if ball in front but abit far
+    robot_move(linear_velocity = 0, angular_velocity = 0); //stop movement
+    return 5;
+  }
+  else if(abs(read_short_sensor_distance_CM(short_distance_sensor_pin) - read_long_sensor_distance_CM(long_distance_sensor_TP_pin)) > TOLERANCE_CM && (long_distance_sensor_FL_status!=0 || long_distance_sensor_FR_status != 0)){
+    //if ball is detected on left or right
+    return check_status_from_left_right_sensor(long_distance_sensor_FL_status, long_distance_sensor_FR_status)
+  }
+  else{
+    //no ball detected, check if timeout. Else continue searching
+    if(time10[T2]-search_timer > 300){
+      return 0
+    }
+    else{
+      return 1;
+    }
+  }
+  //return codes
+  //0 -> Timeout -> main code should execute change_search_position()
+  //1 -> Searching
+  //21 -> Potential ball found on the right, only rotation needed -> main code should execute go_to_detection(21,1)
+  //22 -> Potential ball found on the right, need translation and rotation -> main code should execute go_to_detection(22,1)
+  //31 -> Potential ball found on the left, only rotation needed -> main code should execute go_to_detection(31,1)
+  //32 -> Potential ball found on the left, need translation and rotation -> main code should execute go_to_detection(32,1)
+  //4 -> Ready for collection -> main code should execute ball_collection()
+  //5 -> ball is in front but quite far -> main code should move forward while keep checking. 
+}
+
 circular_path calculate_translation_angular_speed(int pin_num, float angular_velocity_DegPerSec){
   circular_path path;
   float dist_from_robot = read_long_sensor_distance_CM(pin_num);
@@ -76,7 +114,7 @@ circular_path calculate_translation_angular_speed(int pin_num, float angular_vel
   path.angular_velocity = angular_velocity_DegPerSec;
   float omega = abs(angular_velocity_DegPerSec/180.0*PI);
   path.linear_velocity = round(omega*radius, 3);
-  path.time_setting_milisecond = round(radian * FRACTIONAL_CLOSENESS_TO_BALL / omega * 1000, 3); //t = theta/omega, correct to 3 dp
+  path.time_setting_centisecond = round(radian * FRACTIONAL_CLOSENESS_TO_BALL / omega * 100, 3); //t = theta/omega, correct to 3 dp
   return path;
 }
 
@@ -86,10 +124,10 @@ int change_search_position(bool startup_phase){
   if(startup_phase){
     robot_move(linear_velocity = 50, angular_velocity = 0); //move forward
     search_timer = time10[T2];
-    robot_moving_timeout_milisecond = 1600;
+    robot_moving_timeout_centisecond = 160;
   }
 
-  if(time10[T2]-search_timer > robot_moving_timeout_milisecond){
+  if(time10[T2]-search_timer > robot_moving_timeout_centisecond){
     //movement finished, stop movement
     robot_move(linear_velocity = 0, angular_velocity = 0);
     return 0;
@@ -114,39 +152,12 @@ int scan(bool startup_phase){
   }
   
   //Read distance sensors
-  long_distance_sensor_FL_status = read_digitized_long_sensor_distance(long_distance_sensor_FL_pin);
-  long_distance_sensor_FR_status = read_digitized_long_sensor_distance(long_distance_sensor_FR_pin);
-  //long_distance_sensor_TP_status = read_digitized_long_sensor_distance(long_distance_sensor_TP_pin);
-  short_distance_sensor_status = read_digitized_short_sensor_distance(short_distance_sensor_pin);
+  long_distance_sensor_FL_status = read_discretized_long_sensor_distance(long_distance_sensor_FL_pin);
+  long_distance_sensor_FR_status = read_discretized_long_sensor_distance(long_distance_sensor_FR_pin);
+  long_distance_sensor_MID_status = read_discretized_long_sensor_distance(long_distance_sensor_TP_pin);
+  short_distance_sensor_status = read_discretized_short_sensor_distance(short_distance_sensor_pin);
 
   
-  //Find and go to ball, try to ignore opp robot
-  if(short_distance_sensor_status == 1){
-    //if ball immediately in front
-    robot_move(linear_velocity = 0, angular_velocity = 0); //stop movement
-    return 4;
-  }
-  else if(abs(read_short_sensor_distance_CM(short_distance_sensor_pin) - read_long_sensor_distance_CM(long_distance_sensor_TP_pin)) > TOLERANCE_CM && (long_distance_sensor_FL_status!=0 || long_distance_sensor_FR_status != 0)){
-    //if ball is detected on left or right
-    return check_status_from_left_right_sensor(long_distance_sensor_FL_status, long_distance_sensor_FR_status)
-  }
-  else{
-    //no ball detected, check if timeout. Else continue searching
-    if(time10[T2]-search_timer > 3000){
-      return 0
-    }
-    else{
-      return 1;
-    }
-  }
-  //return codes
-  //0 -> Timeout -> main code should execute change_search_position()
-  //1 -> Searching
-  //21 -> Potential ball found on the right, only rotation needed -> main code should execute go_to_detection(21,1)
-  //22 -> Potential ball found on the right, need translation and rotation -> main code should execute go_to_detection(22,1)
-  //31 -> Potential ball found on the left, only rotation needed -> main code should execute go_to_detection(31,1)
-  //32 -> Potential ball found on the left, need translation and rotation -> main code should execute go_to_detection(32,1)
-  //4 -> Ready for collection -> main code should execute ball_collection()
 }
 
 
@@ -158,23 +169,23 @@ int go_to_detection(int status, bool startup_phase){
       {
         //ball on the right, only rotation needed
         robot_move(linear_velocity = 0, angular_velocity = -90); //rotate cw
-        robot_moving_timeout_milisecond = 1200;
+        robot_moving_timeout_centisecond = 120;
       }
       case 22:
       {
         circular_path path = calculate_translation_angular_speed(long_distance_sensor_FR_pin,-90);
-        robot_moving_timeout_milisecond = path.time_setting_milisecond;
+        robot_moving_timeout_centisecond = path.time_setting_centisecond;
         robot_move(linear_velocity = path.linear_velocity, angular_velocity = path.angular_velocity); //rotate cw
       }
       case 31:
       {
         robot_move(linear_velocity = 0, angular_velocity = 90); //rotate ccw
-        robot_moving_timeout_milisecond = 1200;
+        robot_moving_timeout_centisecond = 120;
       }
       case 32:
       {
         circular_path path = calculate_translation_angular_speed(long_distance_sensor_FL_pin,90);
-        robot_moving_timeout_milisecond = path.time_setting_milisecond;
+        robot_moving_timeout_centisecond = path.time_setting_centisecond;
         robot_move(linear_velocity = path.linear_velocity, angular_velocity = path.angular_velocity); //rotate cw
       }
     }
@@ -194,7 +205,7 @@ int go_to_detection(int status, bool startup_phase){
   }
   else{
     //Timeout
-    if(time10[T2]-search_timer > robot_moving_timeout_milisecond){
+    if(time10[T2]-search_timer > robot_moving_timeout_centisecond){
       robot_move(linear_velocity = 0, angular_velocity = 0); //stop movement
       return 0;
     }
