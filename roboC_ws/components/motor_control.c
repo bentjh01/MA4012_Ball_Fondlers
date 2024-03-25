@@ -1,4 +1,9 @@
+#ifndef MOTOR_CONTROL_C
+#define MOTOR_CONTROL_C
+
 #include "../config.h"
+#include "motor.c"
+#include "controller.c"
 
 /* _____________________________________________________________________________________________________________________
 
@@ -35,7 +40,7 @@ void robot_move_closed(float en_rpmR, float en_rpmL, float cmd_rpmR, float cmd_r
  * @brief Open loop control of servo displacement
  * @param displacement The servo displacement
 */
-void robot_servo_open(int displacement){
+void robot_servo_move(int displacement){
 	int move_time_ms = displacement * SERVO_DISPLACEMNT_FACTOR;
 	int servo_power = limit_byte(displacement * SERVO_POWER_FACTOR);
 	while (time1[T2] < move_time_ms){
@@ -43,3 +48,5 @@ void robot_servo_open(int displacement){
 	}
 	motor[servo] = 0;
 }
+
+#endif //MOTOR_CONTROL_C

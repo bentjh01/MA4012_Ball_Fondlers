@@ -1,6 +1,8 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
+#include "components/motor_control.c"
+
 #define LINE_FL_THRESHOLD 106.0
 #define LINE_BL_THRESHOLD 344.0
 #define LINE_BR_THRESHOLD 173.0
@@ -41,6 +43,7 @@
 #define ENCODER_RESOLUTION  360.0 // [ticks/revolution]
 #define MAX_WHEEL_RPM       100.0 // [rpm]
 #define MAX_SPEED           0.5 // [m/s] Maximum linear speed
+#define MAX_TURN            0.5 // [rad/s] Maximum angular speed
 
 // PINOUT
 #define wheel_L_encoderA    dgtl2

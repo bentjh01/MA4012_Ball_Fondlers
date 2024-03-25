@@ -1,13 +1,12 @@
 #include "../config.h"
 
-float deliver_pid_integral = 0;
-float deliver_pid_prev_error = 0;
+static float deliver_pid_integral = 0;
+static float deliver_pid_prev_error = 0;
 
-int BL;
-int BR;
-float rb_yaw;
+static int BL;
+static int BR;
+static float rb_yaw;
 
-// PID Controller for the right motor
 float pid_deliver_update(float feedback, float setpointR){
     float error = setpointR - feedback;
     deliver_pid_integral = deliver_pid_integral + error * DT;
@@ -22,10 +21,14 @@ void deliver_ball(float yaw, int BL, int BR) {
     BL = BL;
     BR = BR;
 
-    float set_linX = 0.0;
-    float set_angZ = pid_deliver_update(yaw, 0.0);
     if (fabs(yaw) < DELIVERY_YAW_TOLERANCE) {
-        set_linX = MAX_SPEED;
+        float set_linX = MAX_SPEED;
+    }
+    else {
+        float set_angZ = -yaw/fabs(yaw) * MAX_TURN;
+    }
+    if (BL && BR) {
+        // Kick Ball out
     }
 }
 
