@@ -28,4 +28,12 @@
 #define ENCODER_RESOLUTION  360 // [ticks/revolution]
 #define MAX_WHEEL_RPM       100 // [rpm]
 
+// PINOUT
+#define wheel_L_encoderA    dgtl2
+#define wheel_R_encoderA    dgtl4
+#define servo               port2
+#define motor_R             port6
+#define motor_L             port7
+
+
 #endif // MOTOR_CONTROL_CONFIG_H
