@@ -29,7 +29,7 @@ void reset_start()
 		if(SensorValue(Reset_Start_Switch) == 1){
 			init_robot(); 	// Initialise Robot
 			center_start();	// Move robot to center of arena and start searching
-			task = SEARCH_TASK;
+			task_state = SEARCH_TASK;
 		}
 	}
 }
