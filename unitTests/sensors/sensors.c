@@ -1,7 +1,7 @@
 #pragma config(Sensor, in1,    long_distance_R, sensorAnalog)
-#pragma config(Sensor, in2,    short_distance, sensorAnalog)
+#pragma config(Sensor, in2,    long_distance_M, sensorAnalog)
 #pragma config(Sensor, in3,    long_distance_L, sensorAnalog)
-#pragma config(Sensor, in4,    long_distance_top, sensorAnalog)
+#pragma config(Sensor, in4,    short_distance_T, sensorAnalog)
 #pragma config(Sensor, in5,    line_BR,        sensorAnalog)
 #pragma config(Sensor, in6,    line_FR,        sensorAnalog)
 #pragma config(Sensor, in7,    line_FL,        sensorAnalog)
@@ -53,8 +53,7 @@ float m_rpmL;
 
 int loop_ms;
 
-
-float calculate_distance(float sensor_val){
+float calculate_long_distance(float sensor_val){
   //convert voltage reading from long dist sensor into distance in cm
   float voltage = sensor_val * BYTE_TO_VOLT;
 
@@ -68,33 +67,33 @@ float calculate_distance(float sensor_val){
   return distance_cm;
 }
 
-float read_short_sensor_distance_CM(float sensor_val){
+float calculate_short_distance(float sensor_val){
   //convert voltage reading from short dist sensor into distance in cm
   float voltage = sensor_val * BYTE_TO_VOLT;
 
   //calculation for the short distance sensor here
   float exponent = -1/0.95;
   float base = voltage/11.033;
-  float distance_cm = pow(base, exponent);
+  float distance_cm = pow(base, exponent); 
   return distance_cm;
 }
 
-int read_digitized_long_sensor_distance(float sensor_val){
-  //read_long_sensor_distance_CM is a function that returns the distance (in cm) of the long range analog sensor reading
-  if(read_long_sensor_distance_CM(sensor_val) <= LONG_DIST_LOWER_THRESHOLD_CM){
+int read_long_discretise_sensor_distance(float distance){
+  //read_sensor_distance_CM is a function that returns the distance (in cm) of the long range analog sensor reading
+  if(read_sensor_distance_CM(distance) <= LONG_DIST_LOWER_THRESHOLD_CM){
     return 1; //close range
   }
-  else if(read_long_sensor_distance_CM(sensor_val) > LONG_DIST_UPPER_THRESHOLD_CM){
-    return 0; //far, ignore detection
+  else if(read_sensor_distance_CM(distance) > LONG_DIST_UPPER_THRESHOLD_CM){
+    return 0; //far, ignore distance
   }
   else{
     return 2; //detected in optimum range
   }
 }
 
-int read_digitized_short_sensor_distance(float sensor_val){
-  //read_short_sensor_distance_CM is a function that returns the distance (in cm) of the long range analog sensor reading
-  if(read_short_sensor_distance_CM(sensor_val) <= SHORT_DIST_THRESHOLD_CM){
+int read_short_discretise_sensor_distance(float distance){
+  //read_sensor_distance_CM is a function that returns the distance (in cm) of the long range analog sensor reading
+  if(read_sensor_distance_CM(distance) <= SHORT_DIST_THRESHOLD_CM){
     return 1; //detected
   }
   else{
@@ -122,14 +121,14 @@ void read_sensors(){
 	prev_dis_top_val = dis_top_val;
 	dis_L_val = low_pass_filter(SensorValue[long_distance_L], prev_dis_L_val, CUTOFF_LONG_L);
 	dis_R_val = low_pass_filter(SensorValue[long_distance_R], prev_dis_R_val, CUTOFF_LONG_R);
-	dis_mid_val = low_pass_filter(SensorValue[short_distance], prev_dis_mid_val, CUTOFF_SHORT);
-	dis_top_val = low_pass_filter(SensorValue[long_distance_top], prev_dis_top_val, CUTOFF_LONG_T);
+	dis_mid_val = low_pass_filter(SensorValue[long_distance_M], prev_dis_mid_val, CUTOFF_SHORT);
+	dis_top_val = low_pass_filter(SensorValue[short_distance_T], prev_dis_top_val, CUTOFF_LONG_T);
 
-	cm_dis_mid_val = read_short_sensor_distance_CM(dis_mid_val);
-	cm_dis_top_val = read_long_sensor_distance_CM(dis_top_val);
+	cm_dis_mid_val = read_sensor_distance_CM(dis_mid_val);
+	cm_dis_top_val = read_sensor_distance_CM(dis_top_val);
 
-	case_mid_val = read_digitized_short_sensor_distance(dis_mid_val);
-	case_top_val = read_digitized_long_sensor_distance(dis_top_val);
+	case_mid_val = read_digitized_sensor_distance(dis_mid_val);
+	case_top_val = read_digitized_sensor_distance(dis_top_val);
 
 
 	d_enR = getMotorEncoder(motor_R);
