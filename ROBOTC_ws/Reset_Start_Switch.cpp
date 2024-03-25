@@ -27,8 +27,9 @@ void reset_start()
 {
 	while(true){
 		if(SensorValue(Reset_Start_Switch) == 1){
-			init_robot();
-			center_start();			
+			init_robot(); 	// Initialise Robot
+			center_start();	// Move robot to center of arena and start searching
+			task = SEARCH_TASK;
 		}
 	}
 }
