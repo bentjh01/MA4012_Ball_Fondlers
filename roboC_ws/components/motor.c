@@ -1,7 +1,7 @@
 #ifndef MOTORS_H
 #define MOTORS_H
 
-#include "motor_test.h"
+#include "../config.h"
 /* _____________________________________________________________________________________________________________________
 
 MOTORS DRIVER
