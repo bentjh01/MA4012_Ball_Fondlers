@@ -4,9 +4,9 @@
 
 // SENSOR PARAMETERS
 //sharp distance sensor definitions
-#define LONG_DIST_LOWER_THRESHOLD_CM 25      //lower threshold of long dist sensor 25 cm
-#define LONG_DIST_UPPER_THRESHOLD_CM 45      //upper threshold of long dist sensor 45 cm
-#define SHORT_DIST_THRESHOLD_CM 20 //upper threshold of short dist sensor 20 cm (example only). Make this <= LOWER_THRESHOLD_CM
+#define LONG_DIST_LOWER_THRESHOLD_CM 25.0      //lower threshold of long dist sensor 25 cm
+#define LONG_DIST_UPPER_THRESHOLD_CM 45.0      //upper threshold of long dist sensor 45 cm
+#define SHORT_DIST_THRESHOLD_CM 20.0 //upper threshold of short dist sensor 20 cm (example only). Make this <= LOWER_THRESHOLD_CM
 #define VOLTAGE_SCALE (5.0/1023.0)
 //TODO-ARENA
 // #define LINE_FL 106
@@ -15,10 +15,10 @@
 // #define LINE_FR 1385
 
 // BENS ROOM
-#define LINE_FL 106
-#define LINE_BL 344
-#define LINE_BR 173
-#define LINE_FR 1385
+#define LINE_FL 106.0
+#define LINE_BL 344.0
+#define LINE_BR 173.0
+#define LINE_FR 1385.0
 
 #define CUTOFF_LINE_FL 	1.0 // [Hz]
 #define CUTOFF_LINE_BL 	1.0 // [Hz]
