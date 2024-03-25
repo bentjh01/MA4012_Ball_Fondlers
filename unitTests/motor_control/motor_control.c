@@ -136,8 +136,8 @@ void constant_velocity(float linX, float angZ){
 	robot_cmd_rpmL = calcualte_rpmL(robot_cmd_linX, robot_cmd_angZ);
 	robot_cmd_rpmR = limit_rpmR(robot_cmd_rpmR, robot_cmd_rpmL);
 	robot_cmd_rpmL = limit_rpmL(robot_cmd_rpmR, robot_cmd_rpmL);
-	robot_cmd_linX = calculate_linX(robot_cmd_rpmR, robot_cmd_rpmL);
-    robot_cmd_angZ = calculate_angZ(robot_cmd_rpmR, robot_cmd_rpmL);
+	robot_cmd_linX = calculate_linear_x(robot_cmd_rpmR, robot_cmd_rpmL);
+    robot_cmd_angZ = calculate_angular_z(robot_cmd_rpmR, robot_cmd_rpmL);
 	robot_move_closed(robot_en_rpmR, robot_en_rpmL, robot_cmd_rpmR, robot_cmd_rpmL);
 }
 
@@ -162,11 +162,11 @@ task main()
 		read_sensors();
 		// Main Loop
 
-		floppy();
+		floppy(1000);
 
 		// constant_power(127, 127);
 		// constant_velocity(0.1, 0.0);
-		constant_rpm(60, 60);
+		// constant_rpm(60, 60);
 
 		while (time1[T1] < DT * 1000){}
 		loop_ms = time1[T1];
