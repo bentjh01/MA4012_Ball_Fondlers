@@ -48,6 +48,10 @@ float wrap_to_pi(float angle){
     }
 }
 
+float discretise_yaw(float yaw){
+    return round(yaw / 45) * 45;
+}
+
 /* _____________________________________________________________________________________________________________________
 
 GLOBAL VARIABLES
