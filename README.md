@@ -1,17 +1,69 @@
 # MA4012 Ball_Fondlers
 
-## Members
+This repos is for the MA4012 Mechatronics Engineering Design Project. The task is to build a robot that collects the most tennis balls within an arena. The robot must run autonomously to carrying out its task. The robot is built on a `VEX Cortex` and `ROBOTC` platform. Key concepts that were kept in mind is good design philosophy on all fronts; mechanical, electrical, electronic, and software.
 
-- Benjamin Teh
-- Bryan Galenius
-- Eunice Ong
-- Fan Zifu
-- Kelvin Lee
-- Chen Lee
-- Timothy Liu
-- Hong Wei Tan
-- Wilsen Lotan
-- Wilson
+## Navigation
+
+[roboC_ws](./roboC_ws/) | [unitTests](./unit_tests/) | [meetingMinutesAndAgenda](./meetingMinutesAndAgenda/) | [sampleCode](./sample_code/) | [dataSheets](./dataSheets/)
+
+## Contents
+
+### [roboC_ws](./roboC_ws/)
+
+- main workspace for the final code of the robot.
+- all code is written in a functional manner.
+
+#### `main.c`
+
+- file to be opened to upload compile and upload code to robot.
+- performs tasks in discrete time.
+
+#### `config.h`
+
+- file that contains all tunable parameters
+- contains all constants
+
+### [unitTests](./unit_tests/)
+
+- organised into folder with `<folder_name>` with the function or feature to be tested.
+  - `<folder_name>.c`
+    - the main code to be compiled and uploaded
+  - `<folder_name>.h`
+    - constants and tunable parameters
+  - `<file_name>.c`
+    - the supporting function to carry out tests or to provide functionality to the robot.
+
+##### motor_control
+
+- tests the motors motion
+- tune the closed loop and open loop control of servo and drive motors
+
+##### localisation
+
+- tests the odometry functionality of the robot
+- tune the filter gains for the alpha-beta filters
+
+##### sensors
+
+- tests the sensor readings of all sensors
+- tune the cutoff frequencies of filters
+- tune the threshold values of sensors
+
+### [meetingMinutesAndAgenda](./meetingMinutesAndAgenda/)
+
+- contains markdown folder of meetings
+
+### [sampleCode](./sample_code/)
+
+- contains past year code
+
+## About VEX
+
+- ROBOTC doesnt play nice with structs 'invalid return type' [link](https://www.vexforum.com/t/robotc-return-struct/36028)
+- ROBOTC doesnt recognise the difference between source and header files.
+- global variables within a file only exists within that file's scope.
+- global variables within a file's scope are static i.e. they retain their value.
+- pragma must be in the file that is selected to be compiled i.e. `main.c`.
 
 ## GitHub Cheatsheet
 
@@ -50,6 +102,15 @@
 - Week 11 - Testing, tuning and optimization
 - Week 12 - Trial run
 
-## Links
+## Members
 
-- [Meeting Minutes and Agenda](./meetingMinutesAndAgenda/)
+- Benjamin Teh
+- Bryan Galenius
+- Eunice Ong
+- Fan Zifu
+- Kelvin Lee
+- Chen Lee
+- Timothy Liu
+- Hong Wei Tan
+- Wilsen Lotan
+- Wilson
