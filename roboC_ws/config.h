@@ -8,13 +8,16 @@
 #define LINE_BR_THRESHOLD 173.0
 #define LINE_FR_THRESHOLD 138.0
 
+// MAIN LOOP PARAMETERS
 #define DT 0.05
+#define HOME                1
+#define SEARCH_BALL         2
+#define GOTO_BALL           3
+#define COLLECT_BALL        4
+#define DELIVER_BALL        5
 
 // DELIVER TASK
 #define DELIVERY_YAW_TOLERANCE 5 // [degrees] Tolerance for the yaw angle to be considered as 0 for robot to move linearly
-#define DELIVER_KP 1.0
-#define DELIVER_KI 0.0
-#define DELIVER_KD 0.0
 
 // MOTORS
 #define MOTOR_L_KP 0.0

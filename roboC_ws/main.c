@@ -56,88 +56,16 @@ void init_robot(void){
 	resetMotorEncoder(motor_L);
 }
 
-
-int edge_detected(){
-	if (line_FL_val > LINE_FL){
-		return 1;
-		} else {
-		return 0;
-	}
-	if (line_BL_val > LINE_BL){
-		return 1;
-		} else {
-		return 0;
-	}
-	if (line_BR_val > LINE_BR){
-		return 1;
-		} else {
-		return 0;
-	}
-	if (line_FR_val > LINE_FR){
-		return 1;
-		} else {
-		return 0;
-	}
+/* @Unizz20
+void wait_for_start(start_button){
+	if (start_button == pressed){
+		init_robot();
+		while(start_button == pressed){
+			// wait for button to be released
+			task_status = HOME;
+		}
 }
-
-int edge_avoid(){
-	twist_t twist;
-	motor_rpm_t rpm;
-	twist.linear_x = 1;
-	twist.angular_z = 1;
-	calcualte_rpm(twist, rpm);
-	calculate_actual_rpm(rpm);
-	calculate_actual_twist(rpm, twist);
-	robot_move(rpm);
-	robot_rpm = rpm;
-	robot_twist = twist;
-	return 1;
-}
-
-int home(){
-	int sucess = 0;
-	if (sucess == 1){
-		return SEARCH_BALL;
-	} else {
-		return HOME;
-	}
-}
-
-int search_ball(){
-    int sucess = 0;
-	if (sucess == 1){
-		return GOTO_BALL;
-	} else {
-		return SEARCH_BALL;
-	}
-}
-
-int goto_ball(){
-    int sucess = 0;
-	if (sucess == 1){
-		return GRAB_BALL;
-	} else {
-		return GOTO_BALL;
-	}
-}
-
-int grab_ball(){
-	int sucess = 0;
-	if (sucess == 1){
-		return DELIVER_BALL;
-	} else {
-		return GRAB_BALL;
-	}
-}
-
-int deliver_ball(){
-	int sucess = 0;
-	if (sucess == 1){
-		return HOME;
-	} else {
-		return DELIVER_BALL;
-	}
-}
+*/
 
 task main()
 {
