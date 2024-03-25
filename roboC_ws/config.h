@@ -12,4 +12,7 @@
 // ROBOT PARAMETERS
 #define MAX_SPEED 0.5 // [m/s] Maximum linear speed
 
-#endif //CONFIG_H
+#endif //CONFIG_#define LINE_FL_THRESHOLD 106
+#define LINE_BL_THRESHOLD 344
+#define LINE_BR_THRESHOLD 173
+#define LINE_FR_THRESHOLD 138

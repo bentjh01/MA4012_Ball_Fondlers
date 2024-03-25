@@ -1,7 +1,7 @@
 #ifndef MOTORS_H
 #define MOTORS_H
 
-#include "config.h"
+#include "motor_control.h"
 /* _____________________________________________________________________________________________________________________
 
 MOTORS DRIVER
@@ -49,12 +49,12 @@ float limit_rpmR(float rpmR, float rpmL){
 	return rpmR;
 }
 
-float calculate_linX(float rpmR, float rpmL){
+float calculate_linear_x(float rpmR, float rpmL){
 	float linX = (rpmR + rpmL) / RADIAN_T0_RPM * WHEEL_DIAMETER /4;
 	return linX;
 }
 
-float calculate_angZ(float rpmR, float rpmL){
+float calculate_angular_z(float rpmR, float rpmL){
 	float angZ = (rpmR - rpmL) * WHEEL_DIAMETER/ROBOT_TRACK / RADIAN_T0_RPM / DEGREE_TO_RADIAN;
 	return angZ;
 }
