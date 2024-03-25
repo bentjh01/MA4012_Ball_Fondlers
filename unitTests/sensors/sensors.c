@@ -27,6 +27,12 @@ int prev_line_BL_val;
 int prev_line_BR_val;
 int	prev_line_FR_val;
 
+
+float prev_dis_L_val;
+float prev_dis_R_val;
+float prev_dis_mid_val;
+float prev_dis_top_val;
+
 float dis_L_val;
 float dis_R_val;
 float dis_mid_val;
@@ -38,10 +44,7 @@ float cm_dis_top_val;
 int case_mid_val;
 int case_top_val;
 
-float prev_dis_L_val;
-float prev_dis_R_val;
-float prev_dis_mid_val;
-float prev_dis_top_val;
+
 
 int d_enR;
 int d_enL;
@@ -51,7 +54,7 @@ float m_rpmL;
 int loop_ms;
 
 
-float read_long_sensor_distance_CM(float sensor_val){
+float calculate_distance(float sensor_val){
   //convert voltage reading from long dist sensor into distance in cm
   float voltage = sensor_val * BYTE_TO_VOLT;
 
@@ -67,7 +70,7 @@ float read_long_sensor_distance_CM(float sensor_val){
 
 float read_short_sensor_distance_CM(float sensor_val){
   //convert voltage reading from short dist sensor into distance in cm
-  float voltage = sensor_val * BYTE_TO_VOLT;;
+  float voltage = sensor_val * BYTE_TO_VOLT;
 
   //calculation for the short distance sensor here
   float exponent = -1/0.95;

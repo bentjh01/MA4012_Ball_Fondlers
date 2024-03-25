@@ -150,42 +150,6 @@ float predict_state_encoders_angZ(float d_enR, float d_enL, float dt){
  * @brief      Calculate pose of the robot using the magetometer
  * @return     predicted pose.value
  */
-float discretise_yaw(float yaw){
-    if (0 < yaw){
-        if (yaw < 22.5){
-            return NORTH;
-        }
-        else if (yaw < 3*22.5){
-            return NORTH_WEST;
-        }
-        else if (yaw < 5*22.5){
-            return WEST;
-        }
-        else if (yaw < 7*22.5){
-            return SOUTH_WEST;
-        }
-        else {
-            return SOUTH;
-        }
-    }
-    else{
-        if (yaw > -22.5){
-            return NORTH;
-        }
-        else if (yaw > -3*22.5){
-            return NORTH_EAST;
-        }
-        else if (yaw > -5*22.5){
-            return EAST;
-        }
-        else if (yaw > -7*22.5){
-            return SOUTH_EAST;
-        }
-        else {
-            return SOUTH;
-        }
-    }
-}
 
 float predict_state_magnetometer_yaw(float bearing){
     // float d_magnetometer_yaw = bearing - prev_bearing;

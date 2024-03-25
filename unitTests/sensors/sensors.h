@@ -33,7 +33,7 @@
 #define M_PI                3.14159265358979323846
 #define DEGREE_TO_RADIAN    M_PI/180.0
 #define RADIAN_T0_RPM       30.0/M_PI
-#define BYTE_TO_VOLT        1.0/51.0
+#define BYTE_TO_VOLT        1.0/51.0 // 
 
 // TASK PARAMETERS
 #define DT                  0.05
