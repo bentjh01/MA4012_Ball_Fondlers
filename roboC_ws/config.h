@@ -8,13 +8,16 @@
 #define LINE_BR_THRESHOLD 173.0
 #define LINE_FR_THRESHOLD 138.0
 
+// MAIN LOOP PARAMETERS
 #define DT 0.05
+#define HOME                1
+#define SEARCH_BALL         2
+#define GOTO_BALL           3
+#define COLLECT_BALL        4
+#define DELIVER_BALL        5
 
 // DELIVER TASK
 #define DELIVERY_YAW_TOLERANCE 5 // [degrees] Tolerance for the yaw angle to be considered as 0 for robot to move linearly
-#define DELIVER_KP 1.0
-#define DELIVER_KI 0.0
-#define DELIVER_KD 0.0
 
 // MOTORS
 #define MOTOR_L_KP 0.0
@@ -33,6 +36,7 @@
 #define M_PI                3.14159265358979323846
 #define DEGREE_TO_RADIAN    M_PI/180
 #define RADIAN_T0_RPM       30/M_PI
+#define NULL                999
 
 // TASK PARAMETERS
 #define DT                  0.05
@@ -45,9 +49,36 @@
 #define MAX_SPEED           0.5 // [m/s] Maximum linear speed
 #define MAX_TURN            0.5 // [rad/s] Maximum angular speed
 
+// MAGNETOMETER PARAMETERS
+#define NORTH           0
+#define NORTH_WEST      45
+#define WEST            90
+#define SOUTH_WEST      135
+#define SOUTH           180
+#define NORTH_EAST      -45
+#define EAST            -90
+#define SOUTH_EAST      -135
+#define SOUTH           180
+
 // PINOUT
-#define wheel_L_encoderA    dgtl2
-#define wheel_R_encoderA    dgtl4
+#define wheel_L_encoderA    dgtl1
+#define wheel_R_encoderA    dgtl3
+#define limit_switch        dgtl5
+#define limit_switch        dgtl6
+#define limit_switch        dgtl7
+#define limit_switch        dgtl8
+#define compass_north       dgtl9
+#define compass_south       dgtl10
+#define compass_east        dgtl11
+#define compass_west        dgtl12
+#define long_distance_R     in1
+#define long_distance_L     in2
+#define long_distance_M     in3
+#define short_distance_T    in4
+#define line_BR             in5
+#define line_FR             in6
+#define line_FL             in7
+#define line_BL             in8
 #define servo               port2
 #define motor_R             port6
 #define motor_L             port7
