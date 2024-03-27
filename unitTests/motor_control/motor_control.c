@@ -166,7 +166,7 @@ task main()
 
 		// constant_power(127, 127);
 		// constant_velocity(0.1, 0.0);
-		constant_rpm(60, 60);
+		// constant_rpm(60, 60);
 
 		while (time1[T1] < DT * 1000){}
 		loop_ms = time1[T1];
