@@ -84,19 +84,19 @@ void read_sensors(){
 	prev_line_BL_val = line_BL_val;
 	prev_line_BR_val = line_BR_val;
 	prev_line_FR_val = line_FR_val;
-	line_FL_val = low_pass_filter(SensorValue[line_FL], prev_line_FL_val, CUTOFF_LINE_FL);
-	line_BL_val = low_pass_filter(SensorValue[line_BL], prev_line_BL_val, CUTOFF_LINE_BL);
-	line_BR_val = low_pass_filter(SensorValue[line_BR], prev_line_FL_val, CUTOFF_LINE_BR);
-	line_FR_val = low_pass_filter(SensorValue[line_FR], prev_line_FL_val, CUTOFF_LINE_FR);
+	line_FL_val = low_pass_filter(SensorValue[line_FL], prev_line_FL_val, FILTER_GAIN_LINE_FL);
+	line_BL_val = low_pass_filter(SensorValue[line_BL], prev_line_BL_val, FILTER_GAIN_LINE_BL);
+	line_BR_val = low_pass_filter(SensorValue[line_BR], prev_line_FL_val, FILTER_GAIN_LINE_BR);
+	line_FR_val = low_pass_filter(SensorValue[line_FR], prev_line_FL_val, FILTER_GAIN_LINE_FR);
 
 	prev_dis_L_val = dis_L_val;
 	prev_dis_R_val = dis_R_val;
 	prev_dis_mid_val = dis_mid_val;
 	prev_dis_top_val = dis_top_val;
-	dis_L_val = low_pass_filter(SensorValue[long_distance_L], prev_dis_L_val, CUTOFF_LONG_L);
-	dis_R_val = low_pass_filter(SensorValue[long_distance_R], prev_dis_R_val, CUTOFF_LONG_R);
-	dis_mid_val = low_pass_filter(SensorValue[long_distance_M], prev_dis_mid_val, CUTOFF_SHORT);
-	dis_top_val = low_pass_filter(SensorValue[short_distance_T], prev_dis_top_val, CUTOFF_LONG_T);
+	dis_L_val = low_pass_filter(SensorValue[long_distance_L], prev_dis_L_val, FILTER_GAIN_LONG_L);
+	dis_R_val = low_pass_filter(SensorValue[long_distance_R], prev_dis_R_val, FILTER_GAIN_LONG_R);
+	dis_mid_val = low_pass_filter(SensorValue[long_distance_M], prev_dis_mid_val, FILTER_GAIN_LONG_MID);
+	dis_top_val = low_pass_filter(SensorValue[short_distance_T], prev_dis_top_val, FILTER_GAIN_SHORT_TOP);
 
 	cm_dis_mid_val = calculate_long_distance(dis_mid_val);
 	cm_dis_top_val = calculate_short_distance(dis_top_val);

@@ -20,14 +20,15 @@
 #define LINE_BR 173.0
 #define LINE_FR 1385.0
 
-#define CUTOFF_LINE_FL 	1.0 // [Hz]
-#define CUTOFF_LINE_BL 	1.0 // [Hz]
-#define CUTOFF_LINE_BR 	1.0 // [Hz]
-#define CUTOFF_LINE_FR 	1.0 // [Hz]
-#define CUTOFF_LONG_L 	1.0 // [Hz]
-#define CUTOFF_LONG_R 	1.0 // [Hz]
-#define CUTOFF_LONG_T 	1.0 // [Hz]
-#define CUTOFF_SHORT 	1.0 // [Hz]
+// FILTERING, (output = prev_input) 0 < FILTER_GAIN < 1 (output = new_input)
+#define FILTER_GAIN_LINE_FL 	1.0
+#define FILTER_GAIN_LINE_BL 	1.0
+#define FILTER_GAIN_LINE_BR 	1.0 
+#define FILTER_GAIN_LINE_FR 	1.0 
+#define FILTER_GAIN_LONG_L 	    1.0 
+#define FILTER_GAIN_LONG_R 	    1.0 
+#define FILTER_GAIN_LONG_MID 	1.0 
+#define FILTER_GAIN_SHORT_TOP 	1.0 
 
 // CONSTANTS
 #define M_PI                3.14159265358979323846
