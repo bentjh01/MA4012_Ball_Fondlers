@@ -78,29 +78,6 @@ float calculate_short_distance(float sensor_val){
   return distance_cm;
 }
 
-int read_long_discretise_sensor_distance(float distance){
-  //read_sensor_distance_CM is a function that returns the distance (in cm) of the long range analog sensor reading
-  if(read_sensor_distance_CM(distance) <= LONG_DIST_LOWER_THRESHOLD_CM){
-    return 1; //close range
-  }
-  else if(read_sensor_distance_CM(distance) > LONG_DIST_UPPER_THRESHOLD_CM){
-    return 0; //far, ignore distance
-  }
-  else{
-    return 2; //detected in optimum range
-  }
-}
-
-int read_short_discretise_sensor_distance(float distance){
-  //read_sensor_distance_CM is a function that returns the distance (in cm) of the long range analog sensor reading
-  if(read_sensor_distance_CM(distance) <= SHORT_DIST_THRESHOLD_CM){
-    return 1; //detected
-  }
-  else{
-    return 0; //no detection
-  }
-}
-
 // sensors
 /**
  * @brief Updates all sensor values
@@ -126,10 +103,6 @@ void read_sensors(){
 
 	cm_dis_mid_val = read_sensor_distance_CM(dis_mid_val);
 	cm_dis_top_val = read_sensor_distance_CM(dis_top_val);
-
-	case_mid_val = read_digitized_sensor_distance(dis_mid_val);
-	case_top_val = read_digitized_sensor_distance(dis_top_val);
-
 
 	d_enR = getMotorEncoder(motor_R);
 	d_enL = getMotorEncoder(motor_L);
