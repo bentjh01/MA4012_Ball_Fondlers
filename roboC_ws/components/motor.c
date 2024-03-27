@@ -1,7 +1,5 @@
-#ifndef MOTORS_H
-#define MOTORS_H
+#include "../config.h"
 
-#include "motor_test.h"
 /* _____________________________________________________________________________________________________________________
 
 MOTORS DRIVER
@@ -59,7 +57,7 @@ float calculate_angular_z(float rpmR, float rpmL){
 	return angZ;
 }
 
-// Cut off the power if above 127 or below -127
+// Limit the power to <= fabs(127)
 int limit_byte(float power){
 	if (power > 127){
 		power = 127;
@@ -68,5 +66,3 @@ int limit_byte(float power){
 	}
 	return power;
 }
-
-#endif // MOTORS_H
