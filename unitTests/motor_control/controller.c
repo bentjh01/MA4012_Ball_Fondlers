@@ -7,7 +7,7 @@ float motor_L_integral = 0;
 float motor_L_prev_error = 0;
 
 float power_speed(float power){
-    return 0.1057 * power + 24.794 * power/fabs(power);
+    return 0.1057 * power + 24.794 * sgn(power);
 }
 
 // PID Controller for the right motor

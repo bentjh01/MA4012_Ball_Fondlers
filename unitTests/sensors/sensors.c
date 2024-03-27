@@ -48,7 +48,34 @@ int d_enL;
 float m_rpmR;
 float m_rpmL;
 
-int loop_ms;
+float compass_yaw;
+
+int loop_ms; // ensure loop runs at 50ms
+
+float read_compass(void){
+  int combination = SensorValue[compass_south] << 3 + SensorValue[compass_east]  << 2 + SensorValue[compass_north]  << 1 + SensorValue[compass_west];
+  switch (combination)
+  {
+  case 0b1101:
+    return DEG_TO_180(NORTH - MAGNETOMETER_OFFSET);
+  case 0b1001:
+    return DEG_TO_180(NORTH_EAST - MAGNETOMETER_OFFSET);
+  case 0b1011:
+    return DEG_TO_180(EAST - MAGNETOMETER_OFFSET);
+  case 0b0011:
+    return DEG_TO_180(SOUTH_EAST - MAGNETOMETER_OFFSET);
+  case 0b0111:
+    return DEG_TO_180(SOUTH - MAGNETOMETER_OFFSET);
+  case 0b0110:
+    return DEG_TO_180(SOUTH_WEST - MAGNETOMETER_OFFSET);
+  case 0b1110:
+    return DEG_TO_180(WEST - MAGNETOMETER_OFFSET);
+  case 0b1100:
+    return DEG_TO_180(SOUTH - MAGNETOMETER_OFFSET);
+  default:
+    return NULL;
+  }
+}
 
 float calculate_long_distance(float sensor_val){
   //convert voltage reading from long dist sensor into distance in cm
@@ -110,6 +137,8 @@ void read_sensors(){
 
 	resetMotorEncoder(motor_R);
 	resetMotorEncoder(motor_L);
+
+	compass_yaw = read_compass();
 }
 
 /**

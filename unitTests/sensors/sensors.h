@@ -34,7 +34,22 @@
 #define M_PI                3.14159265358979323846
 #define DEGREE_TO_RADIAN    M_PI/180.0
 #define RADIAN_T0_RPM       30.0/M_PI
-#define BYTE_TO_VOLT        1.0/51.0 // 
+#define mVOLT_TO_VOLT       1000.0
+#define NULL                9999
+
+// MAGNETOMETER PARAMETERS
+#define MAGNETOMETER_OFFSET 0.0 // magneto reading when robot is facing forward
+#define NORTH           0.0
+#define NORTH_WEST      45.0
+#define WEST            90.0
+#define SOUTH_WEST      135.0
+#define SOUTH           180.0
+#define NORTH_EAST      -45.0
+#define EAST            -90.0
+#define SOUTH_EAST      -135.0
+#define SOUTH           -180.0
+#define DEG_TO_180(angle) (((angle + 180.0) % 360.0) - 180.0)
+
 
 // TASK PARAMETERS
 #define DT                  0.05
@@ -44,7 +59,6 @@
 #define ROBOT_TRACK         0.213 //m
 #define ENCODER_RESOLUTION  360.0 // [ticks/revolution]
 #define MAX_WHEEL_RPM       100.0 // [rpm]
-
 
 
 #endif // SENSORS_CONFIG_H
