@@ -40,11 +40,8 @@ float dis_top_val;
 
 float cm_dis_mid_val;
 float cm_dis_top_val;
-
-int case_mid_val;
-int case_top_val;
-
-
+float cm_dis_R_val;
+float cm_dis_L_val;
 
 int d_enR;
 int d_enL;
@@ -55,7 +52,7 @@ int loop_ms;
 
 float calculate_long_distance(float sensor_val){
   //convert voltage reading from long dist sensor into distance in cm
-  float voltage = sensor_val * BYTE_TO_VOLT;
+  float voltage = sensor_val / 1000.0//* BYTE_TO_VOLT;
 
   //step-by-step calculation as arduino cannot handle PEMDAS
   float ln_voltage = log(voltage);
@@ -69,36 +66,13 @@ float calculate_long_distance(float sensor_val){
 
 float calculate_short_distance(float sensor_val){
   //convert voltage reading from short dist sensor into distance in cm
-  float voltage = sensor_val * BYTE_TO_VOLT;
+  float voltage = sensor_val / 1000.0//* BYTE_TO_VOLT;
 
   //calculation for the short distance sensor here
   float exponent = -1/0.95;
   float base = voltage/11.033;
   float distance_cm = pow(base, exponent); 
   return distance_cm;
-}
-
-int read_long_discretise_sensor_distance(float distance){
-  //read_sensor_distance_CM is a function that returns the distance (in cm) of the long range analog sensor reading
-  if(read_sensor_distance_CM(distance) <= LONG_DIST_LOWER_THRESHOLD_CM){
-    return 1; //close range
-  }
-  else if(read_sensor_distance_CM(distance) > LONG_DIST_UPPER_THRESHOLD_CM){
-    return 0; //far, ignore distance
-  }
-  else{
-    return 2; //detected in optimum range
-  }
-}
-
-int read_short_discretise_sensor_distance(float distance){
-  //read_sensor_distance_CM is a function that returns the distance (in cm) of the long range analog sensor reading
-  if(read_sensor_distance_CM(distance) <= SHORT_DIST_THRESHOLD_CM){
-    return 1; //detected
-  }
-  else{
-    return 0; //no detection
-  }
 }
 
 // sensors
@@ -124,12 +98,10 @@ void read_sensors(){
 	dis_mid_val = low_pass_filter(SensorValue[long_distance_M], prev_dis_mid_val, CUTOFF_SHORT);
 	dis_top_val = low_pass_filter(SensorValue[short_distance_T], prev_dis_top_val, CUTOFF_LONG_T);
 
-	cm_dis_mid_val = read_sensor_distance_CM(dis_mid_val);
-	cm_dis_top_val = read_sensor_distance_CM(dis_top_val);
-
-	case_mid_val = read_digitized_sensor_distance(dis_mid_val);
-	case_top_val = read_digitized_sensor_distance(dis_top_val);
-
+	cm_dis_mid_val = calculate_long_distance(dis_mid_val);
+	cm_dis_top_val = calculate_short_distance(dis_top_val);
+	cm_dis_L_val = calculate_long_distance(dis_L_val);
+	cm_dis_R_val = calculate_long_distance(dis_R_val);
 
 	d_enR = getMotorEncoder(motor_R);
 	d_enL = getMotorEncoder(motor_L);
