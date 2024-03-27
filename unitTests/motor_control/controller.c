@@ -1,13 +1,20 @@
 #include "motor_test.h"
 
-float motor_R_integral = 0;
-float motor_R_prev_error = 0;
+static float motor_R_integral = 0;
+static float motor_R_prev_error = 0;
 
-float motor_L_integral = 0;
-float motor_L_prev_error = 0;
+static float motor_L_integral = 0;
+static float motor_L_prev_error = 0;
 
-float power_speed(float power){
-    return 0.1057 * power + 24.794 * sgn(power);
+// Power to linear speed conversion
+float speed_power(float power){
+    return LINEAR_SPEED_GRADIENT * power + LINEAR_SPEED_INTERCEPT * sgn(power);
+}
+
+// Power to rpm conversion
+float power_rpm(float rpm){
+    if (rpm == 0) return 0;
+    return sgn(rpm) * ((fabs(rpm)/RADIAN_T0_RPM) * WHEEL_DIAMETER/2 - LINEAR_SPEED_INTERCEPT) / LINEAR_SPEED_GRADIENT;
 }
 
 // PID Controller for the right motor
@@ -15,7 +22,8 @@ float pid_R(float rpmR, float setpointR){
     float error = setpointR - rpmR;
     motor_R_integral = motor_R_integral + error * DT;
     float derivative = (error - motor_R_prev_error) / DT;
-    float output = MOTOR_R_KP * error + MOTOR_R_KI * motor_R_integral + MOTOR_R_KD * derivative;
+    float bias = power_rpm(setpointR);
+    float output = MOTOR_R_KP * error + MOTOR_R_KI * motor_R_integral + MOTOR_R_KD * derivative + bias;
     motor_R_prev_error = error;
     return output;
 }
@@ -25,7 +33,8 @@ float pid_L(float rpmL, float setpointL){
     float error = setpointL - rpmL;
     motor_L_integral = motor_L_integral + error * DT;
     float derivative = (error - motor_L_prev_error) / DT;
-    float output = MOTOR_L_KP * error + MOTOR_L_KI * motor_L_integral + MOTOR_L_KD * derivative;
+    float bias = power_rpm(setpointL);
+    float output = MOTOR_L_KP * error + MOTOR_L_KI * motor_L_integral + MOTOR_L_KD * derivative + bias;
     motor_L_prev_error = error;
     return output;
 }
