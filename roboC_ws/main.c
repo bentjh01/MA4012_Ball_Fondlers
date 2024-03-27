@@ -36,6 +36,9 @@ int robot_line_BL;
 int robot_line_BR;
 int robot_line_FR;
 
+// robot task
+int task_status;
+
 /* _____________________________________________________________________________________________________________________
 
 TASKS
@@ -143,7 +146,21 @@ task main()
 		clearTimer(T1);
         read_sensors();
 		// main Loop
-		
+		deivertask(yaw, BL, BR)
+		if (edge_detected()){
+			edge_avoid(robot_x, robot_yaw, robot_line_FL, robot_line_BL, robot_line_BR, robot_line_FR);
+		}
+		else{
+			switch (task_status){
+				case SEARCH{
+
+				}
+				.
+				.
+				.
+
+			}
+		}
         // end of main loop
 		while (time1[T1] < DT * 1000){}
 		update_pose();

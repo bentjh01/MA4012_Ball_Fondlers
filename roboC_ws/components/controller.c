@@ -1,4 +1,4 @@
-#include "motor_test.h"
+#include "../config.h"
 
 float motor_R_integral = 0;
 float motor_R_prev_error = 0;
