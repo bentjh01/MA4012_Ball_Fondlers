@@ -38,7 +38,7 @@
 #define NULL                9999
 
 // MAGNETOMETER PARAMETERS
-#define MAGNETOMETER_OFFSET 0.0 // magneto reading when robot is facing forward
+#define MAGNETOMETER_OFFSET 0.0 // compass reading when robot is facing forward i.e. the bearing of a real compass
 #define NORTH           0.0
 #define NORTH_WEST      45.0
 #define WEST            90.0
