@@ -1,5 +1,7 @@
 #include "../config.h"
 
+// @FANZIFU
+
 int edge_detected(int FL, int BL, int BR, int FR){
 	if (FL > LINE_FL_THRESHOLD){
 		return 1;
