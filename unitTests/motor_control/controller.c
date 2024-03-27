@@ -6,6 +6,10 @@ float motor_R_prev_error = 0;
 float motor_L_integral = 0;
 float motor_L_prev_error = 0;
 
+float power_speed(float power){
+    return 0.1057 * power + 24.794 * power/fabs(power);
+}
+
 // PID Controller for the right motor
 float pid_R(float rpmR, float setpointR){
     float error = setpointR - rpmR;
