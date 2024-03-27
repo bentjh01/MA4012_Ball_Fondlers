@@ -9,9 +9,10 @@ float motor_L_prev_error = 0;
 // PID Controller for the right motor
 float pid_R(float rpmR, float setpointR){
     float error = setpointR - rpmR;
+    float initial_guess = f(setpointR));
     motor_R_integral = motor_R_integral + error * DT;
     float derivative = (error - motor_R_prev_error) / DT;
-    float output = MOTOR_R_KP * error + MOTOR_R_KI * motor_R_integral + MOTOR_R_KD * derivative;
+    float output = initial_guess +  MOTOR_R_KP * error + MOTOR_R_KI * motor_R_integral + MOTOR_R_KD * derivative;
     motor_R_prev_error = error;
     return output;
 }
