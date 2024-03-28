@@ -121,9 +121,9 @@ task main()
 
 		floppy(1000);
 
-		constant_power(20, 20);
+		// constant_power(20, 0);
 		// constant_velocity(0.1, 0.0);
-		// constant_rpm(60, 60);
+		constant_rpm(60, 0);
 
 		while (time1[T1] < DT * 1000){}
 		loop_ms = time1[T1];
