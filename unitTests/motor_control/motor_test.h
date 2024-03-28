@@ -2,8 +2,8 @@
 #define MOTOR_CONTROL_CONFIG_H
 
 // MOTORS
-#define LINEAR_SPEED_GRADIENT 0.00011 // TODO
-#define LINEAR_SPEED_INTERCEPT 0.2479 // TODO
+#define LINEAR_SPEED_FACTOR 0.1511 // TODO
+#define LINEAR_SPEED_OFFSET -0.3419 // TODO
 
 #define MOTOR_L_KP 0.0
 #define MOTOR_L_KI 0.0
@@ -18,7 +18,8 @@
 #define SERVO_POWER_FACTOR 1.0 // TODO
 
 // CONSTANTS
-#define M_PI                3.14159265358979323846
+#define M_PI                3.141593
+#define E                   2.718282
 #define DEGREE_TO_RADIAN    M_PI/180
 #define RADIAN_T0_RPM       30/M_PI
 

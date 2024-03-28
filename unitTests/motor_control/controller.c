@@ -8,13 +8,14 @@ static float motor_L_prev_error = 0;
 
 // Power to linear speed conversion
 float speed_power(float power){
-    return LINEAR_SPEED_GRADIENT * power + LINEAR_SPEED_INTERCEPT * sgn(power);
+    if (power == 0) return 0;
+    return (LINEAR_SPEED_FACTOR * log(power) + LINEAR_SPEED_OFFSET) * sgn(power);
 }
 
 // Power to rpm conversion
 float power_rpm(float rpm){
     if (rpm == 0) return 0;
-    return sgn(rpm) * ((fabs(rpm)/RADIAN_T0_RPM) * WHEEL_DIAMETER/2 - LINEAR_SPEED_INTERCEPT) / LINEAR_SPEED_GRADIENT;
+    return sgn(rpm) * pow(E, (((fabs(rpm)/RADIAN_T0_RPM) * WHEEL_DIAMETER/2 -LINEAR_SPEED_OFFSET)/LINEAR_SPEED_FACTOR));
 }
 
 // PID Controller for the right motor

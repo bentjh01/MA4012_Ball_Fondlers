@@ -10,7 +10,7 @@ ________________________________________________________________________________
 float calcualte_rpmL(float linX, float angZ){
 	float radian_per_sec = angZ * DEGREE_TO_RADIAN;
 	float rpmL = (linX - radian_per_sec*ROBOT_TRACK/2)/(WHEEL_DIAMETER/2) * RADIAN_T0_RPM;
-	return rpmL ;
+	return rpmL;
 }
 
 float calcualte_rpmR(float linX, float angZ){
