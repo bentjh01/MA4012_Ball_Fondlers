@@ -74,14 +74,8 @@ task main()
 		clearTimer(T1);
         read_sensors();
 		// main Loop
-<<<<<<< HEAD
 		if (edge_detected(robot_line_FL, robot_line_BL, robot_line_BR, robot_line_FR)){
 			edge_avoid(robot_x, robot_yaw, robot_line_FL, robot_line_FR);
-=======
-		deivertask(yaw, BL, BR)
-		if (edge_detected()){
-			edge_avoid(robot_x, robot_yaw, robot_line_FL, robot_line_BL, robot_line_BR, robot_line_FR);
->>>>>>> main
 		}
 		else{
 			switch (task_status){

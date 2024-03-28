@@ -36,7 +36,7 @@ static int FR;
 static float alpha;
 static float rotate_ang;
 
-void edge_avoid(float rpmR, float rpmL, float robot_x, float yaw, int FL, int FR){
+void edge_avoid(float robot_x, float yaw, int FL, int FR){
 
 	rb_yaw = rb_yaw;
     rb_x = robot_x;
@@ -45,7 +45,9 @@ void edge_avoid(float rpmR, float rpmL, float robot_x, float yaw, int FL, int FR
 
 	float set_linX;
     float set_angZ;
-	float time;
+	float current_yaw;
+	float expected_yaw;
+
     // stop the motor first
 	robot_move(0,0);
 	
@@ -120,12 +122,18 @@ void edge_avoid(float rpmR, float rpmL, float robot_x, float yaw, int FL, int FR
 	// linX will always be 0, since rotate only
 	set_linX = 0;
 
-	// calculate angZ according to angle should be rotated
-	set_angZ = 0.4;
-	time = rotate_ang / set_angZ;
+	set_angZ = MAX_TURN;
 
-	clearTimer(T1);
-	while (time1[T1] < time * 1000){
-		robot_move_closed(rpmR, rpmL, set_linX, set_angZ);
+	// update current yaw value into variable current_yaw
+	current_yaw = ;
+	expected_yaw = rb_yaw + rotate_ang;
+
+	while (abs(current_yaw - expected_yaw) > YAW_THRESHOLD) {
+		if (rotate_ang >= 0){
+			robot_move(set_linX, set_angZ);
+		} else {
+			robot_move(set_linX, -set_angZ);
+		}
 	}
+	robot_move(0,0);
 }

@@ -1,9 +1,3 @@
-<<<<<<< HEAD
-#define LINE_FL_THRESHOLD 106
-#define LINE_BL_THRESHOLD 344
-#define LINE_BR_THRESHOLD 173
-#define LINE_FR_THRESHOLD 1385
-=======
 #ifndef CONFIG_H
 #define CONFIG_H
 
@@ -89,5 +83,8 @@
 #define motor_R             port6
 #define motor_L             port7
 
+//edge avoid
+#define YAW_THRESHOLD 5
+
 #endif //CONFIG_#define LINE_FL_THRESHOLD 106
->>>>>>> main
+
