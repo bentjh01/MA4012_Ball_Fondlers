@@ -34,6 +34,7 @@ float limit_rpmL(float rpmR, float rpmL){
 	return rpmL;
 }
 
+// Limits the rpm to the maximum wheel rpm not by cutoff but by scaling
 float limit_rpmR(float rpmR, float rpmL){
 	if (fabs(rpmR) <= MAX_WHEEL_RPM && fabs(rpmL) <= MAX_WHEEL_RPM){
 		return rpmR;

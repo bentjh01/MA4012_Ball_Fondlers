@@ -11,20 +11,18 @@ ________________________________________________________________________________
  * @param rpmL The left motor speed in rpm
 */
 void robot_move_open(float rpmR, float rpmL){
-	motor[motor_R] = rpmR / MAX_WHEEL_RPM * 127;
-	motor[motor_L] = rpmL / MAX_WHEEL_RPM * 127;
+	motor[motor_R] = power_rpm(rpmR);
+	motor[motor_L] = power_rpm(rpmL);
 }
 
 /**
  * @brief Closed loop control of motor speed rpm
- * @param en_rpmR The right motor speed in rpm
- * @param en_rpmL The left motor speed in rpm
  * @param cmd_rpmR The desired right motor speed in rpm
  * @param cmd_rpmL The desired left motor speed in rpm
 */
-void robot_move_closed(float en_rpmR, float en_rpmL, float cmd_rpmR, float cmd_rpmL){
-	int motor_power_R = pid_R(en_rpmR, cmd_rpmR);
-	int motor_power_L = pid_L(en_rpmL, cmd_rpmL);
+void robot_move_closed(float cmd_rpmR, float cmd_rpmL){
+	int motor_power_R = pid_R(cmd_rpmR);
+	int motor_power_L = pid_L(cmd_rpmL);
 	motor_power_R = limit_byte(motor_power_R);
 	motor_power_L = limit_byte(motor_power_L);
 	motor[motor_R] = motor_power_R;

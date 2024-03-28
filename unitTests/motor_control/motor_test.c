@@ -16,35 +16,39 @@
 SENSORS
 _____________________________________________________________________________________________________________________ */
 
-int robot_d_enR;
-int robot_d_enL;
+static int robot_d_enR;
+static int robot_d_enL;
 
-float robot_en_rpmR;
-float robot_en_rpmL;
+static float robot_en_rpmR;
+static float robot_en_rpmL;
 
-float robot_en_linX;
-float robot_en_angZ;
+static float robot_en_linX;
+static float robot_en_angZ;
 
-float robot_cmd_linX;
-float robot_cmd_angZ;
-float robot_cmd_rpmR;
-float robot_cmd_rpmL;
+static float robot_cmd_linX;
+static float robot_cmd_angZ;
+static float robot_cmd_rpmR;
+static float robot_cmd_rpmL;
 
-int loop_ms;
+static int loop_ms;
+static int dt;
 
 // Updates all sensor values
-void read_sensors(float dt){
+void read_sensors(void){
 
 	robot_d_enR = getMotorEncoder(motor_R);
 	robot_d_enL = getMotorEncoder(motor_L);
 
 	// robot_en_rpmR = robot_d_enR / ENCODER_RESOLUTION * 60/DT;
   	// robot_en_rpmL = robot_d_enL / ENCODER_RESOLUTION * 60/DT;
+	dt = time1[T1];
 	robot_en_rpmR = robot_d_enR / ENCODER_RESOLUTION * 60/dt;
 	robot_en_rpmL = robot_d_enL / ENCODER_RESOLUTION * 60/dt;
 
 	robot_en_linX = calculate_linear_x(robot_en_rpmR, robot_d_enL);
 	robot_en_angZ = calculate_angular_z(robot_en_rpmR, robot_d_enL);
+
+	update_controller_readings(robot_en_rpmR, robot_en_rpmL, dt);
 
 	resetMotorEncoder(motor_R);
 	resetMotorEncoder(motor_L);
@@ -97,7 +101,7 @@ void constant_velocity(float linX, float angZ){
 	robot_cmd_rpmL = limit_rpmL(robot_cmd_rpmR, robot_cmd_rpmL);
 	robot_cmd_linX = calculate_linear_x(robot_cmd_rpmR, robot_cmd_rpmL);
     robot_cmd_angZ = calculate_angular_z(robot_cmd_rpmR, robot_cmd_rpmL);
-	robot_move_closed(robot_en_rpmR, robot_en_rpmL, robot_cmd_rpmR, robot_cmd_rpmL);
+	robot_move_closed(robot_cmd_rpmR, robot_cmd_rpmL);
 }
 
 /**
@@ -110,14 +114,14 @@ void constant_rpm(float rpmR, float rpmL){
 	robot_cmd_rpmL = rpmL;
 	robot_cmd_rpmR = limit_rpmR(robot_cmd_rpmR, robot_cmd_rpmL);
 	robot_cmd_rpmL = limit_rpmL(robot_cmd_rpmR, robot_cmd_rpmL);
-	robot_move_closed(robot_en_rpmR, robot_en_rpmL, robot_cmd_rpmR, robot_cmd_rpmL);
+	robot_move_closed(robot_cmd_rpmR, robot_cmd_rpmL);
 }
 
 task main()
 {
 	init();
 	while(1){
-		read_sensors(time1[T1]);
+		read_sensors();
 		clearTimer(T1);
 		// Main Loop
 
