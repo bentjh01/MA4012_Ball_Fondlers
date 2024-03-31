@@ -12,6 +12,7 @@ float robot_moving_timeout_centisecond;
 int changing_search_position = 0;
 
 int opponent_detected(float short_sensor_dist){
+  // may need to move this to components into sensors.c
   if(short_sensor_dist <= OPP_CLOSENESS_THRESHOLD){
     //Theres an opp robot close in front
     return OPP_DETECTED;
@@ -42,24 +43,26 @@ int search_task(float x, float y, float yaw, float left_sensor_dist, float right
   if(changing_search_position == 0){
     //Rotate to scan
     if(startup_phase){
-      startup_phase = 0;
-      robot_move(linear_velocity = 0, angular_velocity = 120); //rotate ccw 120 deg/s, try find detection
+      startup_phase = 0;                                        //set startup_phase
+      robot_move(linear_velocity = 0, angular_velocity = 120);  //rotate ccw 120 deg/s, try find detection
+
+      //initialize timer
       search_timer = time10[T2];
       robot_moving_timeout_centisecond = 300;
     }
 
     //check timeout (360 deg rotation achieved)
     if(time10[T2]-search_timer > robot_moving_timeout_centisecond){
-      robot_move(linear_velocity = 0, angular_velocity = 0); //stop movement
-      startup_phase = 1;
-      changing_search_position = 1;
+      robot_move(linear_velocity = 0, angular_velocity = 0);  //stop movement
+      startup_phase = 1;                                      //reset startup_phase
+      changing_search_position = 1;                           //initiate change search position
       return 0;
     }
 
     //check for ball
     if (ball_detected(left_sensor_dist,right_sensor_dist, mid_sensor_dist, short_sensor_dist) == 1){
-      robot_move(linear_velocity = 0, angular_velocity = 0); //stop movement
-      startup_phase = 1;
+      robot_move(linear_velocity = 0, angular_velocity = 0);  //stop movement
+      startup_phase = 1;                                      //reset startup_phase
       return GOTO_BALL;
     }
     else{
@@ -70,25 +73,27 @@ int search_task(float x, float y, float yaw, float left_sensor_dist, float right
   //Changing search position
   else{
     if(startup_phase){
-      startup_phase = 0;
+      startup_phase = 0;                                      //set startup_phase
       robot_move(linear_velocity = 50, angular_velocity = 0); //move forward
+
+      //initialize timer
       search_timer = time10[T2];
       robot_moving_timeout_centisecond = 160;
     }
 
     //check timeout (finished moving to a new search position)
     if(time10[T2]-search_timer > robot_moving_timeout_centisecond){
-      robot_move(linear_velocity = 0, angular_velocity = 0); //stop movement
-      startup_phase = 1;
-      changing_search_position = 0;
+      robot_move(linear_velocity = 0, angular_velocity = 0);  //stop movement
+      startup_phase = 1;                                      //reset startup_phase
+      changing_search_position = 0;                           //terminate change_search_position
       return 0;
     }
 
     //check for ball
     if (ball_detected(left_sensor_dist,right_sensor_dist, mid_sensor_dist, short_sensor_dist) == 1){
-      robot_move(linear_velocity = 0, angular_velocity = 0); //stop movement
-      startup_phase = 1;
-      changing_search_position = 0;
+      robot_move(linear_velocity = 0, angular_velocity = 0);  //stop movement
+      startup_phase = 1;                                      //reset startup_phase
+      changing_search_position = 0;                           //terminate change_search_position
       return GOTO_BALL;
     }
     else{
