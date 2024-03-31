@@ -15,6 +15,13 @@
 #define GOTO_BALL           3
 #define COLLECT_BALL        4
 #define DELIVER_BALL        5
+#define TIMEOUT             8
+#define OPP_DETECTED        9
+
+//SHARP DISTANCE SENSORS
+#define BALL_THRESHOLD_LNR      45.0
+#define BALL_THRESHOLD_MID      35.0
+#define OPP_CLOSENESS_THRESHOLD 15.0
 
 // DELIVER TASK
 #define DELIVERY_YAW_TOLERANCE 5 // [degrees] Tolerance for the yaw angle to be considered as 0 for robot to move linearly
