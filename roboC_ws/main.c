@@ -1,4 +1,8 @@
-
+#pragma config(Sensor, dgtl1,  ,               sensorQuadEncoder)
+#pragma config(Sensor, dgtl3,  ,               sensorQuadEncoder)
+#pragma config(Motor,  port2,           servo,         tmotorServoStandard, openLoop)
+#pragma config(Motor,  port6,           motor_R,       tmotorVex393_MC29, openLoop, encoderPort, dgtl3)
+#pragma config(Motor,  port7,           motor_L,       tmotorVex393_MC29, openLoop, reversed, encoderPort, dgtl1)
 /* _____________________________________________________________________________________________________________________
 
 GLOBAL VARIABLES
