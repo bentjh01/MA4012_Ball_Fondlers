@@ -35,7 +35,7 @@
 #define DEGREE_TO_RADIAN    M_PI/180.0
 #define RADIAN_T0_RPM       30.0/M_PI
 #define mVOLT_TO_VOLT       1000.0
-#define NULL                9999
+// #define NULL                9999
 
 // MAGNETOMETER PARAMETERS
 #define MAGNETOMETER_OFFSET 0.0 // compass reading when robot is facing forward i.e. the bearing of a real compass
@@ -43,7 +43,6 @@
 #define NORTH_WEST      45.0
 #define WEST            90.0
 #define SOUTH_WEST      135.0
-#define SOUTH           180.0
 #define NORTH_EAST      -45.0
 #define EAST            -90.0
 #define SOUTH_EAST      -135.0

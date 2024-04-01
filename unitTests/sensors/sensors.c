@@ -54,34 +54,34 @@ static float compass_yaw;
 
 static int loop_ms; // ensure loop runs at 50ms
 
-float read_compass(void){
-  int combination = SensorValue[compass_south] << 3 + SensorValue[compass_east]  << 2 + SensorValue[compass_north]  << 1 + SensorValue[compass_west];
-  switch (combination)
-  {
-  case 0b1101:
-    return DEG_TO_180(NORTH - MAGNETOMETER_OFFSET);
-  case 0b1001:
-    return DEG_TO_180(NORTH_EAST - MAGNETOMETER_OFFSET);
-  case 0b1011:
-    return DEG_TO_180(EAST - MAGNETOMETER_OFFSET);
-  case 0b0011:
-    return DEG_TO_180(SOUTH_EAST - MAGNETOMETER_OFFSET);
-  case 0b0111:
-    return DEG_TO_180(SOUTH - MAGNETOMETER_OFFSET);
-  case 0b0110:
-    return DEG_TO_180(SOUTH_WEST - MAGNETOMETER_OFFSET);
-  case 0b1110:
-    return DEG_TO_180(WEST - MAGNETOMETER_OFFSET);
-  case 0b1100:
-    return DEG_TO_180(SOUTH - MAGNETOMETER_OFFSET);
-  default:
-    return NULL;
-  }
-}
+// float read_compass(void){
+//   int combination = SensorValue[compass_south] << 3 + SensorValue[compass_east]  << 2 + SensorValue[compass_north]  << 1 + SensorValue[compass_west];
+//   switch (combination)
+//   {
+//   case 0b1101:
+//     return DEG_TO_180(NORTH - MAGNETOMETER_OFFSET);
+//   case 0b1001:
+//     return DEG_TO_180(NORTH_EAST - MAGNETOMETER_OFFSET);
+//   case 0b1011:
+//     return DEG_TO_180(EAST - MAGNETOMETER_OFFSET);
+//   case 0b0011:
+//     return DEG_TO_180(SOUTH_EAST - MAGNETOMETER_OFFSET);
+//   case 0b0111:
+//     return DEG_TO_180(SOUTH - MAGNETOMETER_OFFSET);
+//   case 0b0110:
+//     return DEG_TO_180(SOUTH_WEST - MAGNETOMETER_OFFSET);
+//   case 0b1110:
+//     return DEG_TO_180(WEST - MAGNETOMETER_OFFSET);
+//   case 0b1100:
+//     return DEG_TO_180(SOUTH - MAGNETOMETER_OFFSET);
+//   default:
+//     return NULL;
+//   }
+// }
 
 float calculate_long_distance(float sensor_val){
   //convert voltage reading from long dist sensor into distance in cm
-  float voltage = sensor_val / 1000.0//* BYTE_TO_VOLT;
+  float voltage = sensor_val / 1000.0;//* BYTE_TO_VOLT;
 
   //step-by-step calculation as arduino cannot handle PEMDAS
   float ln_voltage = log(voltage);
@@ -95,7 +95,7 @@ float calculate_long_distance(float sensor_val){
 
 float calculate_short_distance(float sensor_val){
   //convert voltage reading from short dist sensor into distance in cm
-  float voltage = sensor_val / 1000.0//* BYTE_TO_VOLT;
+  float voltage = sensor_val / 1000.0;//* BYTE_TO_VOLT;
 
   //calculation for the short distance sensor here
   float exponent = -1/0.95;
@@ -109,15 +109,15 @@ float calculate_short_distance(float sensor_val){
  * @brief Updates all sensor values
 */
 void read_sensors(){
-	line_FL_val = filter_line_FL(SensorValue[line_FL]);
-	line_BL_val = filter_line_BL(SensorValue[line_BL]);
-	line_BR_val = filter_line_BR(SensorValue[line_BR]);
-	line_FR_val = filter_line_FR(SensorValue[line_FR]);
+	line_FL_val = filter_line_FL(SensorValue[line_FL_pin]);
+	line_BL_val = filter_line_BL(SensorValue[line_BL_pin]);
+	line_BR_val = filter_line_BR(SensorValue[line_BR_pin]);
+	line_FR_val = filter_line_FR(SensorValue[line_FR_pin]);
 
-	dis_L_val = filter_distance_L(SensorValue[long_distance_L]);
-	dis_R_val = filter_distance_R(SensorValue[long_distance_R]);
-	dis_mid_val = filter_distance_mid(SensorValue[long_distance_M]);
-	dis_top_val = filter_distance_top(SensorValue[short_distance_T]);
+	dis_L_val = filter_distance_L(SensorValue[long_distance_L_pin]);
+	dis_R_val = filter_distance_R(SensorValue[long_distance_R_pin]);
+	dis_mid_val = filter_distance_mid(SensorValue[long_distance_M_pin]);
+	dis_top_val = filter_distance_top(SensorValue[short_distance_T_pin]);
 
 	cm_dis_mid_val = calculate_long_distance(dis_mid_val);
 	cm_dis_top_val = calculate_short_distance(dis_top_val);
@@ -133,11 +133,11 @@ void read_sensors(){
 	resetMotorEncoder(motor_L);
 }
 
-float read_arm_position(){
-  limit_switch_A = SensorValue[limit_switch_A_pin];
-  limit_switch_B = SensorValue[limit_switch_B_pin];
-  limit_switch_C = SensorValue[limit_switch_C_pin];
-}
+// float read_arm_position(){
+//   limit_switch_A = SensorValue[limit_switch_A_pin];
+//   limit_switch_B = SensorValue[limit_switch_B_pin];
+//   limit_switch_C = SensorValue[limit_switch_C_pin];
+// }
 
 /**
  * @brief Initialises the robot
