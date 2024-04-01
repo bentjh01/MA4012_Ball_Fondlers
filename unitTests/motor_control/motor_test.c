@@ -31,7 +31,7 @@ static float robot_cmd_rpmR;
 static float robot_cmd_rpmL;
 
 static int loop_ms;
-static int dt;
+static int main_dt;
 
 // Updates all sensor values
 void read_sensors(void){
@@ -41,14 +41,14 @@ void read_sensors(void){
 
 	// robot_en_rpmR = robot_d_enR / ENCODER_RESOLUTION * 60/DT;
   	// robot_en_rpmL = robot_d_enL / ENCODER_RESOLUTION * 60/DT;
-	dt = time1[T1];
-	robot_en_rpmR = robot_d_enR / ENCODER_RESOLUTION * 60/dt;
-	robot_en_rpmL = robot_d_enL / ENCODER_RESOLUTION * 60/dt;
+	main_dt = time1[T1];
+	robot_en_rpmR = robot_d_enR / ENCODER_RESOLUTION * 60/main_dt;
+	robot_en_rpmL = robot_d_enL / ENCODER_RESOLUTION * 60/main_dt;
 
 	robot_en_linX = calculate_linear_x(robot_en_rpmR, robot_d_enL);
 	robot_en_angZ = calculate_angular_z(robot_en_rpmR, robot_d_enL);
 
-	update_controller_readings(robot_en_rpmR, robot_en_rpmL, dt);
+	update_controller_readings(robot_en_rpmR, robot_en_rpmL, main_dt);
 
 	resetMotorEncoder(motor_R);
 	resetMotorEncoder(motor_L);
