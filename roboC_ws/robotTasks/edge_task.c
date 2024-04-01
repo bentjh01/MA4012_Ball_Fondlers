@@ -33,16 +33,17 @@ static float rb_yaw;
 static float rb_x;
 static int FL;
 static int FR;
-static float alpha;
-static float rotate_ang;
+
 
 void edge_avoid(float robot_x, float yaw, int FL, int FR){
 
-	rb_yaw = rb_yaw;
+	rb_yaw = yaw;
     rb_x = robot_x;
 	FL = FL;
 	FR = FR;
 
+	static float alpha;
+    static float rotate_ang;
 	float set_linX;
     float set_angZ;
 	float current_yaw;
@@ -125,7 +126,7 @@ void edge_avoid(float robot_x, float yaw, int FL, int FR){
 	set_angZ = MAX_TURN;
 
 	// update current yaw value into variable current_yaw
-	current_yaw = ;
+	current_yaw = yaw;
 	expected_yaw = rb_yaw + rotate_ang;
 
 	while (abs(current_yaw - expected_yaw) > YAW_THRESHOLD) {
