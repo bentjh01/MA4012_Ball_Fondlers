@@ -14,6 +14,7 @@
 
 int startup_phase = 1;
 int ball_location;
+int prev_ball_location;
 
 int opponent_detected(float short_sensor_dist){
     // may need to move this to components into sensors.c
@@ -45,13 +46,11 @@ int get_ball_location(float left_sensor_dist, float right_sensor_dist, float mid
 }
 
 int goto_task(float x, float y, float yaw, float left_sensor_dist, float right_sensor_dist, float mid_sensor_dist, float short_sensor_dist){
-    if(startup_phase){
-      startup_phase = 0;                                        //set startup_phase
-      ball_location = get_ball_location(left_sensor_dist, right_sensor_dist, mid_sensor_dist, short_sensor_dist);
+    if(get_ball_location(left_sensor_dist, right_sensor_dist, mid_sensor_dist, short_sensor_dist) != 0){
+        ball_location = get_ball_location(left_sensor_dist, right_sensor_dist, mid_sensor_dist, short_sensor_dist);
     }
 
     //ROTATE UNTIL MIDDLE, MOVE FORWARD
-
     if (success == 1){
         return COLLECT_BALL;
     }

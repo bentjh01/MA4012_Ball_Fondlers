@@ -5,11 +5,12 @@
 2. Write a check-if-ball-is-detected function to check if ball is detected and differentiate between ball and opponent
 */
 
-//TODO!!!
-//Check if the robot_move() still accepts linear and angular velocity!
-int startup_phase = 1;
-float robot_moving_timeout_centisecond;
-int changing_search_position = 0;
+static int startup_phase = 1;
+static int changing_search_position = 0;
+static int search_counter = 0;
+static float search_initial_yaw;
+static float search_initial_x;
+static float search_initial_y;
 
 int opponent_detected(float short_sensor_dist){
   // may need to move this to components into sensors.c
@@ -45,14 +46,12 @@ int search_task(float x, float y, float yaw, float left_sensor_dist, float right
     if(startup_phase){
       startup_phase = 0;                                        //set startup_phase
       robot_move(linear_velocity = 0, angular_velocity = 120);  //rotate ccw 120 deg/s, try find detection
-
-      //initialize timer
-      search_timer = time10[T2];
-      robot_moving_timeout_centisecond = 300;
+      search_initial_yaw = yaw;                                        //initialize yaw
+      search_counter = 0;                                       //reset counter
     }
 
-    //check timeout (360 deg rotation achieved)
-    if(time10[T2]-search_timer > robot_moving_timeout_centisecond){
+    //check if 360 deg rotation achieved
+    if(fabs(yaw-search_initial_yaw) < SEARCH_YAW_TOLERANCE && search_counter >= SEARCH_COUNT_THRESHOLD){
       robot_move(linear_velocity = 0, angular_velocity = 0);  //stop movement
       startup_phase = 1;                                      //reset startup_phase
       changing_search_position = 1;                           //initiate change search position
@@ -66,6 +65,7 @@ int search_task(float x, float y, float yaw, float left_sensor_dist, float right
       return GOTO_BALL;
     }
     else{
+      search_counter += 1; //increment counter
       //return opponent_detected(short_sensor_dist) //use this if want to check for opp robot instead of return 0;
       return 0;
     }
@@ -76,13 +76,13 @@ int search_task(float x, float y, float yaw, float left_sensor_dist, float right
       startup_phase = 0;                                      //set startup_phase
       robot_move(linear_velocity = 50, angular_velocity = 0); //move forward
 
-      //initialize timer
-      search_timer = time10[T2];
-      robot_moving_timeout_centisecond = 160;
+      //initialize position
+      search_initial_x = x;
+      search_initial_y = y;
     }
 
     //check timeout (finished moving to a new search position)
-    if(time10[T2]-search_timer > robot_moving_timeout_centisecond){
+    if(sqrt(pow(x-search_initial_x, 2) + pow(y-search_initial_y, 2)) < CHANGE_POSITION_DISTANCE){
       robot_move(linear_velocity = 0, angular_velocity = 0);  //stop movement
       startup_phase = 1;                                      //reset startup_phase
       changing_search_position = 0;                           //terminate change_search_position

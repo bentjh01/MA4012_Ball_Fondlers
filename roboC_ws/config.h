@@ -19,12 +19,15 @@
 #define OPP_DETECTED        9
 
 //SHARP DISTANCE SENSORS
-#define BALL_THRESHOLD_LNR      45.0
-#define BALL_THRESHOLD_MID      35.0
-#define OPP_CLOSENESS_THRESHOLD 15.0
+#define BALL_THRESHOLD_LNR          45.0
+#define BALL_THRESHOLD_MID          35.0
+#define OPP_CLOSENESS_THRESHOLD     15.0
+#define SEARCH_YAW_TOLERANCE        2.0
+#define SEARCH_COUNT_THRESHOLD      25
+#define CHANGE_POSITION_DISTANCE    80.0
 
 // DELIVER TASK
-#define DELIVERY_YAW_TOLERANCE 5 // [degrees] Tolerance for the yaw angle to be considered as 0 for robot to move linearly
+#define DELIVERY_YAW_TOLERANCE 5.0 // [degrees] Tolerance for the yaw angle to be considered as 0 for robot to move linearly
 
 // MOTORS
 #define MOTOR_L_KP 0.0
