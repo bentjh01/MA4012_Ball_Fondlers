@@ -35,6 +35,7 @@ ________________________________________________________________________________
 #define E                   2.718282
 #define DEGREE_TO_RADIAN    M_PI/180
 #define RADIAN_T0_RPM       30/M_PI
+#define mVOLT_TO_VOLT       0.001
 
 // ROBOTC CONSTANTS
 #define TRIGGERED           0

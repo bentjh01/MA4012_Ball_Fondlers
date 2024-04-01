@@ -1,4 +1,3 @@
-
 #pragma config(Sensor, in1,    long_distance_R_pin, sensorAnalog)
 #pragma config(Sensor, in2,    long_distance_M_pin, sensorAnalog)
 #pragma config(Sensor, in3,    long_distance_L_pin, sensorAnalog)
