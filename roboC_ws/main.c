@@ -38,6 +38,7 @@ int robot_line_FR;
 
 // robot task
 int task_status;
+int avoid_status;
 
 /* _____________________________________________________________________________________________________________________
 
@@ -74,12 +75,35 @@ task main()
 		clearTimer(T1);
         read_sensors();
 		// main Loop
-		if (edge_detected(robot_line_FL, robot_line_BL, robot_line_BR, robot_line_FR)){
-			edge_avoid(robot_x, robot_yaw, robot_line_FL, robot_line_FR);
+		if (edge_detected(robot_line_FL, robot_line_BL, robot_line_BR, robot_line_FR) == 1){
+			robot_move(0,0);
+			avoid_status = avoid_case_check(robot_x, robot_yaw, robot_line_FL, robot_line_FR, robot_line_BL, robot_line_BR);
+			// 1 forward
+			// 2 backward
+			// And the expected_yaw in status 1 is also calculated in this function
 		}
-		else{
+
+		// edge avoid when search or goto ball
+		if (avoid_status  == 1){
+
+			avoid_status = edge_avoid_F(robot_yaw);
+
+		} 
+		// edge avoid when deliver ball
+		
+		else if(avoid_status == 2){
+
+			avoid_status = edge_avoid_B();
+
+		} 
+		//special cases: such as in the corner
+		else if(avoid_status == 3){
+			
+			avoid_status = edge_avoid_S(robot_yaw);
+		}
+		else {// when avoid status == 0 
 			switch (task_status){
-				case SEARCH{
+				case{
 
 				}
 				.
