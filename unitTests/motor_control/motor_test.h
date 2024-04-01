@@ -9,7 +9,8 @@
 #define MOTOR_L_KI 0.0
 #define MOTOR_L_KD 0.0
 
-#define MOTOR_R_KP 0.588671875*2.00
+// #define MOTOR_R_KP 0.588671875*2.00
+#define MOTOR_R_KP 0.0
 #define MOTOR_R_KI 0.0
 #define MOTOR_R_KD 0.0
 
@@ -29,8 +30,8 @@
 // ROBOT PARAMETERS
 #define WHEEL_DIAMETER      0.06926 //m
 #define ROBOT_TRACK         0.213 //m
-#define ENCODER_RESOLUTION  360 // [ticks/revolution]
-#define MAX_WHEEL_RPM       100 // [rpm]
+#define ENCODER_RESOLUTION  360.0 // [ticks/revolution]
+#define MAX_WHEEL_RPM       100.0 // [rpm]
 
 // PINOUT
 #define wheel_L_encoderA    dgtl2

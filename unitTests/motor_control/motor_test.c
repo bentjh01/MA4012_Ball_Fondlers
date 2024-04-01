@@ -41,14 +41,14 @@ void read_sensors(void){
 
 	// robot_en_rpmR = robot_d_enR / ENCODER_RESOLUTION * 60/DT;
   	// robot_en_rpmL = robot_d_enL / ENCODER_RESOLUTION * 60/DT;
-	main_dt = time1[T1];
-	robot_en_rpmR = robot_d_enR / ENCODER_RESOLUTION * 60/main_dt;
-	robot_en_rpmL = robot_d_enL / ENCODER_RESOLUTION * 60/main_dt;
+	main_dt = (float)time1[T1]/1000.0;
+	robot_en_rpmR = robot_d_enR / ENCODER_RESOLUTION * 60.0/DT;
+	robot_en_rpmL = robot_d_enL / ENCODER_RESOLUTION * 60.0/DT;
 
 	robot_en_linX = calculate_linear_x(robot_en_rpmR, robot_d_enL);
 	robot_en_angZ = calculate_angular_z(robot_en_rpmR, robot_d_enL);
 
-	update_controller_readings(robot_en_rpmR, robot_en_rpmL, main_dt);
+	update_controller_readings(robot_en_rpmR, robot_en_rpmL, DT);
 
 	resetMotorEncoder(motor_R);
 	resetMotorEncoder(motor_L);
