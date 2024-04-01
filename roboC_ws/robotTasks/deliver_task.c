@@ -44,3 +44,7 @@ void deliver_ball(float yaw, float rpmR, float rpmL, int BL, int BR) {
 void some_function() {
     float current_yaw = rb_yaw;
 }
+
+float deliiver_linX(){
+    return set_linX;
+}

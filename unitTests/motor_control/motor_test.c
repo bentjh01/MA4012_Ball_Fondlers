@@ -33,6 +33,17 @@ static float robot_cmd_rpmL;
 static int loop_ms;
 static int main_dt;
 
+// executes velocity control
+void robot_move(float linear_x, float angular_z){
+	robot_en_rpmR = calcualte_rpmR(linear_x, angular_z);
+	robot_en_rpmL = calcualte_rpmL(linear_x, angular_z);
+	robot_en_rpmR = limit_rpmR(robot_cmd_rpmR, robot_cmd_rpmL);
+	robot_en_rpmL = limit_rpmL(robot_cmd_rpmR, robot_cmd_rpmL);
+	robot_cmd_linX = calculate_linear_x(robot_cmd_rpmR, robot_cmd_rpmL);
+	robot_cmd_angZ = calculate_angular_z(robot_cmd_rpmR, robot_cmd_rpmL);
+	robot_move_closed(robot_cmd_rpmR, robot_cmd_rpmL);
+}
+
 // Updates all sensor values
 void read_sensors(void){
 
@@ -52,6 +63,8 @@ void read_sensors(void){
 
 	resetMotorEncoder(motor_R);
 	resetMotorEncoder(motor_L);
+
+	motor_execute(linX, angZ)
 }
 
 /* _____________________________________________________________________________________________________________________
@@ -88,23 +101,6 @@ void constant_power(int motor_power_R, int motor_power_L){
 }
 
 /**
- * @brief Sets the motor to a constant capped velocity in a closed loop
- * @param linX The desired linear velocity, m/s
- * @param angZ The desired angular velocity, deg/s
-*/
-void constant_velocity(float linX, float angZ){
-	robot_cmd_linX = linX;
-	robot_cmd_angZ = angZ;
-	robot_cmd_rpmR = calcualte_rpmR(robot_cmd_linX, robot_cmd_angZ);
-	robot_cmd_rpmL = calcualte_rpmL(robot_cmd_linX, robot_cmd_angZ);
-	robot_cmd_rpmR = limit_rpmR(robot_cmd_rpmR, robot_cmd_rpmL);
-	robot_cmd_rpmL = limit_rpmL(robot_cmd_rpmR, robot_cmd_rpmL);
-	robot_cmd_linX = calculate_linear_x(robot_cmd_rpmR, robot_cmd_rpmL);
-    robot_cmd_angZ = calculate_angular_z(robot_cmd_rpmR, robot_cmd_rpmL);
-	robot_move_closed(robot_cmd_rpmR, robot_cmd_rpmL);
-}
-
-/**
  * @brief Sets the motor to a capped constant rpm in a closed loop
  * @param rpmR The right motor rpm
  * @param rpmL The left motor rpm
@@ -115,6 +111,16 @@ void constant_rpm(float rpmR, float rpmL){
 	robot_cmd_rpmR = limit_rpmR(robot_cmd_rpmR, robot_cmd_rpmL);
 	robot_cmd_rpmL = limit_rpmL(robot_cmd_rpmR, robot_cmd_rpmL);
 	robot_move_closed(robot_cmd_rpmR, robot_cmd_rpmL);
+}
+
+// returns the linear velocity
+float roboTask_linX(){
+	return 0.0;
+}
+
+// returns the angular velocity
+float roboTask_angZ(){
+	return 0.0;
 }
 
 task main()
@@ -130,6 +136,8 @@ task main()
 		// constant_power(20, 0);
 		constant_velocity(0.1, 0.0);
 		// constant_rpm(60, 60);
+		robot_cmd_linX = roboTask_linX();
+		robot_cmd_angZ = roboTask_angZ();
 
 		while (time1[T1] < DT * 1000){}
 		loop_ms = time1[T1];

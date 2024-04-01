@@ -9,7 +9,7 @@ GLOBAL VARIABLES
 _____________________________________________________________________________________________________________________ */
 
 // Robot pose
-float robot_x;
+static float robot_x;
 float robot_y;
 float robot_yaw;
 float robot_linX;

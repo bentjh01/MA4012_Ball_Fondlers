@@ -23,6 +23,7 @@
 #define MAGNETO_FILTER_GAIN 0.25 // [0,1] takes a value between 0 and 1, the closer to 1 the more filtering
 
 // MAGNETOMETER PARAMETERS
+#define MAGNETO_OFFSET 0.0
 #define NORTH 0
 #define NORTH_WEST 45
 #define WEST 90
