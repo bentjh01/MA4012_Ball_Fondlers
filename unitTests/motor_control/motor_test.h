@@ -4,6 +4,7 @@
 // MOTORS
 #define LINEAR_SPEED_FACTOR 0.1511 // TODO
 #define LINEAR_SPEED_OFFSET -0.3419 // TODO
+#define MAX_POWER 127.0
 
 // #define MOTOR_L_KP 0.588671875*1.60
 #define MOTOR_L_KP 0.5
@@ -16,14 +17,18 @@
 #define MOTOR_R_KD 0.001
 
 // SERVO
-#define SERVO_DISPLACEMNT_FACTOR 1.0 // TODO
-#define SERVO_POWER_FACTOR 1.0 // TODO
+#define ARM_TOLERANCE 5.0 // [deg] TODO
+#define SERVO_POSITION_GAIN 1.0 // TODO
+#define SWITCH_A_POSITION 0.0 //[deg] TODO
+#define SWITCH_B_POSITION 0.0 //[deg] TODO
+#define SWITCH_C_POSITION 0.0 //[deg] TODO
 
 // CONSTANTS
 #define M_PI                3.141593
 #define E                   2.718282
 #define DEGREE_TO_RADIAN    M_PI/180
 #define RADIAN_T0_RPM       30/M_PI
+#define TRIGGERED           0
 
 // TASK PARAMETERS
 #define DT                  0.05
