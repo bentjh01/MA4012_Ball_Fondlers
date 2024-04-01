@@ -106,10 +106,14 @@ void read_sensors(){
 	d_enR = getMotorEncoder(motor_R);
 	d_enL = getMotorEncoder(motor_L);
 	m_rpmR = d_enR * 60/DT /ENCODER_RESOLUTION;
-  	m_rpmL = d_enL * 60/DT /ENCODER_RESOLUTION;
+  m_rpmL = d_enL * 60/DT /ENCODER_RESOLUTION;
 
 	resetMotorEncoder(motor_R);
 	resetMotorEncoder(motor_L);
+}
+
+float read_arduino(){
+  
 }
 
 /**
