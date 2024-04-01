@@ -78,14 +78,16 @@ task main()
 		clearTimer(T1);
         read_sensors();
 		// main Loop
-		deivertask(yaw, BL, BR)
+		robot_move(robot_cmd_linX, robot_cmd_angZ);
 		if (edge_detected()){
 			edge_avoid(robot_x, robot_yaw, robot_line_FL, robot_line_BL, robot_line_BR, robot_line_FR);
 		}
 		else{
 			switch (task_status){
 				case SEARCH{
-
+					search_task(sensorA, sensorB, sensorC);
+					robot_cmd_linX = search_linX();
+					robot_cmd_angZ = search_angZ();
 				}
 				.
 				.

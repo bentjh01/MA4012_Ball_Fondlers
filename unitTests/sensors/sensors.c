@@ -1,21 +1,21 @@
-#pragma config(Sensor, in1,    long_distance_R, sensorAnalog)
-#pragma config(Sensor, in2,    long_distance_M, sensorAnalog)
-#pragma config(Sensor, in3,    long_distance_L, sensorAnalog)
-#pragma config(Sensor, in4,    short_distance_T, sensorAnalog)
-#pragma config(Sensor, in5,    line_BR,        sensorAnalog)
-#pragma config(Sensor, in6,    line_FR,        sensorAnalog)
-#pragma config(Sensor, in7,    line_FL,        sensorAnalog)
-#pragma config(Sensor, in8,    line_BL,        sensorAnalog)
-#pragma config(Sensor, dgtl1,  wheel_L_encoderA, sensorQuadEncoder)
-#pragma config(Sensor, dgtl3,  wheel_R_encoderA, sensorQuadEncoder)
-#pragma config(Sensor, dgtl5,  arduino_3,      sensorDigitalIn)
-#pragma config(Sensor, dgtl6,  arduino_2,      sensorDigitalIn)
-#pragma config(Sensor, dgtl7,  arduino_1,      sensorDigitalIn)
-#pragma config(Sensor, dgtl8,  arduino_0,      sensorDigitalIn)
-#pragma config(Sensor, dgtl9,  magneto_north,  sensorDigitalIn)
-#pragma config(Sensor, dgtl10, magneto_south,  sensorDigitalIn)
-#pragma config(Sensor, dgtl11, magneto_east,   sensorDigitalIn)
-#pragma config(Sensor, dgtl12, magneto_west,   sensorDigitalIn)
+#pragma config(Sensor, in1,    long_distance_R_pin, sensorAnalog)
+#pragma config(Sensor, in2,    long_distance_M_pin, sensorAnalog)
+#pragma config(Sensor, in3,    long_distance_L_pin, sensorAnalog)
+#pragma config(Sensor, in4,    short_distance_T_pin, sensorAnalog)
+#pragma config(Sensor, in5,    line_BR_pin,        sensorAnalog)
+#pragma config(Sensor, in6,    line_FR_pin,        sensorAnalog)
+#pragma config(Sensor, in7,    line_FL_pin,        sensorAnalog)
+#pragma config(Sensor, in8,    line_BL_pin,        sensorAnalog)
+#pragma config(Sensor, dgtl1,  wheel_L_encoderA_pin, sensorQuadEncoder)
+#pragma config(Sensor, dgtl3,  wheel_R_encoderA_pin, sensorQuadEncoder)
+#pragma config(Sensor, dgtl5,  limit_switch_A_pin,      sensorDigitalIn)
+#pragma config(Sensor, dgtl6,  limit_switch_B_pin,      sensorDigitalIn)
+#pragma config(Sensor, dgtl7,  limit_switch_C_pin,      sensorDigitalIn)
+#pragma config(Sensor, dgtl8,  limit_switch_D_pin,      sensorDigitalIn)
+#pragma config(Sensor, dgtl9,  magneto_north_pin,  sensorDigitalIn)
+#pragma config(Sensor, dgtl10, magneto_south_pin,  sensorDigitalIn)
+#pragma config(Sensor, dgtl11, magneto_east_pin,   sensorDigitalIn)
+#pragma config(Sensor, dgtl12, magneto_west_pin,   sensorDigitalIn)
 #pragma config(Motor,  port2,           servo,         tmotorServoStandard, openLoop)
 #pragma config(Motor,  port6,           motor_R,       tmotorVex393_MC29, PIDControl, encoderPort, dgtl3)
 #pragma config(Motor,  port7,           motor_L,       tmotorVex393_MC29, PIDControl, reversed, encoderPort, dgtl1)
@@ -25,29 +25,34 @@
 #include "filter.c"
 
 // global variables
-float line_FL_val;
-float line_BL_val;
-float line_BR_val;
-float line_FR_val;
+static float line_FL_val;
+static float line_BL_val;
+static float line_BR_val;
+static float line_FR_val;
 
-float dis_L_val;
-float dis_R_val;
-float dis_mid_val;
-float dis_top_val;
+static float dis_L_val;
+static float dis_R_val;
+static float dis_mid_val;
+static float dis_top_val;
 
-float cm_dis_mid_val;
-float cm_dis_top_val;
-float cm_dis_R_val;
-float cm_dis_L_val;
+static float cm_dis_mid_val;
+static float cm_dis_top_val;
+static float cm_dis_R_val;
+static float cm_dis_L_val;
 
-int d_enR;
-int d_enL;
-float m_rpmR;
-float m_rpmL;
+static int d_enR;
+static int d_enL;
+static float m_rpmR;
+static float m_rpmL;
 
-float compass_yaw;
+static int limit_switch_A;
+static int limit_switch_B;
+static int limit_switch_C;
+static int limit_switch_D;
 
-int loop_ms; // ensure loop runs at 50ms
+static float compass_yaw;
+
+static int loop_ms; // ensure loop runs at 50ms
 
 float read_compass(void){
   int combination = SensorValue[compass_south] << 3 + SensorValue[compass_east]  << 2 + SensorValue[compass_north]  << 1 + SensorValue[compass_west];
@@ -128,8 +133,10 @@ void read_sensors(){
 	resetMotorEncoder(motor_L);
 }
 
-float read_arduino(){
-  
+float read_arm_position(){
+  limit_switch_A = SensorValue[limit_switch_A_pin];
+  limit_switch_B = SensorValue[limit_switch_B_pin];
+  limit_switch_C = SensorValue[limit_switch_C_pin];
 }
 
 /**

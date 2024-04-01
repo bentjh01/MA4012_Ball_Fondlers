@@ -33,11 +33,13 @@ void robot_move_closed(float cmd_rpmR, float cmd_rpmL){
  * @brief Open loop control of servo displacement
  * @param displacement The servo displacement
 */
-void robot_servo_open(int displacement){
-	int move_time_ms = displacement * SERVO_DISPLACEMNT_FACTOR;
-	int servo_power = limit_byte(displacement * SERVO_POWER_FACTOR);
-	while (time1[T2] < move_time_ms){
-		motor[servo] = servo_power;
+void robot_servo_open(int postion){
+	int move_time_ms = angle * SERVO_DISPLACEMNT_FACTOR;
+	// int servo_power = limit_byte(angle * SERVO_POWER_FACTOR);
+	if (time1[T2] < move_time_ms){
+		motor[servo] = 127;
 	}
-	motor[servo] = 0;
+	else{
+		motor[servo] = 0;
+	}
 }
