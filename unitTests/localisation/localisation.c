@@ -214,21 +214,21 @@ float read_compass(void){
   switch (combination)
   {
   case 0b1101:
-    return NORTH;
+    return NORTH - MAGNETO_OFFSET;
   case 0b1001:
-    return NORTH_EAST;
+    return NORTH_EAST - MAGNETO_OFFSET;
   case 0b1011:
-    return EAST;
+    return EAST - MAGNETO_OFFSET;
   case 0b0011:
-    return SOUTH_EAST;
+    return SOUTH_EAST - MAGNETO_OFFSET;
   case 0b0111:
-    return SOUTH;
+    return SOUTH - MAGNETO_OFFSET;
   case 0b0110:
-    return SOUTH_WEST;
+    return SOUTH_WEST - MAGNETO_OFFSET;
   case 0b1110:
-    return WEST;
+    return WEST - MAGNETO_OFFSET;
   case 0b1100:
-    return NORTH_WEST;
+    return NORTH_WEST - MAGNETO_OFFSET;
   default:
     return NULL;
   }
