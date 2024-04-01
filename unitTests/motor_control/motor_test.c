@@ -25,6 +25,37 @@
 #include "motor_control.c"
 #include "servo_control.c"
 
+/*
+Note the following:
+1. This file is used to TEST and CALIBRATE the motors of the drive system and the servo
+2. The parameters to calibrate are located in motor_test.h and the following are to be calibrated
+	- MOTOR_L_KP
+	- MOTOR_L_KI
+	- MOTOR_L_KD
+	- MOTOR_R_KP
+	- MOTOR_R_KI
+	- MOTOR_R_KD
+	- SERVO_ARM_TOLERANCE = the tolerance of the arm's position. it is used to determine if the servo motor should stop. 
+	- SERVO_POSITION_GAIN = the estimated angle of displacement when the servo is activated in one cycle. i.e. in 0.05 [s] how much does the arm move
+	- SWITCH_A_POSITION = the position of the limit switch A which is somewhere in the outward position
+	- SWITCH_B_POSITION = the position of the limit switch B which is somewhere in the middle position
+	- SWITCH_C_POSITION = the position of the limit switch C which is somewhere in the inward position
+2. 	IMPORTANT!! The characteristic of the motor and the code sets up the KI value to be the most important. The higher the 
+	value, the faster steady state speed is achieved but too high will cause oscillations. please observe the integral component the PID
+3. Code found between the TEST_CODE_BEGIN and TEST_CODE_END are strictly for testing and not to be used in the final robot
+*/
+
+// TEST CODE BEGIN
+float calc_linear_x(float rpmL, float rpmR){
+	float linX = (rpmR + rpmL) / RADIAN_T0_RPM * WHEEL_DIAMETER /4;
+	return linX;
+}
+
+float calc_angular_z(float rpmL, float rpmR){
+	float angZ = (rpmR - rpmL) * WHEEL_DIAMETER/ROBOT_TRACK / RADIAN_T0_RPM / DEGREE_TO_RADIAN;
+	return angZ;
+}
+// TEST CODE END
 
 /* _____________________________________________________________________________________________________________________
 
@@ -38,8 +69,10 @@ static int limit_switch_C;
 static float robot_en_rpmR;
 static float robot_en_rpmL;
 
+// TESTING CODE BEGIN
 static float robot_en_linX;
 static float robot_en_angZ;
+// TESTING CODE END
 
 static float robot_arm_position;
 
@@ -56,7 +89,6 @@ static float robot_cmd_rpmR;
 static float robot_cmd_arm;
 
 static int loop_ms;
-static int main_dt;
 
 // Updates all sensor values
 void read_sensors(void){
@@ -65,8 +97,10 @@ void read_sensors(void){
 	robot_en_rpmR = getMotorEncoder(motor_R) / ENCODER_RESOLUTION * 60.0/DT;
 	robot_en_rpmL = getMotorEncoder(motor_L) / ENCODER_RESOLUTION * 60.0/DT;
 
-	robot_en_linX = calculate_linear_x(robot_en_rpmR, robot_en_rpmR);
-	robot_en_angZ = calculate_angular_z(robot_en_rpmR, robot_en_rpmL);
+	// TESTING CODE BEGIN
+	robot_en_linX = calc_linear_x(robot_en_rpmR, robot_en_rpmR);
+	robot_en_angZ = calc_angular_z(robot_en_rpmR, robot_en_rpmL);
+	// TESTING CODE END
 
 	set_motor_status(robot_en_rpmL, robot_en_rpmR);
 
@@ -83,12 +117,6 @@ void robot_execute(){
 
 	robot_arm_move(robot_cmd_arm);
 }
-
-/* _____________________________________________________________________________________________________________________
-
-TEST SCRIPT
-_____________________________________________________________________________________________________________________ */
-
 /**
  * @brief Initialises the robot
 */
@@ -114,12 +142,13 @@ void init(){
 	}
 }
 
+// TEST CODE BEGIN
 /**
  * @brief Simulates a robot task by floating point operations
  * @param n number of operations
 */
 void floppy(int n){
-	for (unsigned int i = 0; i < n; i++){
+	for (int i = 0; i < n; i++){
 	float ans = 5.0 / 13.0;
 	}
 }
@@ -132,38 +161,65 @@ void floppy(int n){
 void constant_power(int motor_power_R, int motor_power_L){
 	motor[motor_R] = motor_power_R;
 	motor[motor_L] = motor_power_L;
+	return;
+}
+
+/** 
+ * @brief Sets the motors to a constant speed and updates the commanded rpm and speeds based on limitations
+ * @param linX desired linear velocity in M/S
+ * @param angZ desired angular velocity in DEG/S
+*/
+void constant_speed(float linX, float angZ){
+	robot_base_move(robot_cmd_linX, robot_cmd_angZ);
+	robot_cmd_linX = get_cmd_linX();
+	robot_cmd_angZ = get_cmd_angZ();
+	robot_cmd_rpmL = get_cmd_rpmL();
+	robot_cmd_rpmR = get_cmd_rpmR();
+	return;
 }
 
 /**
- * @brief Sets the motor to a capped constant rpm in a closed loop
- * @param rpmR The right motor rpm
- * @param rpmL The left motor rpm
+ * @brief Sets the motors to a constant RPM and updates the commanded RPM based on limitations. This is only for TESTING
+ * @param rpmL desired LEFT wheel rpm
+ * @param rpmR desired RIGHT wheel rpm
 */
-static float robot_cmd_rpmR;
-static float robot_cmd_rpmL;
-void constant_rpm(float rpmR, float rpmL){
-	robot_cmd_rpmR = rpmR;
-	robot_cmd_rpmL = rpmL;
-	robot_cmd_rpmR = limit_rpmR(robot_cmd_rpmR, robot_cmd_rpmL);
-	robot_cmd_rpmL = limit_rpmL(robot_cmd_rpmR, robot_cmd_rpmL);
-	robot_move_closed(robot_cmd_rpmR, robot_cmd_rpmL);
+void constant_rpm(float rpmL, float rpmR){
+	robot_move_rpm(rpmL, rpmR);
+	robot_cmd_linX = NULL;
+	robot_cmd_angZ = NULL;
+	robot_cmd_rpmL = get_cmd_rpmL();
+	robot_cmd_rpmR = get_cmd_rpmR();
+	return;
 }
+// TEST CODE END
 
 task main()
 {
 	init();
 	while(1){
 		read_sensors();
-		robot_execute(robot_cmd_linX, robot_cmd_angZ, robot_cmd_arm);
+		// robot_execute(robot_cmd_linX, robot_cmd_angZ, robot_cmd_arm);
 		clearTimer(T1);
 		// Main Loop
 
 		floppy(1000);
 
-		// constant_power(20, 0);
+		/*________________________________________
 
-		robot_cmd_linX = 0.2;
-		robot_cmd_angZ = 0.0;
+		DRIVE MOTOR TESTING
+		________________________________________*/		
+		// constant_power(20, 0);
+		constant_rpm(60, 60);
+		// constant_speed(0.4, 0.4);
+
+		/*________________________________________
+
+		SERVO MOTOR TESTING
+		________________________________________*/		
+
+		// set a position
+		robot_arm_move(0.0);
+	
 
 		while (time1[T1] < DT * 1000){}
 		loop_ms = time1[T1];

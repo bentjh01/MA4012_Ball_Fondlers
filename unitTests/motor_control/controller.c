@@ -9,7 +9,7 @@ static float motor_L_prev_error = 0;
 // RPM to POWER conversion
 float rpm_to_power(float rpm){
     if (rpm == 0) return 0;
-    return sgn(rpm) * 11.627 * pow(E, 0.0215 * fabs(rpm));
+    return sgn(rpm) * RPM_GAIN * pow(E, EXPONENT_GAIN * fabs(rpm));
 }
 
 // PID Controller for the right motor
