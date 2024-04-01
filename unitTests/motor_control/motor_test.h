@@ -5,14 +5,15 @@
 #define LINEAR_SPEED_FACTOR 0.1511 // TODO
 #define LINEAR_SPEED_OFFSET -0.3419 // TODO
 
-#define MOTOR_L_KP 0.588671875*1.60
-#define MOTOR_L_KI 0.0
-#define MOTOR_L_KD 0.0
+// #define MOTOR_L_KP 0.588671875*1.60
+#define MOTOR_L_KP 0.5
+#define MOTOR_L_KI 1.2
+#define MOTOR_L_KD 0.001
 
 // #define MOTOR_R_KP 0.588671875*2.00
-#define MOTOR_R_KP 0.0
-#define MOTOR_R_KI 0.0
-#define MOTOR_R_KD 0.0
+#define MOTOR_R_KP 0.5
+#define MOTOR_R_KI 1.2
+#define MOTOR_R_KD 0.001
 
 // SERVO
 #define SERVO_DISPLACEMNT_FACTOR 1.0 // TODO
