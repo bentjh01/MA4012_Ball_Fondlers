@@ -20,7 +20,7 @@ float speed_power(float power){
 // Power to rpm conversion
 float power_rpm(float rpm){
     if (rpm == 0) return 0;
-    return sgn(rpm) * pow(E, (((fabs(rpm)/RADIAN_T0_RPM) * WHEEL_DIAMETER/2 -LINEAR_SPEED_OFFSET)/LINEAR_SPEED_FACTOR));
+    return sgn(rpm) * 11.627 * pow(E, 0.0215 * fabs(rpm));
 }
 
 void update_controller_readings(float rpmR, float rpmL, float dt){
