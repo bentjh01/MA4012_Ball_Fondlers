@@ -25,14 +25,14 @@ ________________________________________________________________________________
 #define LINE_FR 1385.0
 
 // FILTERING, (output = prev_input) 0 < FILTER_GAIN < 1 (output = new_input)
-#define FILTER_GAIN_LINE_FL 	1.0
-#define FILTER_GAIN_LINE_BL 	1.0
-#define FILTER_GAIN_LINE_BR 	1.0 
-#define FILTER_GAIN_LINE_FR 	1.0 
-#define FILTER_GAIN_LONG_L 	    1.0 
-#define FILTER_GAIN_LONG_R 	    1.0 
-#define FILTER_GAIN_LONG_MID 	1.0 
-#define FILTER_GAIN_SHORT_TOP 	1.0 
+#define FILTER_GAIN_LINE_FL 	1.0 //TODO
+#define FILTER_GAIN_LINE_BL 	1.0 //TODO
+#define FILTER_GAIN_LINE_BR 	1.0 //TODO
+#define FILTER_GAIN_LINE_FR 	1.0 //TODO
+#define FILTER_GAIN_LONG_L 	    1.0 //TODO
+#define FILTER_GAIN_LONG_R 	    1.0 //TODO
+#define FILTER_GAIN_LONG_MID 	1.0 //TODO
+#define FILTER_GAIN_SHORT_TOP 	1.0 //TODO
 
 // MAGNETOMETER PARAMETERS
 #define MAGNETOMETER_OFFSET 0.0 // compass reading when robot is facing forward i.e. the bearing of a real compass
