@@ -12,24 +12,29 @@ static float search_initial_yaw;
 static float search_initial_x;
 static float search_initial_y;
 
-int search_opponent_detected(float short_sensor_dist){
-  // may need to move this to components into sensors.c
-  if(short_sensor_dist <= OPP_CLOSENESS_THRESHOLD){
-    //Theres an opp robot close in front
-    return OPP_DETECTED;
-  }
-  else{
-    return 0;
-  }
-}
+//NOTE!!!
+//MOVE OPP DETECTION TO 
+//MAIN CODE GET SENSOR READING IN CM
 
-int ball_detected(float left_sensor_dist, float right_sensor_dist, float mid_sensor_dist, float short_sensor_dist){
+// int search_opponent_detected(float short_sensor_dist){
+//   // may need to move this to components into sensors.c
+//   if(short_sensor_dist <= OPP_CLOSENESS_THRESHOLD){
+//     //Theres an opp robot close in front
+//     return OPP_DETECTED;
+//   }
+//   else{
+//     return 0;
+//   }
+// }
+
+int ball_detected(float left_sensor_dist, float right_sensor_dist, float mid_sensor_dist, float short_sensor_dist, int opp_detected){
   // Returns 1 if a ball is detected, 0 otherwise
   // return 0 when there is no detection
+  //ignore opp robot
   if (left_sensor_dist <= BALL_THRESHOLD_LNR || right_sensor_dist <= BALL_THRESHOLD_LNR){
     return 1;
   }
-  else if(mid_sensor_dist <= BALL_THRESHOLD_MID && search_opponent_detected(short_sensor_dist) == 0){
+  else if(mid_sensor_dist <= BALL_THRESHOLD_MID && !opp_detected){
     return 1;
   }
   else{
@@ -38,7 +43,7 @@ int ball_detected(float left_sensor_dist, float right_sensor_dist, float mid_sen
 }
 
 
-int search_task(float x, float y, float yaw, float left_sensor_dist, float right_sensor_dist, float mid_sensor_dist, float short_sensor_dist){
+int search_task(float x, float y, float yaw, float left_sensor_dist, float right_sensor_dist, float mid_sensor_dist, float short_sensor_dist, int opp_detected){
   //Scanning
   if(changing_search_position == 0){
     //Rotate to scan
@@ -54,11 +59,11 @@ int search_task(float x, float y, float yaw, float left_sensor_dist, float right
       robot_move(linear_velocity = 0, angular_velocity = 0);  //stop movement
       search_startup_phase = 1;                               //reset search_startup_phase
       changing_search_position = 1;                           //initiate change search position
-      return 0;
+      return SEARCH_BALL;
     }
 
     //check for ball
-    if (ball_detected(left_sensor_dist,right_sensor_dist, mid_sensor_dist, short_sensor_dist) == 1){
+    if (ball_detected(left_sensor_dist,right_sensor_dist, mid_sensor_dist, short_sensor_dist, opp_detected) == 1){
       robot_move(linear_velocity = 0, angular_velocity = 0);  //stop movement
       search_startup_phase = 1;                               //reset search_startup_phase
       return GOTO_BALL;
@@ -66,7 +71,7 @@ int search_task(float x, float y, float yaw, float left_sensor_dist, float right
     else{
       search_counter += 1; //increment counter
       //return search_opponent_detected(short_sensor_dist) //use this if want to check for opp robot instead of return 0;
-      return 0;
+      return SEARCH_BALL;
     }
   }
   //Changing search position
@@ -85,18 +90,19 @@ int search_task(float x, float y, float yaw, float left_sensor_dist, float right
       robot_move(linear_velocity = 0, angular_velocity = 0);  //stop movement
       search_startup_phase = 1;                               //reset search_startup_phase
       changing_search_position = 0;                           //terminate change_search_position
-      return 0;
+      return SEARCH_BALL;
     }
 
     //check for ball and opp
-    if (ball_detected(left_sensor_dist,right_sensor_dist, mid_sensor_dist, short_sensor_dist) == 1){
+    if (ball_detected(left_sensor_dist,right_sensor_dist, mid_sensor_dist, short_sensor_dist, opp_detected) == 1){
       robot_move(linear_velocity = 0, angular_velocity = 0);  //stop movement
       search_startup_phase = 1;                               //reset search_startup_phase
       changing_search_position = 0;                           //terminate change_search_position
       return GOTO_BALL;
     }
     else{
-      return search_opponent_detected(short_sensor_dist) //check for opp robot
+      // return search_opponent_detected(short_sensor_dist) //check for opp robot
+      return SEARCH_BALL;
     }
   }
     

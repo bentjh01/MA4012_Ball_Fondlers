@@ -15,8 +15,7 @@
 #define GOTO_BALL           3
 #define COLLECT_BALL        4
 #define DELIVER_BALL        5
-#define TIMEOUT             8
-#define OPP_DETECTED        9
+// #define OPP_DETECTED        9
 
 //SHARP DISTANCE SENSORS
 #define BALL_THRESHOLD_LNR          45.0

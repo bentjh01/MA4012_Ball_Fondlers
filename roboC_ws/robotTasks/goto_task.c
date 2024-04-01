@@ -65,12 +65,12 @@ float calculate_goto_target_yaw(float goto_initial_yaw, float yaw){
 }
 
 int goto_task(float x, float y, float yaw, float left_sensor_dist, float right_sensor_dist, float mid_sensor_dist, float short_sensor_dist){
-    //Check every new detection
     ball_location = get_ball_location(left_sensor_dist, right_sensor_dist, mid_sensor_dist, short_sensor_dist);     //get latest ball location
 
+    //Check if new detection there is new detection that is different from the previous (Cos if e.g. detect left, then left again, can be 2 different balls)
     if(get_ball_location(left_sensor_dist, right_sensor_dist, mid_sensor_dist, short_sensor_dist) != 0 && prev_ball_location != ball_location){
-        robot_move(linear_velocity = 0, angular_velocity = 0);                                                          //stop movement
-        prev_ball_location = ball_location;                                                                             //save prev ball location
+        robot_move(linear_velocity = 0, angular_velocity = 0);  //stop movement
+        prev_ball_location = ball_location;                     //save prev ball location
     }
 
     if(ball_location == FRONT && goto_opponent_detected(short_sensor_dist) == OPP_DETECTED){
@@ -79,14 +79,18 @@ int goto_task(float x, float y, float yaw, float left_sensor_dist, float right_s
         return SEARCH_BALL;
     }
     else if(ball_location == FRONT && mid_sensor_dist > READY_TO_COLLECT_THRESHOLD && goto_opponent_detected(short_sensor_dist) != OPP_DETECTED){
-        robot_move(linear_velocity = 50, angular_velocity = 0); //move forward
-        return 0;
-    }
-    else if(ball_location == FRONT && mid_sensor_dist <= READY_TO_COLLECT_THRESHOLD && goto_opponent_detected(short_sensor_dist) != OPP_DETECTED){
-        robot_move(linear_velocity = 0, angular_velocity = 0); //stop movement
-        return COLLECT_BALL;
+        //Ball in front, check if need to move forward to get closer to the ball
+        if(mid_sensor_dist > READY_TO_COLLECT_THRESHOLD){
+            robot_move(linear_velocity = 50, angular_velocity = 0); //move forward
+            return GOTO_BALL;
+        }
+        else{
+            robot_move(linear_velocity = 0, angular_velocity = 0); //stop movement
+            return COLLECT_BALL;
+        }
     }
     else if(ball_location == LEFT){
+        //Ball on the left
         //if ball previously detected on the right, now detected on to the left. Meaning the ball is too far for the middle sensor to pick up.
         if(prev_ball_location == RIGHT){
             goto_correction_mode = 1;                                           //activate correction mode
@@ -101,15 +105,17 @@ int goto_task(float x, float y, float yaw, float left_sensor_dist, float right_s
             if(fabs(yaw-goto_target_yaw) < GOTO_YAW_TOLERANCE){
                 robot_move(linear_velocity = 20, angular_velocity = 0); //move forward
             }
+            return GOTO_BALL;
         }
         //ball detected on the left for the first time
         else{
             goto_initial_yaw = yaw;
             robot_move(linear_velocity = 0, angular_velocity = 20); //rotate CCW
-            return 0;
+            return GOTO_BALL;
         }
     }
     else if(ball_location == RIGHT){
+        //Ball on the right
         //if ball previously detected on the left, now detected on to the right. Meaning the ball is too far for the middle sensor to pick up.
         if(prev_ball_location == LEFT){
             goto_correction_mode = 1;                                           //activate correction mode
@@ -124,16 +130,17 @@ int goto_task(float x, float y, float yaw, float left_sensor_dist, float right_s
             if(fabs(yaw-goto_target_yaw) < GOTO_YAW_TOLERANCE){
                 robot_move(linear_velocity = 20, angular_velocity = 0); //move forward
             }
+            return GOTO_BALL;
         }
         //ball detected on the left for the first time
         else{
             goto_initial_yaw = yaw;
             robot_move(linear_velocity = 0, angular_velocity = -20); //rotate CW
-            return 0;
+            return GOTO_BALL;
         }
     }
     else{
-        return 0;
+        return GOTO_BALL;
     }
 
 
