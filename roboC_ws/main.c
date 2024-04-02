@@ -1,11 +1,15 @@
-
+#pragma config(Sensor, dgtl1,  ,               sensorQuadEncoder)
+#pragma config(Sensor, dgtl3,  ,               sensorQuadEncoder)
+#pragma config(Motor,  port2,           servo,         tmotorServoStandard, openLoop)
+#pragma config(Motor,  port6,           motor_R,       tmotorVex393_MC29, openLoop, encoderPort, dgtl3)
+#pragma config(Motor,  port7,           motor_L,       tmotorVex393_MC29, openLoop, reversed, encoderPort, dgtl1)
 /* _____________________________________________________________________________________________________________________
 
 GLOBAL VARIABLES
 _____________________________________________________________________________________________________________________ */
 
 // Robot pose
-float robot_x;
+static float robot_x;
 float robot_y;
 float robot_yaw;
 float robot_linX;
@@ -74,14 +78,16 @@ task main()
 		clearTimer(T1);
         read_sensors();
 		// main Loop
-		deivertask(yaw, BL, BR)
+		robot_move(robot_cmd_linX, robot_cmd_angZ);
 		if (edge_detected()){
 			edge_avoid(robot_x, robot_yaw, robot_line_FL, robot_line_BL, robot_line_BR, robot_line_FR);
 		}
 		else{
 			switch (task_status){
 				case SEARCH{
-
+					search_task(sensorA, sensorB, sensorC);
+					robot_cmd_linX = search_linX();
+					robot_cmd_angZ = search_angZ();
 				}
 				.
 				.
