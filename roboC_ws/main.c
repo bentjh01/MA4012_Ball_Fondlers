@@ -201,7 +201,7 @@ task main()
 			task_status = EDGE;
 			edge_avoid(robot_x, robot_yaw, robot_line_FL, robot_line_BL, robot_line_BR, robot_line_FR);
 		}
-		else{
+		else {// when avoid status == 0 
 			switch (task_status){
 				case EDGE:
 					int avoid_complete = avoid_task(robot_x, robot_y, robot_yaw, robot_magneto_yaw, robot_line_FL, robot_line_BL, robot_line_BR, robot_line_FR);
