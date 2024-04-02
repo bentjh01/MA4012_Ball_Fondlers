@@ -1,21 +1,51 @@
-
-
-void collect_ball(){
-	// Start Ball Collection
-    // Check if status = collection, and, gate is open
-	if (task_Status == 4 && limit_3 == 0){
-        if (short_dist_sensor > 5 and long_dist_sensor_mid < 7){
-            robot_servo_move;
-        }
-
-        // Check if ball in the chamber
-        if (short_dist < 0){
-            // Go to deliver task
-            task_status = 5; 
-        }
-
-    // Go back to Search + GOTO ball task
-	else {task_status = 3}
+void init_robot(void){
+	robot_x = 0;
+    robot_y = 0;
+    robot_yaw = 0;
+    robot_linX = 0;
+    robot_angZ = 0;
+    robot_rpmR = 0;
+    robot_rpmL = 0;
+    resetMotorEncoder(motor_R);
+	resetMotorEncoder(motor_L);
 }
 
+// Move to center of arena
+void move_to_center(){
+	if (robot_x < 120){ // arena length/2 = 2.4m/2
+		robot_move_close = ;
+	}
+	else{
+		robot_move_close(0,0);
+		int center_state = 1; // Robot reached the center of arena
+	}
+}
+	
+void center_start(){
+	// Begin Search upon reaching the center
+	if (center_state == 1){
+		task_status = 2; // Search status
+	}
+	else {
+		move_to_center();
+	}
+}
+
+void reset_start()
+{
+	while(true){
+		if(SensorValue(Reset_Start_Switch) == 0){
+			// Initialise all conditions of the robot
+			init_robot();
+			task_status = 0; // Home status
+			
+			if (SensorValue(Reset_Start_Switch) == 1){
+				// Move robot to center of arena
+				move_to_center();
+				
+				// Start Search
+				center_start();			
+		}
+	}
+}
 
