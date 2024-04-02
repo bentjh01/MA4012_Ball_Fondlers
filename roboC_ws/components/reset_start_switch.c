@@ -13,10 +13,10 @@ void init_robot(void){
 // Move to center of arena
 void move_to_center(){
 	if (robot_x < 120){ // arena length/2 = 2.4m/2
-		robot_move_close = ;
+		robot_move_closed(127, 0);
 	}
 	else{
-		robot_move_close(0,0);
+		robot_move_closed(0,0);
 		int center_state = 1; // Robot reached the center of arena
 	}
 }
