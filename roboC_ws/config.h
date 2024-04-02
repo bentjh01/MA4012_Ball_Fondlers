@@ -1,86 +1,123 @@
 #ifndef CONFIG_H
 #define CONFIG_H
+/*______________________________________________________________________________________________________________________
 
-#include "components/motor_control.c"
+TUNING SENSOR PARAMETERS
+______________________________________________________________________________________________________________________*/
+// SHARP DISTANCE SENSOR
+#define MID_SENSOR_OFFSET       0.0 // wrt to edge of ramp
+#define TOP_SENSOR_OFFSET       0.0 // wrt to edge of ramp
+#define LEFT_SENSOR_OFFSET      0.0 // wrt to edge of ramp
+#define RIGHT_SENSOR_OFFSET     0.0 // wrt to edge of ramp
+#define FILTER_GAIN_LONG_L 	    1.0 //(output = prev_input) 0 < FILTER_GAIN < 1 (output = new_input)
+#define FILTER_GAIN_LONG_R 	    1.0 //(output = prev_input) 0 < FILTER_GAIN < 1 (output = new_input)
+#define FILTER_GAIN_LONG_MID 	1.0 //(output = prev_input) 0 < FILTER_GAIN < 1 (output = new_input)
+#define FILTER_GAIN_SHORT_TOP 	1.0 //(output = prev_input) 0 < FILTER_GAIN < 1 (output = new_input)
+#define BALL_IN_CHAMBER_DISTANCE 9.9 // [cm] TODO
 
-#define LINE_FL_THRESHOLD 106.0
-#define LINE_BL_THRESHOLD 344.0
-#define LINE_BR_THRESHOLD 173.0
-#define LINE_FR_THRESHOLD 138.0
+// LINE SENSOR
+#define FILTER_GAIN_LINE_FL 	1.0 //(output = prev_input) 0 < FILTER_GAIN < 1 (output = new_input)
+#define FILTER_GAIN_LINE_BL 	1.0 // (output = prev_input) 0 < FILTER_GAIN < 1 (output = new_input)
+#define FILTER_GAIN_LINE_BR 	1.0 //(output = prev_input) 0 < FILTER_GAIN < 1 (output = new_input)
+#define FILTER_GAIN_LINE_FR 	1.0 //(output = prev_input) 0 < FILTER_GAIN < 1 (output = new_input)
+#define LINE_FL_THRESHOLD       106.0 // Midpoint of black point and yellow point
+#define LINE_BL_THRESHOLD       344.0 // Midpoint of black point and yellow point
+#define LINE_BR_THRESHOLD       173.0 // Midpoint of black point and yellow point
+#define LINE_FR_THRESHOLD       1385.0 // Midpoint of black point and yellow point
 
-// MAIN LOOP PARAMETERS
-#define DT 0.05
-#define HOME                1
-#define SEARCH_BALL         2
-#define GOTO_BALL           3
-#define COLLECT_BALL        4
-#define DELIVER_BALL        5
+// MAGNETOMETER PARAMETERS
+#define MAGNETOMETER_OFFSET 0.0 // [deg] TODO BEARING OF THE ROBOT WHEN AT START
 
-// DELIVER TASK
-#define DELIVERY_YAW_TOLERANCE 5 // [degrees] Tolerance for the yaw angle to be considered as 0 for robot to move linearly
+/*______________________________________________________________________________________________________________________
 
-// MOTORS
-#define MOTOR_L_KP 0.0
-#define MOTOR_L_KI 0.0
-#define MOTOR_L_KD 0.0
+TUNING MOTOR PARAMETERS
+______________________________________________________________________________________________________________________*/
 
-#define MOTOR_R_KP 0.588671875
-#define MOTOR_R_KI 0.0
-#define MOTOR_R_KD 0.0
+// DRIVE
+#define EXPONENT_GAIN 0.0215
+#define RPM_GAIN 11.627
+
+#define MOTOR_L_KP 0.5 //TODO
+#define MOTOR_L_KI 1.2 //TODO
+#define MOTOR_L_KD 0.001 //TODO
+
+#define MOTOR_R_KP 0.5 //TODO
+#define MOTOR_R_KI 1.2 //TODO
+#define MOTOR_R_KD 0.001 //TODO
 
 // SERVO
-#define SERVO_DISPLACEMNT_FACTOR 1.0 // TODO
-#define SERVO_POWER_FACTOR 1.0 // TODO
+#define SERVO_TOLERANCE 5.0 // [deg] TODO
+#define SERVO_POSITION_GAIN 1.0 // [deg] TODO
+#define SWITCH_A_POSITION 0.0 //[deg] TODO
+#define SWITCH_B_POSITION 0.0 //[deg] TODO
+#define SWITCH_C_POSITION 0.0 //[deg] TODO
 
-// CONSTANTS
-#define M_PI                3.14159265358979323846
+/*______________________________________________________________________________________________________________________
+
+TUNING ODOMETRY PARAMETERS
+______________________________________________________________________________________________________________________*/
+
+// ROBOT POSE
+#define ENCODER_FILTER_GAIN 0.25 // TODO [0,1] takes a value between 0 and 1, the closer to 1 the more filtering
+#define MAGNETO_FILTER_GAIN 0.25 // TODO [0,1] takes a value between 0 and 1, the closer to 1 the more filtering
+
+#define LINEAR_TOLERANCE 0.1 //TODO 
+#define YAW_TOLERANCE 0.1 //TODO 
+
+/*______________________________________________________________________________________________________________________
+
+TUNABLE TASK PARAMETERS
+______________________________________________________________________________________________________________________*/
+
+// DELIVERY TASK
+#define DELIVERY_YAW_TOLERANCE 0.1 //TODO
+#define SERVO_DELIVER_POSITION 180.0 //TODO
+
+/*______________________________________________________________________________________________________________________
+
+FIXED PARAMETERS
+______________________________________________________________________________________________________________________*/
+
+// MATH CONSTANTS AND CONVERTIONS
+#define M_PI                3.141593
+#define E                   2.718282
 #define DEGREE_TO_RADIAN    M_PI/180
 #define RADIAN_T0_RPM       30/M_PI
-#define NULL                999
+#define mVOLT_TO_VOLT       0.001
+
+// ROBOTC CONSTANTS
+#define TRIGGERED           0
+#define MAX_POWER 127.0
 
 // TASK PARAMETERS
 #define DT                  0.05
+#define EDGE                1   
+#define HOME                2
+#define SEARCH              3
+#define COLLECT             4
+#define DELIVER             5
 
 // ROBOT PARAMETERS
-#define WHEEL_DIAMETER      0.069 //m
+#define WHEEL_DIAMETER      0.06926 //m
 #define ROBOT_TRACK         0.213 //m
 #define ENCODER_RESOLUTION  360.0 // [ticks/revolution]
 #define MAX_WHEEL_RPM       100.0 // [rpm]
-#define MAX_SPEED           0.5 // [m/s] Maximum linear speed
-#define MAX_TURN            0.5 // [rad/s] Maximum angular speed
+#define MAX_SPEED           MAX_WHEEL_RPM/RADIAN_T0_RPM*WHEEL_DIAMETER/2 // [m/s]
+#define MAX_TURN            MAX_WHEEL_RPM/RADIAN_T0_RPM*WHEEL_DIAMETER/ROBOT_TRACK/DEGREE_TO_RADIAN // [deg/s]
 
-// MAGNETOMETER PARAMETERS
-#define NORTH           0
-#define NORTH_WEST      45
-#define WEST            90
-#define SOUTH_WEST      135
-#define SOUTH           180
-#define NORTH_EAST      -45
-#define EAST            -90
-#define SOUTH_EAST      -135
-#define SOUTH           180
+// ARENA PARAMETERS
+#define ARENA_X        2.4 // [m] Length
+#define ARENA_Y        1.2 // [m] Width
+#define ARENA_BEARING    0.0 // [degrees] North
 
-// PINOUT
-#define wheel_L_encoderA    dgtl1
-#define wheel_R_encoderA    dgtl3
-#define limit_switch        dgtl5
-#define limit_switch        dgtl6
-#define limit_switch        dgtl7
-#define limit_switch        dgtl8
-#define compass_north       dgtl9
-#define compass_south       dgtl10
-#define compass_east        dgtl11
-#define compass_west        dgtl12
-#define long_distance_R     in1
-#define long_distance_L     in2
-#define long_distance_M     in3
-#define short_distance_T    in4
-#define line_BR             in5
-#define line_FR             in6
-#define line_FL             in7
-#define line_BL             in8
-#define servo               port2
-#define motor_R             port6
-#define motor_L             port7
+// BEARING DEFINITION
+#define NORTH           0.0
+#define NORTH_WEST      45.0
+#define WEST            90.0
+#define SOUTH_WEST      135.0
+#define NORTH_EAST      -45.0
+#define EAST            -90.0
+#define SOUTH_EAST      -135.0
+#define SOUTH           -180.0
 
-#endif //CONFIG_#define LINE_FL_THRESHOLD 106
+#endif // CONFIG_H
