@@ -2,6 +2,9 @@
 
 // @FANZIFU
 
+static float edge_linX = 0.0;
+static float edge_angZ = 0.0;
+
 int edge_detected(int FL, int BL, int BR, int FR){
 	if (FL > LINE_FL_THRESHOLD){
 		return 1;
@@ -27,4 +30,12 @@ int edge_detected(int FL, int BL, int BR, int FR){
 
 void edge_avoid(....){
     
+}
+
+float get_edge_linX(){
+	return edge_linX;
+}
+
+float get_edge_angZ(){
+	return edge_angZ;
 }
