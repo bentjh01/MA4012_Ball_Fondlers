@@ -16,7 +16,7 @@ float modulo(float numerator, float denominator){
  * @param angle angle to wrap in DEG
  * @return angle from -180 to 180 DEG
 */
-float wrap_angle(float angle){
+float wrap_to_pi(float angle){
     return (modulo((angle + 180.0),360.0)) - 180.0;
 }
 

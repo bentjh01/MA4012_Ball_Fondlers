@@ -91,7 +91,11 @@ static int loop_ms;
 
 // Updates all sensor values
 void read_sensors(void){
-	robot_arm_position = get_arm_position(limit_switch_A, limit_switch_B, limit_switch_C);
+    limit_switch_A = SensorValue[limit_switch_A_pin];
+    limit_switch_B = SensorValue[limit_switch_B_pin];
+    limit_switch_C = SensorValue[limit_switch_C_pin];
+
+	robot_arm_position = get_arm_position(SensorValue[limit_switch_A_pin], SensorValue[limit_switch_B_pin], SensorValue[limit_switch_C_pin]);
 
 	robot_en_rpmR = getMotorEncoder(motor_R) / ENCODER_RESOLUTION * 60.0/DT;
 	robot_en_rpmL = getMotorEncoder(motor_L) / ENCODER_RESOLUTION * 60.0/DT;

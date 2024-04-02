@@ -34,41 +34,31 @@ static float magneto_yaw;
 ROBOT STATE
 _____________________________________________________________________________________________________________________ */
 
-void update_odometry(float x, float y, float yaw, float linX, float angZ, float cmd_linX, float cmd_angZ, float rpmL, float rpmR, float magnetometer_yaw){
-    local_x = x;
-    local_y = y;
-    local_yaw = yaw;
-    local_linX = linX;
-    local_angZ = angZ;
-    local_cmd_linX = cmd_linX;
-    local_cmd_angZ = cmd_angZ;
-
-    local_rpmL = rpmL;
-    local_rpmR = rpmR;
-
-    local_magneto_yaw = magnetometer_yaw;
-
-    ab_filter_update();
-}
-
-/**
- * @brief      Calculate pose of the robot using the state model
- * @return     predicted pose.value
- */
+/// @brief Predict the pose of the robot after one time step
+/// @param x the current X position of robot
+/// @param y the current Y position of robot
+/// @param yaw the current Yaw of robot
+/// @param linX the current Linear Velocity of robot
+/// @param angZ the current Angular Velocity of robot
+/// @param cmd_linX the previous executed velocity of robot
+/// @param cmd_angZ the previous executed velocity of robot
+/// @param dt the time step of the cycle
 void predict_state(float x, float y, float yaw, float linX, float angZ, float cmd_linX, float cmd_angZ, float dt){
-    state_x = x + linX * cos(yaw) * dt;
-    state_y = y + linX * sin(yaw) * dt;
+    state_x = x + linX * dt * cos(yaw);
+    state_y = y + linX * dt * sin(yaw);
     state_yaw = yaw + angZ * dt;
     state_linX = cmd_linX;
     state_angZ = cmd_angZ;
-
     return;
 }
 
-/**
- * @brief      Calculate pose of the robot using the encoders
- * @return     predicted pose.value
- */
+/// @brief Calculates the current position of the robot based on encoders
+/// @param x the current X position of robot
+/// @param y the current Y position of robot
+/// @param yaw the current Yaw of robot 
+/// @param rpmL the current RPM of the Left wheel
+/// @param rpmR the current RPM of the Right whee 
+/// @param dt the time step of the cycle
 void predict_state_encoders(float x, float y, float yaw, float rpmL, float rpmR, float dt){
 	float d_radL = rpmL / RADIAN_T0_RPM;
     float d_radR = rpmR / RADIAN_T0_RPM;
@@ -83,24 +73,20 @@ void predict_state_encoders(float x, float y, float yaw, float rpmL, float rpmR,
 }
 
 
-/**
- * @brief      Calculate pose of the robot using the magetometer
- * @return     predicted pose.value
- */
-
-float predict_state_magnetometer_yaw(float yaw){
+/// @brief Calculates the current pose of the robot using the magnetometer
+/// @param yaw Current magnetometer reading
+void predict_state_magnetometer(float yaw){
     magneto_yaw = yaw;
     return;
 }
 
 /**
  * @brief      Alpha Beta Filter
- * @return     predicted pose.value
  */
 void ab_filter_update(void){
     predict_state(local_x, local_y, local_yaw, local_linX, local_angZ, local_cmd_linX, local_cmd_angZ, DT);
     predict_state_encoders(local_x, local_y, local_yaw, local_rpmL, local_rpmR, DT);
-    predict_state_magnetometer_yaw(local_magneto_yaw);
+    predict_state_magnetometer(local_magneto_yaw);
     
     float encoder_x_innovation = encoder_x - state_x;
     local_x = state_x + ENCODER_FILTER_GAIN * encoder_x_innovation;
@@ -118,24 +104,65 @@ void ab_filter_update(void){
 
     float encoder_angular_velocity_innovation = encoder_angZ - state_angZ;
     local_angZ = state_angZ + ENCODER_FILTER_GAIN * encoder_angular_velocity_innovation;
+    return; 
 }
 
+/// @brief Updates the variables used for odometry calculation so that `get_pose_value` functions can return the new values. 
+/// @param x the current X position of robot
+/// @param y the current Y position of robot
+/// @param yaw the current Yaw of robot
+/// @param linX the current Linear Velocity of robot
+/// @param angZ the current Angular Velocity of robot
+/// @param cmd_linX the previous executed velocity of robot
+/// @param cmd_angZ the previous executed velocity of robot
+/// @param rpmL the current RPM of the Left wheel
+/// @param rpmR the current RPM of the Right wheel
+/// @param magnetometer_yaw the current magnetometer reading
+void update_odometry(float x, float y, float yaw, float linX, float angZ, float cmd_linX, float cmd_angZ, float rpmL, float rpmR, float magnetometer_yaw){
+    local_x = x;
+    local_y = y;
+    local_yaw = yaw;
+    local_linX = linX;
+    local_angZ = angZ;
+    local_cmd_linX = cmd_linX;
+    local_cmd_angZ = cmd_angZ;
+
+    local_rpmL = rpmL;
+    local_rpmR = rpmR;
+
+    local_magneto_yaw = magnetometer_yaw;
+
+    ab_filter_update();
+
+    return;
+}
+
+/// @brief Fetches the updated filtered X position
+/// @return X Position of robot
 float get_robot_x(void){
     return local_x;
 }
 
+/// @brief Fetches the updated filtered Y position
+/// @return Y Position of robot
 float get_robot_y(void){
     return local_y;
 }
 
+/// @brief Fetches the updated filtered Yaw
+/// @return Yaw of robot
 float get_robot_yaw(void){
     return local_yaw;
 }
 
+/// @brief Fetches the updated filtered Linear Velocity
+/// @return Linear Velocity of robot
 float get_robot_linX(void){
     return local_linX;
 }
 
+/// @brief Fetches the updated filtered Angular Velocity
+/// @return Angular Velocity of robot
 float get_robot_angZ(void){
     return local_angZ;
 }

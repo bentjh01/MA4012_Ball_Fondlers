@@ -23,6 +23,9 @@
 
 #include "localisation_config.h"
 #include "support.c"
+#include "sensors.c"
+#include "motor_control.c"
+#include "servo_control.c"
 #include "odometry.c"
 
 /* _____________________________________________________________________________________________________________________
@@ -68,6 +71,12 @@ static float distance_sensor_right;
 static float distance_sensor_top;
 static float distance_sensor_mid;
 
+// limit siwtches
+static int limit_switch_A;
+static int limit_switch_B;
+static int limit_switch_C;
+static int limit_switch_D;
+
 // TEST CODE BEGIN
 float calc_linear_x(float rpmL, float rpmR){
 	float linX = (rpmR + rpmL) / RADIAN_T0_RPM * WHEEL_DIAMETER /4;
@@ -85,17 +94,18 @@ float calc_angular_z(float rpmL, float rpmR){
 SENSORS
 _____________________________________________________________________________________________________________________ */
 void read_sensors(){
-    magnetometer_yaw = wrap_angle(read_compass(SensorValue[magneto_north], SensorValue[magneto_south], SensorValue[magneto_east], SensorValue[magneto_west]) - MAGNETOMETER_OFFSET);
+    magnetometer_yaw = read_compass(SensorValue[magneto_north_pin], SensorValue[magneto_south_pin], SensorValue[magneto_east_pin], SensorValue[magneto_west_pin]);
+    magnetometer_yaw = wrap_to_pi(magnetometer_yaw - MAGNETOMETER_OFFSET);
 
     limit_switch_A = SensorValue[limit_switch_A_pin];
     limit_switch_B = SensorValue[limit_switch_B_pin];
     limit_switch_C = SensorValue[limit_switch_C_pin];
     limit_switch_D = SensorValue[limit_switch_D_pin];
 
-	line_FL_val = filter_line_FL(SensorValue[line_FL_pin]);
-	line_BL_val = filter_line_BL(SensorValue[line_BL_pin]);
-	line_BR_val = filter_line_BR(SensorValue[line_BR_pin]);
-	line_FR_val = filter_line_FR(SensorValue[line_FR_pin]);
+	robot_line_FL = filter_line_FL(SensorValue[line_FL_pin]);
+	robot_line_BL = filter_line_BL(SensorValue[line_BL_pin]);
+	robot_line_BR = filter_line_BR(SensorValue[line_BR_pin]);
+	robot_line_FR = filter_line_FR(SensorValue[line_FR_pin]);
 
 	distance_sensor_mid = calculate_long_distance(filter_distance_mid(SensorValue[long_distance_M_pin])) - MID_SENSOR_OFFSET;
 	distance_sensor_top = calculate_short_distance(filter_distance_top(SensorValue[short_distance_T_pin])) - TOP_SENSOR_OFFSET;
@@ -104,12 +114,17 @@ void read_sensors(){
 
     robot_en_rpmL = getMotorEncoder(motor_L) * 60/DT /ENCODER_RESOLUTION;
 	robot_en_rpmR = getMotorEncoder(motor_R) * 60/DT /ENCODER_RESOLUTION;
+    
     // TEST CODE BEGIN
     robot_en_linX = calc_linear_x(robot_en_rpmL, robot_en_rpmR);
     robot_en_angZ = calc_angular_z(robot_en_rpmL, robot_en_rpmR);
     // TEST CODE END
+
+	robot_arm_position = get_arm_position(SensorValue[limit_switch_A_pin], SensorValue[limit_switch_B_pin], SensorValue[limit_switch_C_pin]);
+
 	resetMotorEncoder(motor_R);
 	resetMotorEncoder(motor_L);
+	return;
 }
 
 void update_robot_odom(){
@@ -123,6 +138,7 @@ void update_robot_odom(){
 }
 
 void robot_execute(){
+	set_motor_status(robot_en_rpmL, robot_en_rpmR);
 	robot_base_move(robot_cmd_linX, robot_cmd_angZ);
 	robot_cmd_linX = get_cmd_linX();
 	robot_cmd_angZ = get_cmd_angZ();
@@ -130,6 +146,7 @@ void robot_execute(){
 	robot_cmd_rpmR = get_cmd_rpmR();
 
 	robot_arm_move(robot_cmd_arm);
+	return;
 }
 
 /* _____________________________________________________________________________________________________________________
@@ -140,7 +157,7 @@ ________________________________________________________________________________
 /**
  * @brief Initialises the robot
 */
-void init(){
+void init_robot(){
 	int ready = 0;
 	while (ready != 1){
 		read_sensors();
@@ -170,6 +187,7 @@ void init(){
 			break;
 		}
 	}
+	return;
 }
 
 // TEST CODE BEGIN
@@ -178,11 +196,16 @@ float move_distance(float distance_forward){
     if (robot_x < distance_forward){
         return 0.2;
     }
-    else {
-        return 0.0;
-    }
+	return 0.0;
 }
 
+// rotates the robot to face angle
+float rotate_angle(float angle, int direction){
+    if (fabs(robot_yaw - angle) < YAW_TOLERANCE){
+        return 0.0;
+    }
+    return sgn(direction) * 45.0;
+}
 // TEST CODE END
 
 task main()
@@ -195,7 +218,8 @@ task main()
         robot_execute();
 		// main Loop
 
-        robot_cmd_linX = move_distance(1.0);
+        // robot_cmd_linX = move_distance(1.0);
+        robot_cmd_angZ = rotate_angle(180.0, -1);
 		
         // end of main loop
 		while (time1[T1] < DT * 1000){}
