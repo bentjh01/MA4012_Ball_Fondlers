@@ -136,3 +136,29 @@ int check_threshold(float sensor_val, float threshold){
     return NOT_TRIGGERED;
   }
 }
+
+int opponent_detection(float short_sensor_dist){
+  // may need to move this to components into sensors.c
+  if(short_sensor_dist <= OPP_CLOSENESS_THRESHOLD){
+    //Theres an opp robot close in front
+    return 1;
+  }
+  else{
+    return 0;
+  }
+}
+
+int detect_ball(float left_sensor_dist, float right_sensor_dist, float mid_sensor_dist, int opp_detected){
+  // Returns 1 if a ball is detected, 0 otherwise
+  // return 0 when there is no detection
+  //ignore opp robot
+  if (left_sensor_dist <= BALL_THRESHOLD_LNR || right_sensor_dist <= BALL_THRESHOLD_LNR){
+    return 1;
+  }
+  else if(mid_sensor_dist <= BALL_THRESHOLD_MID && !opp_detected){
+    return 1;
+  }
+  else{
+    return 0;
+  }
+}

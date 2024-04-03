@@ -19,6 +19,8 @@ static float goto_current_yaw;
 static float goto_target_yaw;
 static int goto_correction_mode = 0;
 static int goto_different_sign;
+static float goto_linX;
+static float goto_angZ;
 
 // int goto_opponent_detected(float short_sensor_dist){
 //     //may need to move this to components into sensors.c
@@ -69,23 +71,31 @@ int goto_task(float x, float y, float yaw, float left_sensor_dist, float right_s
 
     //Check if new detection there is new detection that is different from the previous (Cos if e.g. detect left, then left again, can be 2 different balls)
     if(ball_location != 0 && prev_ball_location != ball_location){
-        robot_move(linear_velocity = 0, angular_velocity = 0);  //stop movement
+        //stop movement
+        goto_linX = 0.0;
+        goto_angZ = 0.0;
         prev_ball_location = ball_location;                     //save prev ball location
     }
 
     if(ball_location == FRONT && opp_detected){
         //Opponent, not ball
-        robot_move(linear_velocity = 0, angular_velocity = 0); //stop movement
+        //stop movement
+        goto_linX = 0.0;
+        goto_angZ = 0.0;
         return SEARCH;
     }
     else if(ball_location == FRONT && mid_sensor_dist > READY_TO_COLLECT_THRESHOLD && !opp_detected){
         //Ball in front, check if need to move forward to get closer to the ball
         if(mid_sensor_dist > READY_TO_COLLECT_THRESHOLD){
-            robot_move(linear_velocity = 50, angular_velocity = 0); //move forward
+            //move forward 
+            goto_linX = 0.50;
+            goto_angZ = 0.0;
             return GOTO;
         }
         else{
-            robot_move(linear_velocity = 0, angular_velocity = 0); //stop movement
+            //stop movement
+            goto_linX = 0.0;
+            goto_angZ = 0.0;
             return COLLECT;
         }
     }
@@ -99,18 +109,24 @@ int goto_task(float x, float y, float yaw, float left_sensor_dist, float right_s
 
         //correction mode activated, go to the 
         if(goto_correction_mode){
-            robot_move(linear_velocity = 0, angular_velocity = -20);    //rotate CW
+            //rotate CW
+            goto_linX = 0.0;
+            goto_angZ = -20.0;
 
             //When approximately facing towards the ball
             if(fabs(yaw-goto_target_yaw) < GOTO_YAW_TOLERANCE){
-                robot_move(linear_velocity = 20, angular_velocity = 0); //move forward
+                //move forward
+                goto_linX = 0.20;
+                goto_angZ = 0.0;
             }
             return GOTO;
         }
         //ball detected on the left for the first time
         else{
             goto_initial_yaw = yaw;
-            robot_move(linear_velocity = 0, angular_velocity = 20); //rotate CCW
+            //rotate CCW
+            goto_linX = 0.0;
+            goto_angZ = 20.0;
             return GOTO;
         }
     }
@@ -124,22 +140,41 @@ int goto_task(float x, float y, float yaw, float left_sensor_dist, float right_s
 
         //correction mode activated, go to the 
         if(goto_correction_mode){
-            robot_move(linear_velocity = 0, angular_velocity = 20);    //rotate CCW
+            //rotate CCW
+            goto_linX = 0.0;
+            goto_angZ = 20.0;
 
             //When approximately facing towards the ball
             if(fabs(yaw-goto_target_yaw) < GOTO_YAW_TOLERANCE){
-                robot_move(linear_velocity = 20, angular_velocity = 0); //move forward
+                //move forward
+                goto_linX = 0.20;
+                goto_angZ = 0.0;
             }
             return GOTO;
         }
         //ball detected on the left for the first time
         else{
             goto_initial_yaw = yaw;
-            robot_move(linear_velocity = 0, angular_velocity = -20); //rotate CW
+            //rotate CW
+            goto_linX = 0.0;
+            goto_angZ = -20.0;
+
             return GOTO;
         }
     }
     else{
         return GOTO;
     }
+}
+
+/// @brief Function to get the linear for the search task
+/// @return linear velocity in m/s
+float get_goto_linX(){
+    return goto_linX;
+}
+
+/// @brief Function to get the angular velocity for the search task
+/// @return angular velocity in deg/s
+float get_goto_angZ(){
+    return goto_angZ;
 }

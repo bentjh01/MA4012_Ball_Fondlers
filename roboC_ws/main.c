@@ -76,6 +76,9 @@ static int limit_switch_D;
 int task_status;
 int prev_task_status;
 
+// opponent detection
+int opp_detected;
+
 /* _____________________________________________________________________________________________________________________
 
 UNCONDITIONAL TASKS
@@ -219,11 +222,20 @@ task main()
 					robot_cmd_arm = get_home_servo();
 					break;
 				case SEARCH:
-					task_status = COLLECT;
-					// task_status = search_task(sensorA, sensorB, sensorC);
-					robot_cmd_linX = search_linX();
-					robot_cmd_angZ = search_angZ();
+					opp_detected = opponent_detection(distance_sensor_top);
+
+					// task_status = GOTO;
+					task_status = search_task(robot_x, robot_y, robot_yaw, distance_sensor_left, distance_sensor_right, distance_sensor_mid, opp_detected);
+					robot_cmd_linX = get_search_linX();
+					robot_cmd_angZ = get_search_angZ();
 					break;
+				case GOTO:
+					opp_detected = opponent_detection(distance_sensor_top);
+
+					// task_status = COLLECT;
+					task_status = goto_task(robot_x, robot_y, robot_yaw, distance_sensor_left, distance_sensor_right, distance_sensor_mid, opp_detected);
+					robot_cmd_linX = get_goto_linX();
+					robot_cmd_angZ = get_goto_angZ();
 				case COLLECT:
 					task_status = DELIVER;
 					// task_status = collect_task(robot_x, robot_y, robot_yaw, robot_arm_position, ball_in_chamber_status, limit_switch_D);

@@ -11,6 +11,8 @@ static int search_counter = 0;
 static float search_initial_yaw;
 static float search_initial_x;
 static float search_initial_y;
+static float search_linX;
+static float search_angZ;
 
 //NOTE!!!
 //MOVE OPP DETECTION TO 
@@ -27,7 +29,7 @@ static float search_initial_y;
 //   }
 // }
 
-int ball_detected(float left_sensor_dist, float right_sensor_dist, float mid_sensor_dist, int opp_detected){
+int search_ball_detected(float left_sensor_dist, float right_sensor_dist, float mid_sensor_dist, int opp_detected){
   // Returns 1 if a ball is detected, 0 otherwise
   // return 0 when there is no detection
   //ignore opp robot
@@ -49,22 +51,32 @@ int search_task(float x, float y, float yaw, float left_sensor_dist, float right
     //Rotate to scan
     if(search_startup_phase){
       search_startup_phase = 0;                                 //set search_startup_phase
-      robot_move(linear_velocity = 0, angular_velocity = 120);  //rotate ccw 120 deg/s, try find detection
+      
+      //rotate ccw 120 deg/s, try find detection
+      search_linX = 0.0;
+      search_angZ = 120.0;
+
       search_initial_yaw = yaw;                                 //initialize yaw
       search_counter = 0;                                       //reset counter
     }
 
     //check if 360 deg rotation achieved
-    if(fabs(yaw-search_initial_yaw) < SEARCH_YAW_TOLERANCE && search_counter >= SEARCH_COUNT_THRESHOLD){
-      robot_move(linear_velocity = 0, angular_velocity = 0);  //stop movement
+    if(fabs(yaw-search_initial_yaw) < YAW_TOLERANCE && search_counter >= SEARCH_COUNT_THRESHOLD){
+      //stop movement
+      search_linX = 0.0;
+      search_angZ = 0.0;
+
       search_startup_phase = 1;                               //reset search_startup_phase
       changing_search_position = 1;                           //initiate change search position
       return SEARCH;
     }
 
     //check for ball
-    if (ball_detected(left_sensor_dist,right_sensor_dist, mid_sensor_dist, opp_detected) == 1){
-      robot_move(linear_velocity = 0, angular_velocity = 0);  //stop movement
+    if (search_ball_detected(left_sensor_dist,right_sensor_dist, mid_sensor_dist, opp_detected) == 1){
+      //stop movement
+      search_linX = 0.0;
+      search_angZ = 0.0;
+
       search_startup_phase = 1;                               //reset search_startup_phase
       return GOTO;
     }
@@ -78,24 +90,32 @@ int search_task(float x, float y, float yaw, float left_sensor_dist, float right
   else{
     if(search_startup_phase){
       search_startup_phase = 0;                               //set search_startup_phase
-      robot_move(linear_velocity = 50, angular_velocity = 0); //move forward
+      //move forward
+      search_linX = 0.50;
+      search_angZ = 0.0;
 
       //initialize position
       search_initial_x = x;
       search_initial_y = y;
     }
 
-    //check timeout (finished moving to a new search position)
+    //check if finished moving to a new search position
     if(sqrt(pow(x-search_initial_x, 2) + pow(y-search_initial_y, 2)) < CHANGE_POSITION_DISTANCE){
-      robot_move(linear_velocity = 0, angular_velocity = 0);  //stop movement
+      //stop movement
+      search_linX = 0.0;
+      search_angZ = 0.0;
+
       search_startup_phase = 1;                               //reset search_startup_phase
       changing_search_position = 0;                           //terminate change_search_position
       return SEARCH;
     }
 
     //check for ball and opp
-    if (ball_detected(left_sensor_dist,right_sensor_dist, mid_sensor_dist, opp_detected) == 1){
-      robot_move(linear_velocity = 0, angular_velocity = 0);  //stop movement
+    if (search_ball_detected(left_sensor_dist,right_sensor_dist, mid_sensor_dist, opp_detected) == 1){
+      //stop movement
+      search_linX = 0.0;
+      search_angZ = 0.0;
+
       search_startup_phase = 1;                               //reset search_startup_phase
       changing_search_position = 0;                           //terminate change_search_position
       return GOTO;
@@ -111,11 +131,11 @@ int search_task(float x, float y, float yaw, float left_sensor_dist, float right
 /// @brief Function to get the linear for the search task
 /// @return linear velocity in m/s
 float get_search_linX(){
-    return 0.0;
+    return search_linX;
 }
 
 /// @brief Function to get the angular velocity for the search task
 /// @return angular velocity in deg/s
 float get_search_angZ(){
-    return 0.0;
+    return search_angZ;
 }
