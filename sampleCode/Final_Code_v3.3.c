@@ -847,7 +847,7 @@ void return_state(){
 		turn_right_indef();
 	}
 }
-
+/////////////////////////////////////////////
 void avoid_boundary_state(){
   switch (boundary_sensors){
     case 1: //BR detect
