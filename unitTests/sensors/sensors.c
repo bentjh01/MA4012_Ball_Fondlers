@@ -1,5 +1,4 @@
 #include "sensors_test.h"
-#include "support.c"
 
 static float prev_line_FL_val;
 static float prev_line_BL_val;

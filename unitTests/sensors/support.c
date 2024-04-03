@@ -1,6 +1,4 @@
-#ifndef SUPPORT_H
-#define SUPPORT_H
-
+#include "sensors_test.h"
 /**
  * @brief Wraps the angle from -180 to 180 degrees wrt to the X-Axis i.e. negative angles are CW and positive are CCW
  * @param angle angle to wrap in DEG
@@ -44,5 +42,3 @@ float fast_inverse_sqrt(float x) {
 float low_pass_filter(float input, float prev_input, float alpha){
 	return alpha*input + (1-alpha)*prev_input;
 }
-
-#endif
