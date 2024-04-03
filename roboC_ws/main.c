@@ -212,21 +212,21 @@ task main()
 					robot_cmd_angZ = get_edge_avoid_angZ();
 					break;
 				case HOME:
-					home_task(robot_x, robot_y, robot_yaw, robot_magneto_yaw, robot_line_FL, robot_line_BL, robot_line_BR, robot_line_FR);
-					task_status = home_status();
+					task_status = SEARCH;
+					// task_status = home_task(robot_x, robot_y, robot_yaw, robot_magneto_yaw, robot_line_FL, robot_line_BL, robot_line_BR, robot_line_FR);
 					robot_cmd_linX = get_home_linX();
 					robot_cmd_angZ = get_home_angZ();
 					robot_cmd_arm = get_home_servo();
 					break;
 				case SEARCH:
-					search_task(sensorA, sensorB, sensorC);
-					task_status = search_status();
+					task_status = COLLECT;
+					// task_status = search_task(sensorA, sensorB, sensorC);
 					robot_cmd_linX = search_linX();
 					robot_cmd_angZ = search_angZ();
 					break;
 				case COLLECT:
-					collect_task(sensorA, sensorB, sensorC);
-					task_status = collect_status();
+					task_status = DELIVER;
+					// task_status = collect_task(robot_x, robot_y, robot_yaw, robot_arm_position, ball_in_chamber_status, limit_switch_D);
 					robot_cmd_linX = get_collect_linX();
 					robot_cmd_angZ = get_collect_angZ();
 					robot_cmd_arm = get_collect_servo();
