@@ -196,23 +196,20 @@ task main()
         update_robot_odom();
         robot_execute();
 		// main Loop
-		if (edge_detected(robot_line_FL, robot_line_BL, robot_line_BR, robot_line_FR)){
+		if (edge_detected(robot_line_FL, robot_line_BL, robot_line_BR, robot_line_FR) == TRIGGERED){
 			if (task_status != EDGE){
 				prev_task_status = task_status;
 			}
 			task_status = EDGE;
-
 			avoid_case_check(robot_x, robot_y, robot_yaw, robot_line_FL, robot_line_FR, robot_line_BL, robot_line_BR);
+			// wall_case_check(robot_yaw, robot_line_FL, robot_line_FR, robot_line_BL, robot_line_BR); @Unizz20
 		}
 		else {// when avoid status == 0 
 			switch (task_status){
 				case EDGE:
-					int avoid_complete = edge_avoid_task(robot_x, robot_y, robot_yaw);
+					task_status = edge_avoid_task(robot_x, robot_y, robot_yaw, prev_task_status);
 					robot_cmd_linX = get_edge_avoid_linX();
 					robot_cmd_angZ = get_edge_avoid_angZ();
-					if (avoid_complete == SUCCESS){
-						task_status = prev_task_status;
-					}
 					break;
 				case HOME:
 					home_task(robot_x, robot_y, robot_yaw, robot_magneto_yaw, robot_line_FL, robot_line_BL, robot_line_BR, robot_line_FR);

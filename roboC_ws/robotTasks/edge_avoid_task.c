@@ -17,28 +17,21 @@ static float edge_y = 0.0;
 /// @param BL Back Left sensor
 /// @param BR Back Right sensor
 /// @param FR Front Right sensor
-/// @return returns `1` if a sensor is triggered, `0` otherwise
+/// @return returns TRIGGERED if a sensor is triggered, NOT_TRIGGERED otherwise
 int edge_detected(int FL, int BL, int BR, int FR){
 	if (FL == TRIGGERED){
-		return 1;
-		} else {
-		return 0;
+		return TRIGGERED;
 	}
 	if (BL == TRIGGERED){
-		return 1;
-		} else  {
-		return 0;
+		return TRIGGERED;
 	}
 	if (BR == TRIGGERED){
-		return 1;
-		} else {
-		return 0;
+		return TRIGGERED;
 	}
 	if (FR == TRIGGERED){
-		return 1;
-		} else {
-		return 0;
+		return TRIGGERED;
 	}
+	return NOT_TRIGGERED;
 }
 
 /// @brief Determines the goal yaw based on the robot's current yaw and the sensor that is triggered
@@ -152,24 +145,25 @@ void avoid_case_check(float rb_x, float rb_y, float rb_yaw, int FL, int FR, int 
 /// @param rb_x robot's x position
 /// @param rb_y robot's y position
 /// @param rb_yaw robot's current yaw
-int edge_avoid_task(float rb_x, float rb_y, float rb_yaw){
+/// @return the previous task if successful, EDGE otherwise
+int edge_avoid_task(float rb_x, float rb_y, float rb_yaw, int prev_task){
 	float distance_from_edge = calculate_distance(rb_x, rb_y, edge_x, edge_y);
 	float yaw_error = rb_yaw - edge_goal_yaw;
 
 	if (distance_from_edge < EDGE_REVERSE_DISTANCE && yaw_error < YAW_TOLERANCE){
 		edge_linX = 0.0;
 		edge_angZ = 0.0;
-		return SUCCESS;
+		return prev_task;
 	}
 	else if (distance_from_edge > EDGE_REVERSE_DISTANCE){
 		edge_linX = -MAX_SPEED;
 		edge_angZ = 0.0;
-		return FAIL;
+		return EDGE;
 	}
 	else if (fabs(yaw_error) > YAW_TOLERANCE){
 		edge_linX = 0.0;
 		edge_angZ = sgn(yaw_error) * MAX_TURN;
-		return FAIL;
+		return EDGE;
 	}
 }
 
