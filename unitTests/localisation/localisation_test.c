@@ -12,10 +12,10 @@
 #pragma config(Sensor, dgtl6,  limit_switch_B_pin,      sensorDigitalIn)
 #pragma config(Sensor, dgtl7,  limit_switch_C_pin,      sensorDigitalIn)
 #pragma config(Sensor, dgtl8,  limit_switch_D_pin,      sensorDigitalIn)
-#pragma config(Sensor, dgtl9,  magneto_north_pin,  sensorDigitalIn)
+#pragma config(Sensor, dgtl9,  magneto_west_pin,  sensorDigitalIn)
 #pragma config(Sensor, dgtl10, magneto_south_pin,  sensorDigitalIn)
 #pragma config(Sensor, dgtl11, magneto_east_pin,   sensorDigitalIn)
-#pragma config(Sensor, dgtl12, magneto_west_pin,   sensorDigitalIn)
+#pragma config(Sensor, dgtl12, magneto_north_pin,   sensorDigitalIn)
 #pragma config(Motor,  port2,           servo,         tmotorServoStandard, openLoop)
 #pragma config(Motor,  port6,           motor_R,       tmotorVex393_MC29, PIDControl, encoderPort, dgtl3)
 #pragma config(Motor,  port7,           motor_L,       tmotorVex393_MC29, PIDControl, reversed, encoderPort, dgtl1)
@@ -95,7 +95,7 @@ SENSORS
 _____________________________________________________________________________________________________________________ */
 void read_sensors(){
     magnetometer_yaw = read_compass(SensorValue[magneto_north_pin], SensorValue[magneto_south_pin], SensorValue[magneto_east_pin], SensorValue[magneto_west_pin]);
-    magnetometer_yaw = wrap_to_pi(magnetometer_yaw - MAGNETOMETER_OFFSET);
+    magnetometer_yaw = -1.0 * wrap_to_pi(magnetometer_yaw - MAGNETOMETER_OFFSET);
 
     limit_switch_A = SensorValue[limit_switch_A_pin];
     limit_switch_B = SensorValue[limit_switch_B_pin];

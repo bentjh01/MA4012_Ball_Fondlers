@@ -54,12 +54,12 @@ ________________________________________________________________________________
 
 // BEARING DEFINITION
 #define NORTH           0.0
-#define NORTH_EAST      45.0
-#define EAST            90.0
-#define SOUTH_EAST      135.0
-#define NORTH_WEST      -45.0
-#define WEST            -90.0
-#define SOUTH_WEST      -135.0
+#define NORTH_WEST      45.0
+#define WEST            90.0
+#define SOUTH_WEST      135.0
+#define NORTH_EAST      -45.0
+#define EAST            -90.0
+#define SOUTH_EAST      -135.0
 #define SOUTH           -180.0
 
 // MATH CONSTANTS AND CONVERSIONS

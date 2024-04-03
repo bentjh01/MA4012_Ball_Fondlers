@@ -62,7 +62,7 @@ void read_sensors(){
 	E = SensorValue[magneto_east_pin];
 	W = SensorValue[magneto_west_pin];
     compass_yaw = read_compass(N, S, E, W);
-    compass_yaw = -1.0 * wrap_to_pi(compass_yaw - MAGNETOMETER_OFFSET);
+    compass_yaw = wrap_to_pi(compass_yaw - MAGNETOMETER_OFFSET);
 
     limit_switch_A = SensorValue[limit_switch_A_pin];
     limit_switch_B = SensorValue[limit_switch_B_pin];
