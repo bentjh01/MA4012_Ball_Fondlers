@@ -25,8 +25,9 @@ float get_arm_position(float arm_position, float servo_direction, int switch_A, 
 /**
  * @brief Sets the desired position of the servo and actuates if it is not there
  * @param set_position desired position of the servo in DEG
+ * @return direction of the arm
 */
-void robot_arm_move(float set_position, float arm_position){
+float robot_arm_move(float set_position, float arm_position){
     int set_servo_power = 0;
     // position of arm is -1 at most open, and 180 at most closed
     // when motor is set to positive, arm swings inwards
@@ -34,5 +35,5 @@ void robot_arm_move(float set_position, float arm_position){
 		int set_servo_power = sgn(set_position - arm_position) * MAX_POWER;
 	}
     motor[servo] = set_servo_power;
-    return;
+    return sgn(set_position - arm_position);
 }

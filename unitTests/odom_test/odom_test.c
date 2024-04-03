@@ -33,48 +33,50 @@ GLOBAL VARIABLES
 _____________________________________________________________________________________________________________________ */
 
 // Robot State
-static float robot_x;
-static float robot_y;
-static float robot_yaw;
-static float robot_linX;
-static float robot_angZ;
+float robot_x = 0.0;
+float robot_y = 0.0;
+float robot_yaw = 0;
+float robot_linX = 0;
+float robot_angZ = 0.0;
 
-static float robot_arm_position;
+float robot_arm_position = 0.0;
 
 // robot twist
-static float robot_cmd_rpmR;
-static float robot_cmd_rpmL;
-static float robot_cmd_linX;
-static float robot_cmd_angZ;
+float robot_cmd_rpmR = 0.0;
+float robot_cmd_rpmL = 0.0;
+float robot_cmd_linX = 0.0;
+float robot_cmd_angZ = 0.0;
 
-static float robot_cmd_arm;
+float robot_cmd_arm = 0.0;
+float robot_arm_direction = 0.0;
 
 // robot encoders
-static float robot_en_rpmR;
-static float robot_en_rpmL;
-static float robot_en_linX;
-static float robot_en_angZ;
+float robot_en_rpmR = 0.0;
+float robot_en_rpmL = 0.0;
+float robot_en_linX = 0.0;
+float robot_en_sanity_check =0.0;
+float robot_en_angZ = 0.0;
 
 // magnetometer
-static float magnetometer_yaw;
+float magnetometer_yaw = 0.0;
 
 // robot line sensors
-static int robot_line_FL;
-static int robot_line_BL;
-static int robot_line_BR;
-static int robot_line_FR;
+int robot_line_FL = 0;
+int robot_line_BL = 0;
+int robot_line_BR = 0;
+int robot_line_FR = 0;
 
 // robot distance sensors
-static float distance_sensor_left;
-static float distance_sensor_right;
-static float distance_sensor_top;
-static float distance_sensor_mid;
+float distance_sensor_left = 0.0;
+float distance_sensor_right = 0.0;
+float distance_sensor_top = 0.0;
+float distance_sensor_mid = 0.0;
 
 // limit siwtches
-static int limit_switch_A;
-static int limit_switch_B;
-static int limit_switch_C;
-static int limit_switch_D;
+int limit_switch_A = 0;
+int limit_switch_B = 0;
+int limit_switch_C = 0;
+int limit_switch_D = 0;
 
 
 /* _____________________________________________________________________________________________________________________
@@ -102,13 +104,14 @@ void read_sensors(){
 
     robot_en_rpmL = getMotorEncoder(motor_L) * 60/DT /ENCODER_RESOLUTION;
 	robot_en_rpmR = getMotorEncoder(motor_R) * 60/DT /ENCODER_RESOLUTION;
-    
+
     // TEST CODE BEGIN
     robot_en_linX = calculate_linear_x(robot_en_rpmL, robot_en_rpmR);
     robot_en_angZ = calculate_angular_z(robot_en_rpmL, robot_en_rpmR);
+	robot_en_sanity_check = (robot_en_rpmR + robot_en_rpmL) / 30.0 * 3.142 * 0.07 / 4;
     // TEST CODE END
 
-	robot_arm_position = get_arm_position(SensorValue[limit_switch_A_pin], SensorValue[limit_switch_B_pin], SensorValue[limit_switch_C_pin]);
+	robot_arm_position = get_arm_position(robot_arm_position,robot_arm_direction, SensorValue[limit_switch_A_pin], SensorValue[limit_switch_B_pin], SensorValue[limit_switch_C_pin]);
 
 	resetMotorEncoder(motor_R);
 	resetMotorEncoder(motor_L);
@@ -121,7 +124,7 @@ void update_robot_odom(){
     robot_yaw = update_odometry_yaw(robot_yaw, robot_angZ, robot_en_rpmL, robot_en_rpmR, magnetometer_yaw, DT);
     // robot_yaw = magnetometer_yaw;
     robot_linX = update_odometry_linX(robot_linX, robot_en_rpmL, robot_en_rpmR, DT);
-    robot_angZ = update_odometry_angZ(robot_angZ, robot_en_rpmL, robot_en_rpmR, DT);
+    robot_angZ = update_odometry_angZ(robot_yaw, robot_cmd_angZ, robot_en_rpmL, robot_en_rpmR, magnetometer_yaw, DT);
     return;
 }
 
@@ -129,12 +132,12 @@ void robot_execute(){
 	robot_cmd_rpmL = calculate_rpmL(robot_cmd_linX, robot_cmd_angZ);
 	robot_cmd_rpmR = calculate_rpmR(robot_cmd_linX, robot_cmd_angZ);
 	robot_cmd_rpmL = limit_rpmL(robot_cmd_rpmL, robot_cmd_rpmR);
-	robot_cmd_rpmR = limit_rpmL(robot_cmd_rpmL, robot_cmd_rpmR);
+	robot_cmd_rpmR = limit_rpmR(robot_cmd_rpmL, robot_cmd_rpmR);
 	robot_move_closed(robot_cmd_rpmL, robot_cmd_rpmR, robot_en_rpmL, robot_en_rpmR);
 	robot_cmd_linX = calculate_linear_x(robot_cmd_rpmL, robot_cmd_rpmR);
 	robot_cmd_angZ = calculate_angular_z(robot_cmd_rpmL, robot_cmd_rpmR);
 
-	robot_arm_move(robot_cmd_arm, robot_arm_position);
+	robot_arm_direction = robot_arm_move(robot_cmd_arm, robot_arm_position);
 	return;
 }
 
@@ -175,19 +178,19 @@ float rotate_angle(float angle, int direction){
 // TEST CODE END
 
 task main()
-{
+{\
 	init_robot();
-
+	robot_x = 0.0;
 	while(1){
 		clearTimer(T1);
         read_sensors();
         update_robot_odom();
         robot_execute();
 		// main Loop
-		
-        // robot_cmd_linX = move_distance(1.0);
-        robot_cmd_angZ = rotate_angle(180.0, -1);
-		
+
+        robot_cmd_linX = move_distance(1.0);
+        // robot_cmd_angZ = rotate_angle(180.0, -1);
+
         // end of main loop
 		while (time1[T1] < DT * 1000){}
 	}

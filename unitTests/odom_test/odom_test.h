@@ -2,8 +2,6 @@
 #define ODOM_TEST_H
 
 #define EDGE_REVERSE_DISTANCE 0.05
-#define MAX_SPEED 0.2
-#define MAX_TURN 10
 #define EDGE 5
 
 /*______________________________________________________________________________________________________________________
@@ -46,12 +44,14 @@ ________________________________________________________________________________
 #define RPM_GAIN 11.627
 
 #define MOTOR_L_KP 0.5 //TODO
-#define MOTOR_L_KI 1.2 //TODO
+#define MOTOR_L_KI 0.0 //TODO
 #define MOTOR_L_KD 0.001 //TODO
+#define INTEGRAL_LIMIT_L 15.0
 
 #define MOTOR_R_KP 0.5 //TODO
-#define MOTOR_R_KI 1.2 //TODO
+#define MOTOR_R_KI 0.0 //TODO
 #define MOTOR_R_KD 0.001 //TODO
+#define INTEGRAL_LIMIT_R 15.0
 
 // SERVO
 #define ARM_TOLERANCE 5.0 // [deg] TODO
@@ -66,7 +66,7 @@ TUNING ODOMETRY PARAMETERS
 ______________________________________________________________________________________________________________________*/
 
 // ROBOT POSE
-#define ENCODER_FILTER  0.25// TODO [0,1] takes a value between 0 and 1, the closer to 1 the more filtering
+#define ENCODER_FILTER  0.8// TODO [0,1] takes a value between 0 and 1, the closer to 1 the more filtering
 #define MAGNETO_FILTER 0.25 // TODO [0,1] takes a value between 0 and 1, the closer to 1 the more filtering
 #define MAGNETO_SPEED_FILTER 0.25 // TODO [0,1] takes a value between 0 and 1, the closer to 1 the more filtering
 
@@ -82,14 +82,15 @@ ________________________________________________________________________________
 // MATH CONSTANTS AND CONVERTIONS
 #define M_PI                3.141593
 #define E                   2.718282
-#define DEGREE_TO_RADIAN    M_PI/180
-#define RADIAN_T0_RPM       30/M_PI
+#define DEGREE_TO_RADIAN    M_PI/180.0
+#define RADIAN_T0_RPM       30.0/M_PI
 #define mVOLT_TO_VOLT       0.001
 
 // ROBOTC CONSTANTS
 #define TRIGGERED           0
 #define NOT_TRIGGERED       1
 #define MAX_POWER 127.0
+#define INVALID 9999
 
 // TASK PARAMETERS
 #define DT                  0.05
@@ -99,6 +100,9 @@ ________________________________________________________________________________
 #define ROBOT_TRACK         0.213 //m
 #define ENCODER_RESOLUTION  360.0 // [ticks/revolution]
 #define MAX_WHEEL_RPM       100.0 // [rpm]
+// #define MAX_SPEED           MAX_WHEEL_RPM/RADIAN_T0_RPM*WHEEL_DIAMETER/2.0 // [m/s]
+#define MAX_SPEED           0.40 // [m/s]
+#define MAX_TURN            MAX_WHEEL_RPM/RADIAN_T0_RPM*WHEEL_DIAMETER/ROBOT_TRACK/DEGREE_TO_RADIAN // [deg/s]
 
 // ARENA PARAMETERS
 #define ARENA_X        2.4 // [m] Length
