@@ -1,5 +1,11 @@
 #ifndef LOCALISATION_CONFIG_H
 #define LOCALISATION_CONFIG_H
+
+#define EDGE_REVERSE_DISTANCE 0.05
+#define MAX_SPEED 0.2
+#define MAX_TURN 10
+#define EDGE 5
+
 /*______________________________________________________________________________________________________________________
 
 TUNING SENSOR PARAMETERS
@@ -81,6 +87,7 @@ ________________________________________________________________________________
 
 // ROBOTC CONSTANTS
 #define TRIGGERED           0
+#define NOT_TRIGGERED       1
 #define MAX_POWER 127.0
 
 // TASK PARAMETERS

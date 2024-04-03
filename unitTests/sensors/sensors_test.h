@@ -7,10 +7,10 @@ SENSORS
 ______________________________________________________________________________________________________________________*/
 
 // SHARP DISTANCE SENSOR
-#define MID_SENSOR_OFFSET 0.0
-#define TOP_SENSOR_OFFSET 0.0
-#define LEFT_SENSOR_OFFSET 0.0
-#define RIGHT_SENSOR_OFFSET 0.0
+#define MID_SENSOR_OFFSET -13.27
+#define TOP_SENSOR_OFFSET 21.5
+#define LEFT_SENSOR_OFFSET 1.5
+#define RIGHT_SENSOR_OFFSET 2.9
 
 //TODO-ARENA
 // #define LINE_FL 106

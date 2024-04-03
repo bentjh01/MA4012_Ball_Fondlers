@@ -55,27 +55,33 @@ float filter_distance_top(float input){
  * @return the bearing of the compass
 */
 float read_compass(int north_pin, int south_pin, int east_pin, int west_pin){
-  int combination = north_pin << 3 + south_pin  << 2 + east_pin  << 1 + west_pin;
-  switch (combination)
-  {
-    case 0b0111:
-      return NORTH;
-    case 0b1011:
-      return SOUTH;
-    case 0b1101:
-      return EAST;
-    case 0b1110:
-      return WEST;
-    case 0b0101:
-      return NORTH_EAST;
-    case 0b0110:
-      return NORTH_WEST;
-    case 0b1001:
-      return SOUTH_EAST;
-    case 0b1010:
-      return SOUTH_WEST;
-    default:
-      return NULL;
+  int combination = north_pin * 1000 + south_pin  * 100 + east_pin  *10 + west_pin;
+  if (combination == 0111){
+    return NORTH;
+  }
+  else if (combination == 1011){
+    return SOUTH;
+  }
+  else if (combination == 1101){
+    return EAST;
+  }
+  else if (combination == 1110){
+    return WEST;
+  }
+  else if (combination == 0101){
+    return NORTH_EAST;
+  }
+  else if (combination == 0110){
+    return NORTH_WEST;
+  }
+  else if (combination == 1001){
+    return SOUTH_EAST;
+  }
+  else if (combination == 1010){
+    return SOUTH_WEST;
+  }
+  else {
+    return 9999;
   }
 }
 
@@ -110,29 +116,4 @@ float calculate_short_distance(float sensor_val){
   float base = voltage/11.033;
   float distance_cm = pow(base, exponent);
   return distance_cm;
-}
-
-/// @brief Checks for ball in chamber using the middle short distance sensor
-/// @param mid_sensor_distance 
-/// @return TRIGGERED for ball in chamber, NOT_TRIGGERED for no ball in chamber
-int check_ball_in_chamber(float mid_sensor_distance){
-  if (mid_sensor_distance < BALL_IN_CHAMBER_DISTANCE){
-    return TRIGGERED;
-  }
-  else{
-    return NOT_TRIGGERED;
-  }
-}
-
-/// @brief Checks the threshold of a sensor
-/// @param sensor_val current sensor value
-/// @param threshold
-/// @return TRIGGERED if sensor_val > threshold, NOT_TRIGGERED otherwise
-int check_threshold(float sensor_val, float threshold){
-  if (sensor_val > threshold){
-    return TRIGGERED;
-  }
-  else{
-    return NOT_TRIGGERED;
-  }
 }
