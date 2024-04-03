@@ -1,5 +1,5 @@
-#ifndef LOCALISATION_CONFIG_H
-#define LOCALISATION_CONFIG_H
+#ifndef ODOM_TEST_H
+#define ODOM_TEST_H
 
 #define EDGE_REVERSE_DISTANCE 0.05
 #define MAX_SPEED 0.2
@@ -66,8 +66,9 @@ TUNING ODOMETRY PARAMETERS
 ______________________________________________________________________________________________________________________*/
 
 // ROBOT POSE
-#define ENCODER_FILTER_GAIN  0.25// TODO [0,1] takes a value between 0 and 1, the closer to 1 the more filtering
-#define MAGNETO_FILTER_GAIN 0.25 // TODO [0,1] takes a value between 0 and 1, the closer to 1 the more filtering
+#define ENCODER_FILTER  0.25// TODO [0,1] takes a value between 0 and 1, the closer to 1 the more filtering
+#define MAGNETO_FILTER 0.25 // TODO [0,1] takes a value between 0 and 1, the closer to 1 the more filtering
+#define MAGNETO_SPEED_FILTER 0.25 // TODO [0,1] takes a value between 0 and 1, the closer to 1 the more filtering
 
 #define LINEAR_TOLERANCE 0.05 //TODO 
 #define YAW_TOLERANCE 5.0 //TODO 
@@ -114,4 +115,4 @@ ________________________________________________________________________________
 #define SOUTH_EAST      -135.0
 #define SOUTH           -180.0
 
-#endif // LOCALISATION_CONFIG_H
+#endif // ODOM_TEST_H

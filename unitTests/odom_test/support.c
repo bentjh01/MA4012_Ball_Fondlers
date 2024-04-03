@@ -1,4 +1,15 @@
 #include "sensors_test.h"
+
+/**
+ * @brief Performs modulo operation x/y
+ * @param numerator the numerator of the operation i.e. x
+ * @param denominator the denominator of the operation i.e. y
+ * @return the remainder of the division operation.
+*/
+float modulo(float numerator, float denominator){
+    return (numerator/denominator - round(numerator/denominator)) * denominator;
+}
+
 /**
  * @brief Wraps the angle from -180 to 180 degrees wrt to the X-Axis i.e. negative angles are CW and positive are CCW
  * @param angle angle to wrap in DEG. MUST be less than +/-360 DEG
@@ -41,4 +52,13 @@ float fast_inverse_sqrt(float x) {
 */
 float low_pass_filter(float input, float prev_input, float alpha){
 	return alpha*input + (1-alpha)*prev_input;
+}
+
+/**
+ * @brief Discretise the yaw reading into bins of 45 [deg] each
+ * @param yaw the yaw reading to discretise
+ * @return the discretised yaw valies in 45 [deg] increments
+*/
+float discretise_yaw(float yaw){
+    return round(yaw / 45) * 45;
 }

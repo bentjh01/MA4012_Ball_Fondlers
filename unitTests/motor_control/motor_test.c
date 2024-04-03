@@ -113,11 +113,13 @@ void read_sensors(void){
 }
 
 void robot_execute(){
-	robot_base_move(robot_cmd_linX, robot_cmd_angZ);
-	robot_cmd_linX = get_cmd_linX();
-	robot_cmd_angZ = get_cmd_angZ();
-	robot_cmd_rpmL = get_cmd_rpmL();
-	robot_cmd_rpmR = get_cmd_rpmR();
+	float motor_rpmL = calcualte_rpmL(robot_cmd_linX, robot_cmd_angZ);
+	float motor_rpmR = calcualte_rpmR(robot_cmd_linX, robot_cmd_angZ);
+	motor_rpmL = limit_rpmL(motor_rpmL, motor_rpmR);
+	motor_rpmR = limit_rpmR(motor_rpmL, motor_rpmR);
+	robot_move_closed(motor_rpmL, motor_rpmR, robot_en_rpmL, robot_en_rpmR);
+	robot_cmd_linX = calculate_linear_x(motor_rpmL, motor_rpmR);
+	robot_cmd_angZ = calculate_angular_z(motor_rpmL, motor_rpmR);
 
 	robot_arm_move(robot_cmd_arm);
 }
