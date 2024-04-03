@@ -2,22 +2,18 @@
 #define SUPPORT_H
 
 /**
- * @brief Performs modulo operation x/y
- * @param numerator the numerator of the operation i.e. x
- * @param denominator the denominator of the operation i.e. y
- * @return the remainder of the division operation.
-*/
-float modulo(float numerator, float denominator){
-    return (numerator/denominator - round(numerator/denominator)) * denominator;
-}
-
-/**
  * @brief Wraps the angle from -180 to 180 degrees wrt to the X-Axis i.e. negative angles are CW and positive are CCW
  * @param angle angle to wrap in DEG
  * @return angle from -180 to 180 DEG
 */
 float wrap_to_pi(float angle){
-    return (modulo((angle + 180.0),360.0)) - 180.0;
+	if (angle == -180){
+		return 180.0;
+	}
+	if (fabs(angle) > 180.0){
+		return (sgn(angle) * (fabs(angle) - 360.0));
+	}
+	return angle;
 }
 
 /**
