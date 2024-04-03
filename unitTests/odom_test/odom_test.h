@@ -71,7 +71,7 @@ ________________________________________________________________________________
 #define MAGNETO_SPEED_FILTER 0.25 // TODO [0,1] takes a value between 0 and 1, the closer to 1 the more filtering
 
 #define LINEAR_TOLERANCE 0.05 //TODO 
-#define YAW_TOLERANCE 5.0 //TODO 
+#define YAW_TOLERANCE 15.0 //TODO 
 
 
 /*______________________________________________________________________________________________________________________
@@ -82,8 +82,8 @@ ________________________________________________________________________________
 // MATH CONSTANTS AND CONVERTIONS
 #define M_PI                3.141593
 #define E                   2.718282
-#define DEGREE_TO_RADIAN    M_PI/180.0
-#define RADIAN_T0_RPM       30.0/M_PI
+#define DEGREE_TO_RADIAN    0.017453
+#define RADIAN_T0_RPM       9.549297
 #define mVOLT_TO_VOLT       0.001
 
 // ROBOTC CONSTANTS
@@ -100,8 +100,7 @@ ________________________________________________________________________________
 #define ROBOT_TRACK         0.213 //m
 #define ENCODER_RESOLUTION  360.0 // [ticks/revolution]
 #define MAX_WHEEL_RPM       100.0 // [rpm]
-// #define MAX_SPEED           MAX_WHEEL_RPM/RADIAN_T0_RPM*WHEEL_DIAMETER/2.0 // [m/s]
-#define MAX_SPEED           0.40 // [m/s]
+#define MAX_SPEED           MAX_WHEEL_RPM/RADIAN_T0_RPM*WHEEL_DIAMETER/2.0 // [m/s]
 #define MAX_TURN            MAX_WHEEL_RPM/RADIAN_T0_RPM*WHEEL_DIAMETER/ROBOT_TRACK/DEGREE_TO_RADIAN // [deg/s]
 
 // ARENA PARAMETERS

@@ -54,7 +54,6 @@ float robot_arm_direction = 0.0;
 float robot_en_rpmR = 0.0;
 float robot_en_rpmL = 0.0;
 float robot_en_linX = 0.0;
-float robot_en_sanity_check =0.0;
 float robot_en_angZ = 0.0;
 
 // magnetometer
@@ -108,7 +107,6 @@ void read_sensors(){
     // TEST CODE BEGIN
     robot_en_linX = calculate_linear_x(robot_en_rpmL, robot_en_rpmR);
     robot_en_angZ = calculate_angular_z(robot_en_rpmL, robot_en_rpmR);
-	robot_en_sanity_check = (robot_en_rpmR + robot_en_rpmL) / 30.0 * 3.142 * 0.07 / 4;
     // TEST CODE END
 
 	robot_arm_position = get_arm_position(robot_arm_position,robot_arm_direction, SensorValue[limit_switch_A_pin], SensorValue[limit_switch_B_pin], SensorValue[limit_switch_C_pin]);
@@ -169,11 +167,13 @@ float move_distance(float distance_forward){
 }
 
 // rotates the robot to face angle
-float rotate_angle(float angle, int direction){
-    if (fabs(robot_yaw - angle) < YAW_TOLERANCE){
+float rotate_angle(float desired_yaw){
+	float direction = sgn(wrap_to_pi(desired_yaw - robot_yaw));
+    if (fabs(desired_yaw - robot_yaw) < YAW_TOLERANCE){
         return 0.0;
     }
-    return sgn(direction) * MAX_TURN;
+    // return 0.1 * sgn(direction) * MAX_TURN;
+    return direction * M_PI/4 / DEGREE_TO_RADIAN;
 }
 // TEST CODE END
 
@@ -188,8 +188,8 @@ task main()
         robot_execute();
 		// main Loop
 
-        robot_cmd_linX = move_distance(1.0);
-        // robot_cmd_angZ = rotate_angle(180.0, -1);
+        // robot_cmd_linX = move_distance(1.0);
+        robot_cmd_angZ = rotate_angle(45.0);
 
         // end of main loop
 		while (time1[T1] < DT * 1000){}
