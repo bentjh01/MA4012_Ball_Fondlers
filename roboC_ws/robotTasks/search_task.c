@@ -107,3 +107,15 @@ int search_task(float x, float y, float yaw, float left_sensor_dist, float right
   }
     
 }
+
+/// @brief Function to get the linear for the search task
+/// @return linear velocity in m/s
+float get_search_linX(){
+    return 0.0;
+}
+
+/// @brief Function to get the angular velocity for the search task
+/// @return angular velocity in deg/s
+float get_search_angZ(){
+    return 0.0;
+}

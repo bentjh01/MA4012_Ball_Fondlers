@@ -8,12 +8,28 @@
 3. if ball escapes collection point, return to search_task
 */
 
+static float collect_linX = 0.0;
+static float collect_angZ = 0.0;
+static float collect_servo = 0.0;
+
 int collect_task(){
     int success = 0;
     if (success == 1){
-        return DELIVER_BALL;
+        return DELIVER;
     }
     else{
-        return COLLECT_BALL;
+        return COLLECT;
     }
+}
+
+float get_collect_linX(){
+    return collect_linX;
+}
+
+float get_collect_angZ(){
+    return collect_angZ;
+}
+
+float get_collect_servo(){
+    return collect_servo;
 }

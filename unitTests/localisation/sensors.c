@@ -1,4 +1,4 @@
-#include "../config.h"
+#include "localisation_config.h"
 #include "support.c"
 
 static float prev_line_FL_val;
@@ -110,29 +110,4 @@ float calculate_short_distance(float sensor_val){
   float base = voltage/11.033;
   float distance_cm = pow(base, exponent);
   return distance_cm;
-}
-
-/// @brief Checks for ball in chamber using the middle short distance sensor
-/// @param mid_sensor_distance 
-/// @return TRIGGERED for ball in chamber, NOT_TRIGGERED for no ball in chamber
-int check_ball_in_chamber(float mid_sensor_distance){
-  if (mid_sensor_distance < BALL_IN_CHAMBER_DISTANCE){
-    return TRIGGERED;
-  }
-  else{
-    return NOT_TRIGGERED;
-  }
-}
-
-/// @brief Checks the threshold of a sensor
-/// @param sensor_val current sensor value
-/// @param threshold
-/// @return TRIGGERED if sensor_val > threshold, NOT_TRIGGERED otherwise
-int check_threshold(float sensor_val, float threshold){
-  if (sensor_val > threshold){
-    return TRIGGERED;
-  }
-  else{
-    return NOT_TRIGGERED;
-  }
 }
