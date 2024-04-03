@@ -11,6 +11,7 @@ static float edge_angZ = 0.0;
 static float edge_goal_yaw = 0.0;
 static float edge_x = 0.0;
 static float edge_y = 0.0;
+static float edge_linX_sign = 1;
 
 /// @brief Detects if a line sensor is triggered
 /// @param FL Front Left sensor
@@ -50,6 +51,7 @@ void avoid_case_check(float rb_x, float rb_y, float rb_yaw, int FL, int FR, int 
 
 	// FL or FR is detected, BL and BR are not detected
 	if ((FL == 1 || FR == 1) && (BL != 1 && BR != 1)){
+		edge_linX_sign = -1;
 		// robot facing deliver wall
 		if (rb_yaw >= -175 && rb_yaw < -95) {
 			// wall on right, turn left
@@ -65,7 +67,7 @@ void avoid_case_check(float rb_x, float rb_y, float rb_yaw, int FL, int FR, int 
 
 		// facing right wall at right wall
 		} else if (rb_yaw >= -95 && rb_yaw < -85) {
-			if (rb_x >= 120){
+			if (rb_x >= 1.2){
 				// turn towards the delivery wall
 				rotate_ang = -90;
 			}else {
@@ -104,7 +106,7 @@ void avoid_case_check(float rb_x, float rb_y, float rb_yaw, int FL, int FR, int 
 		// robot facing left wall
 		} else if (rb_yaw >= 85 && rb_yaw < 95) {
 			// turn towards the delivery wall
-			if (rb_x >= 120){
+			if (rb_x >= 1.2){
 				rotate_ang = 90;
 			}else {
 				rotate_ang = -90;
@@ -132,6 +134,7 @@ void avoid_case_check(float rb_x, float rb_y, float rb_yaw, int FL, int FR, int 
 	//status 2: only backward sensors detetcted
 	else if((BL == 1 || BR == 1) && (FL != 1 && FR != 1)){
 		edge_goal_yaw = 0.0;
+		edge_linX_sign = 1;
 		return;
 	}
 	//Some special cases: in corner
@@ -150,13 +153,13 @@ int edge_avoid_task(float rb_x, float rb_y, float rb_yaw, int prev_task){
 	float distance_from_edge = calculate_distance(rb_x, rb_y, edge_x, edge_y);
 	float yaw_error = rb_yaw - edge_goal_yaw;
 
-	if (distance_from_edge < EDGE_REVERSE_DISTANCE && yaw_error < YAW_TOLERANCE){
+	if (distance_from_edge > EDGE_REVERSE_DISTANCE && yaw_error < YAW_TOLERANCE){
 		edge_linX = 0.0;
 		edge_angZ = 0.0;
 		return prev_task;
 	}
-	else if (distance_from_edge > EDGE_REVERSE_DISTANCE){
-		edge_linX = -MAX_SPEED;
+	else if (distance_from_edge < EDGE_REVERSE_DISTANCE){
+		edge_linX = edge_linX_sign * MAX_SPEED;
 		edge_angZ = 0.0;
 		return EDGE;
 	}
