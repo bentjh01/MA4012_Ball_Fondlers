@@ -5,7 +5,9 @@ static float deliver_set_angZ;
 static float deliver_set_servo;
 
 int deliver_task(float yaw, float servo_position, int ball_in_chamber, int back_limit_switch) {
-    if (fabs(yaw) > DELIVERY_YAW_TOLERANCE) {
+    float deliver_arm_position_err = SERVO_DELIVER_POSITION - servo_position;
+
+    if (fabs(yaw) > YAW_TOLERANCE) {
         deliver_set_linX = 0;
         deliver_set_angZ = -1.0 * sgn(yaw) * MAX_TURN;
     }
@@ -18,10 +20,10 @@ int deliver_task(float yaw, float servo_position, int ball_in_chamber, int back_
         deliver_set_servo = SERVO_DELIVER_POSITION;
     }
 
-    if (fabs(servo_position - SERVO_DELIVER_POSITION) < SERVO_TOLERANCE && ball_in_chamber == 0) {
+    if (fabs(deliver_arm_position_err) < SERVO_TOLERANCE && ball_in_chamber == NOT_TRIGGERED) {
         return HOME;
     }
-    else if (ball_in_chamber == 0){
+    else if (ball_in_chamber == NOT_TRIGGERED){
         return SEARCH;
     }
     else {

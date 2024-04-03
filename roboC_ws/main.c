@@ -91,10 +91,10 @@ void read_sensors(){
     limit_switch_C = SensorValue[limit_switch_C_pin];
     limit_switch_D = SensorValue[limit_switch_D_pin];
 
-	robot_line_FL = filter_line_FL(SensorValue[line_FL_pin]);
-	robot_line_BL = filter_line_BL(SensorValue[line_BL_pin]);
-	robot_line_BR = filter_line_BR(SensorValue[line_BR_pin]);
-	robot_line_FR = filter_line_FR(SensorValue[line_FR_pin]);
+	robot_line_FL = check_threshold(filter_line_FL(SensorValue[line_FL_pin]), LINE_FL_THRESHOLD);
+	robot_line_BL = check_threshold(filter_line_BL(SensorValue[line_BL_pin]), LINE_BL_THRESHOLD);
+	robot_line_BR = check_threshold(filter_line_BR(SensorValue[line_BR_pin]), LINE_BR_THRESHOLD);
+	robot_line_FR = check_threshold(filter_line_FR(SensorValue[line_FR_pin]), LINE_FR_THRESHOLD);
 
 	distance_sensor_mid = calculate_long_distance(filter_distance_mid(SensorValue[long_distance_M_pin])) - MID_SENSOR_OFFSET;
 	distance_sensor_top = calculate_short_distance(filter_distance_top(SensorValue[short_distance_T_pin])) - TOP_SENSOR_OFFSET;
@@ -196,18 +196,21 @@ task main()
         update_robot_odom();
         robot_execute();
 		// main Loop
-		if (edge_detected()){
-			prev_task_status = task_status;
+		if (edge_detected(robot_line_FL, robot_line_BL, robot_line_BR, robot_line_FR)){
+			if (task_status != EDGE){
+				prev_task_status = task_status;
+			}
 			task_status = EDGE;
-			edge_avoid(robot_x, robot_yaw, robot_line_FL, robot_line_BL, robot_line_BR, robot_line_FR);
+
+			avoid_case_check(robot_x, robot_y, robot_yaw, robot_line_FL, robot_line_FR, robot_line_BL, robot_line_BR);
 		}
 		else {// when avoid status == 0 
 			switch (task_status){
 				case EDGE:
-					int avoid_complete = avoid_task(robot_x, robot_y, robot_yaw, robot_magneto_yaw, robot_line_FL, robot_line_BL, robot_line_BR, robot_line_FR);
-					robot_cmd_linX = avoid_linX();
-					robot_cmd_angZ = avoid_angZ();
-					if (avoid_complete == 1){
+					int avoid_complete = edge_avoid_task(robot_x, robot_y, robot_yaw);
+					robot_cmd_linX = get_edge_avoid_linX();
+					robot_cmd_angZ = get_edge_avoid_angZ();
+					if (avoid_complete == SUCCESS){
 						task_status = prev_task_status;
 					}
 					break;

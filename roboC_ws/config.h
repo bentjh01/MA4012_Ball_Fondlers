@@ -69,8 +69,10 @@ ________________________________________________________________________________
 TUNABLE TASK PARAMETERS
 ______________________________________________________________________________________________________________________*/
 
+// EDGE TASK
+#define EDGE_REVERSE_DISTANCE 0.05 // [m] TODO
+
 // DELIVERY TASK
-#define DELIVERY_YAW_TOLERANCE 0.1 //TODO
 #define SERVO_DELIVER_POSITION 180.0 //TODO
 
 /*______________________________________________________________________________________________________________________
@@ -87,7 +89,10 @@ ________________________________________________________________________________
 
 // ROBOTC CONSTANTS
 #define TRIGGERED           0
-#define MAX_POWER 127.0
+#define NOT_TRIGGERED           0
+#define MAX_POWER           127.0
+#define SUCCESS             1
+#define FAIL             0
 
 // TASK PARAMETERS
 #define DT                  0.05

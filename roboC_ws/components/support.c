@@ -58,4 +58,16 @@ float discretise_yaw(float yaw){
     return round(yaw / 45) * 45;
 }
 
+/**
+ * @brief Calculates the distance between two points in a 2D plane.
+ * @param x1 The x-coordinate of the first point.
+ * @param y1 The y-coordinate of the first point.
+ * @param x2 The x-coordinate of the second point.
+ * @param y2 The y-coordinate of the second point.
+ * @return The distance between the two points.
+ */
+float calculate_distance(float x1, float y1, float x2, float y2){
+	return sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2));
+}
+
 #endif
