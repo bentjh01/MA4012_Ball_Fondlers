@@ -27,7 +27,7 @@ static float search_initial_y;
 //   }
 // }
 
-int ball_detected(float left_sensor_dist, float right_sensor_dist, float mid_sensor_dist, float short_sensor_dist, int opp_detected){
+int ball_detected(float left_sensor_dist, float right_sensor_dist, float mid_sensor_dist, int opp_detected){
   // Returns 1 if a ball is detected, 0 otherwise
   // return 0 when there is no detection
   //ignore opp robot
@@ -43,7 +43,7 @@ int ball_detected(float left_sensor_dist, float right_sensor_dist, float mid_sen
 }
 
 
-int search_task(float x, float y, float yaw, float left_sensor_dist, float right_sensor_dist, float mid_sensor_dist, float short_sensor_dist, int opp_detected){
+int search_task(float x, float y, float yaw, float left_sensor_dist, float right_sensor_dist, float mid_sensor_dist, int opp_detected){
   //Scanning
   if(changing_search_position == 0){
     //Rotate to scan
@@ -59,19 +59,19 @@ int search_task(float x, float y, float yaw, float left_sensor_dist, float right
       robot_move(linear_velocity = 0, angular_velocity = 0);  //stop movement
       search_startup_phase = 1;                               //reset search_startup_phase
       changing_search_position = 1;                           //initiate change search position
-      return SEARCH_BALL;
+      return SEARCH;
     }
 
     //check for ball
-    if (ball_detected(left_sensor_dist,right_sensor_dist, mid_sensor_dist, short_sensor_dist, opp_detected) == 1){
+    if (ball_detected(left_sensor_dist,right_sensor_dist, mid_sensor_dist, opp_detected) == 1){
       robot_move(linear_velocity = 0, angular_velocity = 0);  //stop movement
       search_startup_phase = 1;                               //reset search_startup_phase
-      return GOTO_BALL;
+      return GOTO;
     }
     else{
       search_counter += 1; //increment counter
       //return search_opponent_detected(short_sensor_dist) //use this if want to check for opp robot instead of return 0;
-      return SEARCH_BALL;
+      return SEARCH;
     }
   }
   //Changing search position
@@ -90,19 +90,19 @@ int search_task(float x, float y, float yaw, float left_sensor_dist, float right
       robot_move(linear_velocity = 0, angular_velocity = 0);  //stop movement
       search_startup_phase = 1;                               //reset search_startup_phase
       changing_search_position = 0;                           //terminate change_search_position
-      return SEARCH_BALL;
+      return SEARCH;
     }
 
     //check for ball and opp
-    if (ball_detected(left_sensor_dist,right_sensor_dist, mid_sensor_dist, short_sensor_dist, opp_detected) == 1){
+    if (ball_detected(left_sensor_dist,right_sensor_dist, mid_sensor_dist, opp_detected) == 1){
       robot_move(linear_velocity = 0, angular_velocity = 0);  //stop movement
       search_startup_phase = 1;                               //reset search_startup_phase
       changing_search_position = 0;                           //terminate change_search_position
-      return GOTO_BALL;
+      return GOTO;
     }
     else{
       // return search_opponent_detected(short_sensor_dist) //check for opp robot
-      return SEARCH_BALL;
+      return SEARCH;
     }
   }
     

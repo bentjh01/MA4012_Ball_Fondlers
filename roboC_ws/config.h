@@ -11,11 +11,12 @@
 // MAIN LOOP PARAMETERS
 #define DT 0.05
 #define HOME                1
-#define SEARCH_BALL         2
-#define GOTO_BALL           3
-#define COLLECT_BALL        4
-#define DELIVER_BALL        5
-// #define OPP_DETECTED        9
+#define EDGE                1   
+#define HOME                2
+#define SEARCH              3
+#define COLLECT             4
+#define DELIVER             5
+#define GOTO                6
 
 //SHARP DISTANCE SENSORS
 #define BALL_THRESHOLD_LNR          45.0
