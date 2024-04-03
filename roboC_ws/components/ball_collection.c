@@ -1,31 +1,29 @@
 
-void collect_ball(){
-	// Start Ball Collection
-    // Check if status = collect ball, and, gate is open
-	if (task_Status == 4 && limit_3 == 0){
-        // Confirm if ball is in front of robot and is not opponent
-		if (short_distance_T > 5 and long_distance_M < 7){
-                 // Servo move 90 degrees to collect ball
-            	robot_servo_move(90);
 
-                // Check if ball in chamber
-                if (long_distance_M < -5){
-                    // Go to deliver task
-                    task_status = 5; 
-                }
-                
-                else{
-                    // Open gate
-                    robot_servo_moce(-90);
+static float collect_servo = 0.0;
 
-                    // Return back to collect ball
-                    task_status = 4;
-                }
-        }
+int collect_task(float servo_position, float distance_sensor_mid, float distance_sensor_top, int ball_in_chamber){
+    float collect_arm_position_err = SERVO_COLLECT_POSITION - servo_position;
 
-        
-    // Go back to Search + GOTO ball task
-	else {
-        task_status = 3;
+    if (distance_sensor_mid < 0.05 && distance_sensor_top > 0.05){
+        collect_set_servo = SERVO_COLLECT_POSITION;
     }
+
+    if (fabs(collect_arm_position_err) < SERVO_TOLERANCE && ball_in_chamber == TRIGGERED){
+        return DELIVER;
+    }
+
+    else if (ball_in_chamber == NOT_TRIGGERED){
+        return SEARCH;
+    }
+
+    else {
+        return COLLECT;
+    }
+}
+
+
+
+float get_collect_servo(){
+    return collect_servo;
 }
