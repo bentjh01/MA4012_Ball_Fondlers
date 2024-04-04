@@ -62,3 +62,15 @@ float low_pass_filter(float input, float prev_input, float alpha){
 float discretise_yaw(float yaw){
     return round(yaw / 45) * 45;
 }
+
+/**
+* @brief Calculates the distance between 2 points
+* @param x1 x coordinate of point 1
+* @param y1 y coordinate of point 1
+* @param x2 x coordinate of point 2
+* @param y2 y coordinate of point 2
+* @return distance between 2 points 
+*/
+float calculate_distance(float x1, float y1, float x2, float y2){
+	return sqrt(pow((x2-x1),2)+pow((y2-y1),2));
+}
