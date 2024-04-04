@@ -37,8 +37,8 @@ ________________________________________________________________________________
 #define FILTER_GAIN_LINE_FR 	1.0 //(output = prev_input) 0 < FILTER_GAIN < 1 (output = new_input)
 
 // MAGNETOMETER PARAMETERS
-#define MAGNETOMETER_OFFSET 180.0 // [deg] 
-#define MAGNETOMETER_OFFSET 45.0 // [deg] TODO BEARING OF THE ROBOT WHEN AT START
+#define MAGNETOMETER_OFFSET 180.0 // [deg]
+//#define MAGNETOMETER_OFFSET 45.0 // [deg] TODO BEARING OF THE ROBOT WHEN AT START
 
 /*______________________________________________________________________________________________________________________
 
@@ -73,8 +73,8 @@ ________________________________________________________________________________
 #define ENCODER_FILTER_GAIN 0.8 // TODO [0,1] takes a value between 0 and 1, the closer to 1 the more filtering
 #define MAGNETO_FILTER_GAIN 1.0 // TODO [0,1] takes a value between 0 and 1, the closer to 1 the more filtering
 
-#define LINEAR_TOLERANCE 0.05 //TODO 
-#define YAW_TOLERANCE 10.0 // [deg] TODO 
+#define LINEAR_TOLERANCE 0.05 //TODO
+#define YAW_TOLERANCE 10.0 // [deg] TODO
 
 /*______________________________________________________________________________________________________________________
 
@@ -113,10 +113,10 @@ ________________________________________________________________________________
 
 // TASK PARAMETERS
 #define DT                  0.05
-#define EDGE                1   
+#define EDGE                1
 #define HOME                2
 #define SEARCH              3
-#define GOTO                4   
+#define GOTO                4
 #define COLLECT             5
 #define DELIVER             6
 
@@ -142,5 +142,14 @@ ________________________________________________________________________________
 #define EAST            -90.0
 #define SOUTH_EAST      -135.0
 #define SOUTH           -180.0
+
+
+// UNDEFINED YET (CAUSED ERROR)
+#define INTEGRAL_LIMIT_R 1.0
+#define INTEGRAL_LIMIT_L 1.0
+#define ENCODER_FILTER 0.8
+#define MAGNETO_FILTER 1.0
+#define ARM_TOLERANCE 10.0
+#define GOTO_YAW_TOLERANCE 10.0
 
 #endif // CONFIG_H
