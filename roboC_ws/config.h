@@ -46,19 +46,19 @@ ________________________________________________________________________________
 #define RPM_GAIN 11.627
 
 #define MOTOR_L_KP 0.5 //TODO
-#define MOTOR_L_KI 1.2 //TODO
+#define MOTOR_L_KI 0.0 //TODO
 #define MOTOR_L_KD 0.001 //TODO
 
 #define MOTOR_R_KP 0.5 //TODO
-#define MOTOR_R_KI 1.2 //TODO
+#define MOTOR_R_KI 0.0 //TODO
 #define MOTOR_R_KD 0.001 //TODO
 
 // SERVO
 #define SERVO_TOLERANCE 5.0 // [deg] TODO
 #define SERVO_POSITION_GAIN 1.0 // [deg] TODO
 #define SWITCH_A_POSITION 0.0 //[deg] TODO
-#define SWITCH_B_POSITION 0.0 //[deg] TODO
-#define SWITCH_C_POSITION 0.0 //[deg] TODO
+#define SWITCH_B_POSITION 90.0 //[deg] TODO
+#define SWITCH_C_POSITION 180.0 //[deg] TODO
 
 /*______________________________________________________________________________________________________________________
 
@@ -66,11 +66,11 @@ TUNING ODOMETRY PARAMETERS
 ______________________________________________________________________________________________________________________*/
 
 // ROBOT POSE
-#define ENCODER_FILTER_GAIN 0.25 // TODO [0,1] takes a value between 0 and 1, the closer to 1 the more filtering
-#define MAGNETO_FILTER_GAIN 0.25 // TODO [0,1] takes a value between 0 and 1, the closer to 1 the more filtering
+#define ENCODER_FILTER_GAIN 0.8 // TODO [0,1] takes a value between 0 and 1, the closer to 1 the more filtering
+#define MAGNETO_FILTER_GAIN 1.0 // TODO [0,1] takes a value between 0 and 1, the closer to 1 the more filtering
 
-#define LINEAR_TOLERANCE 0.1 //TODO 
-#define YAW_TOLERANCE 5.0 // [deg] TODO 
+#define LINEAR_TOLERANCE 0.05 //TODO 
+#define YAW_TOLERANCE 10.0 // [deg] TODO 
 
 /*______________________________________________________________________________________________________________________
 
@@ -91,16 +91,16 @@ ________________________________________________________________________________
 // MATH CONSTANTS AND CONVERTIONS
 #define M_PI                3.141593
 #define E                   2.718282
-#define DEGREE_TO_RADIAN    M_PI/180
-#define RADIAN_T0_RPM       30/M_PI
+#define DEGREE_TO_RADIAN    0.017453
+#define RADIAN_T0_RPM       9.549297
 #define mVOLT_TO_VOLT       0.001
 
 // ROBOTC CONSTANTS
 #define TRIGGERED           0
-#define NOT_TRIGGERED           0
+#define NOT_TRIGGERED       0
 #define MAX_POWER           127.0
 #define SUCCESS             1
-#define FAIL             0
+#define FAIL                0
 #define INVALID             9999
 
 // TASK PARAMETERS
@@ -108,8 +108,9 @@ ________________________________________________________________________________
 #define EDGE                1   
 #define HOME                2
 #define SEARCH              3
-#define COLLECT             4
-#define DELIVER             5
+#define GOTO                4   
+#define COLLECT             5
+#define DELIVER             6
 
 // ROBOT PARAMETERS
 #define WHEEL_DIAMETER      0.06926 //m

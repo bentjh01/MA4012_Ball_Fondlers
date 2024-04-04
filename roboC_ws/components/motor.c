@@ -1,24 +1,20 @@
-#ifndef MOTORS_H
-#define MOTORS_H
-
 #include "../config.h"
 /* _____________________________________________________________________________________________________________________
 
 MOTORS DRIVER
 _____________________________________________________________________________________________________________________ */
 
-float calcualte_rpmL(float linX, float angZ){
-	float radian_per_sec = angZ * DEGREE_TO_RADIAN;
-	float rpmL = (linX - radian_per_sec*ROBOT_TRACK/2)/(WHEEL_DIAMETER/2) * RADIAN_T0_RPM;
-	return rpmL;
-}
-
-float calcualte_rpmR(float linX, float angZ){
-	float radian_per_sec = angZ * DEGREE_TO_RADIAN;
-	float rpmR = (linX + radian_per_sec*ROBOT_TRACK/2)/(WHEEL_DIAMETER/2) * RADIAN_T0_RPM;
-	return rpmR;
-}
-
+/**
+ * Limits the RPM (Rotations Per Minute) of the left wheel based on the RPM of the right wheel.
+ * If the absolute value of the RPM of both wheels is less than or equal to MAX_WHEEL_RPM,
+ * the RPM of the left wheel remains unchanged.
+ * If the absolute value of the RPM of the right wheel is greater than the RPM of the left wheel,
+ * the RPM of the left wheel is adjusted proportionally to reach the maximum RPM limit.
+ *
+ * @param rpmL The RPM of the left wheel.
+ * @param rpmR The RPM of the right wheel.
+ * @return The limited RPM of the left wheel.
+ */
 float limit_rpmL(float rpmL, float rpmR){
 	if (fabs(rpmR) <= MAX_WHEEL_RPM && fabs(rpmL) <= MAX_WHEEL_RPM){
 		return rpmL;
@@ -34,40 +30,44 @@ float limit_rpmL(float rpmL, float rpmR){
 	return rpmL;
 }
 
-// Limits the rpm to the maximum wheel rpm not by cutoff but by scaling
+/**
+ * Limits the RPM (Rotations Per Minute) of the right wheel based on the RPM of the left wheel.
+ * If the absolute value of the RPM of both wheels is less than or equal to MAX_WHEEL_RPM,
+ * the RPM of the right wheel remains unchanged.
+ * If the absolute value of the RPM of the right wheel is greater than the RPM of the left wheel,
+ * the RPM of the right wheel is scaled down proportionally to the RPM of the left wheel,
+ * and then limited to MAX_WHEEL_RPM.
+ *
+ * @param rpmL The RPM of the left wheel.
+ * @param rpmR The RPM of the right wheel.
+ * @return The limited RPM of the right wheel.
+ */
 float limit_rpmR(float rpmL, float rpmR){
 	if (fabs(rpmR) <= MAX_WHEEL_RPM && fabs(rpmL) <= MAX_WHEEL_RPM){
 		return rpmR;
-		}
+	}
 	float higher_rpm;
 	if (fabs(rpmR) > fabs(rpmL)){
 		higher_rpm = fabs(rpmR);
-		} else {
+	} else {
 		higher_rpm = fabs(rpmL);
 	}
-	rpmR= rpmR/ higher_rpm * MAX_WHEEL_RPM;
+	rpmR = rpmR / higher_rpm * MAX_WHEEL_RPM;
 
 	return rpmR;
 }
 
-float calculate_linear_x(float rpmL, float rpmR){
-	float linX = (rpmR + rpmL) / RADIAN_T0_RPM * WHEEL_DIAMETER /4;
-	return linX;
-}
-
-float calculate_angular_z(float rpmL, float rpmR){
-	float angZ = (rpmR - rpmL) * WHEEL_DIAMETER/2 /ROBOT_TRACK / RADIAN_T0_RPM / DEGREE_TO_RADIAN;
-	return angZ;
-}
-
-// Cut off the power if above 127 or below -127
+/**
+ * Limits the input power value to a range of -127 to 127.
+ *
+ * @param power The input power value to be limited.
+ * @return The limited power value within the range of -127 to 127.
+ */
 int limit_byte(float power){
 	if (power > 127){
 		power = 127;
-		} else if (power < -127){
+	} else if (power < -127){
 		power = -127;
 	}
 	return power;
 }
-
-#endif // MOTORS_H

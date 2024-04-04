@@ -47,7 +47,7 @@ float robot_cmd_rpmL = 0.0;
 float robot_cmd_linX = 0.0;
 float robot_cmd_angZ = 0.0;
 
-float robot_cmd_arm = 0.0;
+float robot_cmd_arm_position = 0.0;
 float robot_arm_direction = 0.0;
 
 // robot encoders
@@ -135,7 +135,7 @@ void robot_execute(){
 	robot_cmd_linX = calculate_linear_x(robot_cmd_rpmL, robot_cmd_rpmR);
 	robot_cmd_angZ = calculate_angular_z(robot_cmd_rpmL, robot_cmd_rpmR);
 
-	robot_arm_direction = robot_arm_move(robot_cmd_arm, robot_arm_position);
+	robot_arm_direction = robot_arm_move(robot_cmd_arm_position, robot_arm_position);
 	return;
 }
 
@@ -178,7 +178,7 @@ float rotate_angle(float desired_yaw){
 // TEST CODE END
 
 task main()
-{\
+{
 	init_robot();
 	robot_x = 0.0;
 	while(1){
