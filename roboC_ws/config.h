@@ -52,10 +52,12 @@ ________________________________________________________________________________
 #define MOTOR_L_KP 0.5 //TODO
 #define MOTOR_L_KI 0.0 //TODO
 #define MOTOR_L_KD 0.001 //TODO
+#define INTEGRAL_LIMIT_L 15.0
 
 #define MOTOR_R_KP 0.5 //TODO
 #define MOTOR_R_KI 0.0 //TODO
 #define MOTOR_R_KD 0.001 //TODO
+#define INTEGRAL_LIMIT_R 15.0
 
 // SERVO
 #define SERVO_TOLERANCE 5.0 // [deg] TODO
@@ -73,7 +75,7 @@ ________________________________________________________________________________
 #define ENCODER_FILTER_GAIN 0.8 // TODO [0,1] takes a value between 0 and 1, the closer to 1 the more filtering
 #define MAGNETO_FILTER_GAIN 1.0 // TODO [0,1] takes a value between 0 and 1, the closer to 1 the more filtering
 
-#define LINEAR_TOLERANCE 0.05 //TODO 
+#define LINEAR_TOLERANCE 0.10 //TODO 
 #define YAW_TOLERANCE 10.0 // [deg] TODO 
 
 /*______________________________________________________________________________________________________________________
@@ -132,6 +134,10 @@ ________________________________________________________________________________
 #define ARENA_X        2.4 // [m] Length
 #define ARENA_Y        1.2 // [m] Width
 #define ARENA_BEARING    0.0 // [degrees] North
+#define FRONT_WALL  12
+#define BACK_WALL   6
+#define LEFT_WALL   9
+#define RIGHT_WALL  3
 
 // BEARING DEFINITION
 #define NORTH           0.0

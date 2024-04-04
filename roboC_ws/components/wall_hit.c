@@ -1,8 +1,4 @@
-#define FRONT_WALL 6
-#define BACK_WALL  7
-#define LEFTT_WALL 8
-#define RIGHT_WALL 9
-
+#include "../config"
 
 void wall_hit(){
 
