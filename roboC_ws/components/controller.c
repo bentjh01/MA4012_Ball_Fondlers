@@ -1,34 +1,40 @@
 #include "../config.h"
 
-static float motor_R_integral = 0;
-static float motor_R_prev_error = 0;
-
-static float motor_L_integral = 0;
-static float motor_L_prev_error = 0;
-
-// RPM to POWER conversion
-float rpm_to_power(float rpm){
-    if (rpm == 0) return 0;
-    return sgn(rpm) * RPM_GAIN * pow(E, EXPONENT_GAIN * fabs(rpm));
-}
-
-// PID Controller for the right motor
-float pid_R(float setpointR, float en_rpmR){
+/**
+ * @brief Calculates the output of a PID controller for the right motor.
+ * @param setpointR The desired setpoint for the right motor.
+ * @param en_rpmR The current RPM (rotations per minute) of the right motor.
+ * @param bias The bias value to be added to the output.
+ * @return The output of the PID controller.
+ */
+float pid_R(float setpointR, float en_rpmR, float bias){
+    static float motor_R_integral = 0;
+    static float motor_R_prev_error = 0;
     float error = setpointR - en_rpmR;
-    motor_R_integral = motor_R_integral + error * DT;
+    if (fabs(motor_R_integral) < INTEGRAL_LIMIT_R){
+        motor_R_integral = motor_R_integral + error * DT;
+    }
     float derivative = (error - motor_R_prev_error) / DT;
-    float bias = rpm_to_power(setpointR);
     float output = MOTOR_R_KP * error + MOTOR_R_KI * motor_R_integral + MOTOR_R_KD * derivative + bias;
     motor_R_prev_error = error;
     return output;
 }
 
-// PID Controller for the left motor
-float pid_L(float setpointL, float en_rpmL){
+/**
+ * @brief Calculates the output of the left motor PID controller.
+ * @param setpointL The desired setpoint for the left motor.
+ * @param en_rpmL The current RPM of the left motor.
+ * @param bias The bias to be applied to the output.
+ * @return The output of the PID controller.
+ */
+float pid_L(float setpointL, float en_rpmL, float bias){
+    static float motor_L_integral = 0;
+    static float motor_L_prev_error = 0;
     float error = setpointL - en_rpmL;
-    motor_L_integral = motor_L_integral + error * DT;
+    if (fabs(motor_L_integral) < INTEGRAL_LIMIT_L){
+        motor_L_integral = motor_L_integral + error * DT;
+    }
     float derivative = (error - motor_L_prev_error) / DT;
-    float bias = rpm_to_power(setpointL);
     float output = MOTOR_L_KP * error + MOTOR_L_KI * motor_L_integral + MOTOR_L_KD * derivative + bias;
     motor_L_prev_error = error;
     return output;

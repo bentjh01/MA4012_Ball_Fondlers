@@ -1,5 +1,4 @@
-#include "sensors_test.h"
-#include "support.c"
+#include "../unit_tests.h"
 
 float filter_line_FL(float input){
   static float prev_line_FL_val;

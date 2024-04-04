@@ -1,5 +1,4 @@
-#ifndef SUPPORT_H
-#define SUPPORT_H
+#include "../config.h"
 
 /**
  * @brief Performs modulo operation x/y
@@ -13,7 +12,7 @@ float modulo(float numerator, float denominator){
 
 /**
  * @brief Wraps the angle from -180 to 180 degrees wrt to the X-Axis i.e. negative angles are CW and positive are CCW
- * @param angle angle to wrap in DEG
+ * @param angle angle to wrap in DEG. MUST be less than +/-360 DEG
  * @return angle from -180 to 180 DEG
 */
 float wrap_to_pi(float angle){
@@ -63,5 +62,3 @@ float low_pass_filter(float input, float prev_input, float alpha){
 float discretise_yaw(float yaw){
     return round(yaw / 45) * 45;
 }
-
-#endif
