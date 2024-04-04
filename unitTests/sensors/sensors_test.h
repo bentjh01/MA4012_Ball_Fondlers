@@ -7,10 +7,10 @@ SENSORS
 ______________________________________________________________________________________________________________________*/
 
 // SHARP DISTANCE SENSOR
-#define MID_SENSOR_OFFSET 0.0
-#define TOP_SENSOR_OFFSET 0.0
-#define LEFT_SENSOR_OFFSET 0.0
-#define RIGHT_SENSOR_OFFSET 0.0
+#define MID_SENSOR_OFFSET -13.27
+#define TOP_SENSOR_OFFSET 21.5
+#define LEFT_SENSOR_OFFSET 1.5
+#define RIGHT_SENSOR_OFFSET 2.9
 
 //TODO-ARENA
 // #define LINE_FL 106
@@ -35,7 +35,7 @@ ________________________________________________________________________________
 #define FILTER_GAIN_SHORT_TOP 	1.0 //TODO
 
 // MAGNETOMETER PARAMETERS
-#define MAGNETOMETER_OFFSET 0.0 // compass reading when robot is facing forward i.e. the bearing of a real compass
+#define MAGNETOMETER_OFFSET -180.0 // compass reading when robot is facing forward i.e. the bearing of a real compass
 
 /*______________________________________________________________________________________________________________________
 
@@ -44,6 +44,7 @@ ________________________________________________________________________________
 
 // TASK PARAMETERS
 #define DT                  0.05
+#define INVALID             9999
 
 // ROBOT PARAMETERS
 #define WHEEL_DIAMETER      0.069 //m TODO

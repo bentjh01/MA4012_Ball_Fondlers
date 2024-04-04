@@ -12,10 +12,10 @@
 #pragma config(Sensor, dgtl6,  limit_switch_B_pin,      sensorDigitalIn)
 #pragma config(Sensor, dgtl7,  limit_switch_C_pin,      sensorDigitalIn)
 #pragma config(Sensor, dgtl8,  limit_switch_D_pin,      sensorDigitalIn)
-#pragma config(Sensor, dgtl9,  magneto_north_pin,  sensorDigitalIn)
+#pragma config(Sensor, dgtl9,  magneto_west_pin,  sensorDigitalIn)
 #pragma config(Sensor, dgtl10, magneto_south_pin,  sensorDigitalIn)
 #pragma config(Sensor, dgtl11, magneto_east_pin,   sensorDigitalIn)
-#pragma config(Sensor, dgtl12, magneto_west_pin,   sensorDigitalIn)
+#pragma config(Sensor, dgtl12, magneto_north_pin,   sensorDigitalIn)
 #pragma config(Motor,  port2,           servo,         tmotorServoStandard, openLoop)
 #pragma config(Motor,  port6,           motor_R,       tmotorVex393_MC29, PIDControl, encoderPort, dgtl3)
 #pragma config(Motor,  port7,           motor_L,       tmotorVex393_MC29, PIDControl, reversed, encoderPort, dgtl1)
@@ -27,6 +27,8 @@
 #include "motor_control.c"
 #include "servo_control.c"
 #include "odometry.c"
+
+#include "edge_avoid_task.c"
 
 /* _____________________________________________________________________________________________________________________
 
@@ -131,7 +133,8 @@ void update_robot_odom(){
     update_odometry(robot_x, robot_y, robot_yaw, robot_linX, robot_angZ, robot_cmd_linX, robot_cmd_angZ, robot_en_rpmL, robot_en_rpmR, magnetometer_yaw);
     robot_x = get_robot_x();
     robot_y = get_robot_y();
-    robot_yaw = get_robot_yaw();
+    // robot_yaw = get_robot_yaw();
+    robot_yaw = magnetometer_yaw;
     robot_linX = get_robot_linX();
     robot_angZ = get_robot_angZ();
     return;
@@ -208,6 +211,9 @@ float rotate_angle(float angle, int direction){
 }
 // TEST CODE END
 
+int task_status;
+int prev_task_status;
+
 task main()
 {
 	init_robot();
@@ -217,9 +223,28 @@ task main()
         update_robot_odom();
         robot_execute();
 		// main Loop
+		if (edge_detected(robot_line_FL, robot_line_BL, robot_line_BR, robot_line_FR) == TRIGGERED){
+			if (task_status != EDGE){
+				prev_task_status = task_status;
+			}
+			task_status = EDGE;
+			avoid_case_check(robot_x, robot_y, robot_yaw, robot_line_FL, robot_line_FR, robot_line_BL, robot_line_BR);
+			// wall_case_check(robot_yaw, robot_line_FL, robot_line_FR, robot_line_BL, robot_line_BR); @Unizz20
+		}
+		else {// when avoid status == 0 
+			switch (task_status){
+				case EDGE:
+					task_status = edge_avoid_task(robot_x, robot_y, robot_yaw, 3);
+					robot_cmd_linX = get_edge_avoid_linX();
+					robot_cmd_angZ = get_edge_avoid_angZ();
+					break;
 
+				case 3:
+					robot_cmd_linX = 0.2;
+			}
+		}
         // robot_cmd_linX = move_distance(1.0);
-        robot_cmd_angZ = rotate_angle(180.0, -1);
+        // robot_cmd_angZ = rotate_angle(180.0, -1);
 		
         // end of main loop
 		while (time1[T1] < DT * 1000){}

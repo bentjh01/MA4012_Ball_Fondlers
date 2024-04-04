@@ -1,8 +1,4 @@
-#include "../config.h"
-#include "../components/motor_control.c"
-#include "../components/controller.c"
-#include "../components/motor.c"
-#include "../components/sensors.c"
+#include "localisation_config.h"
 
 // @FANZIFU
 
@@ -150,18 +146,13 @@ void avoid_case_check(float rb_x, float rb_y, float rb_yaw, int FL, int FR, int 
 /// @param rb_yaw robot's current yaw
 /// @return the previous task if successful, EDGE otherwise
 int edge_avoid_task(float rb_x, float rb_y, float rb_yaw, int prev_task){
-	float distance_from_edge = calculate_distance(rb_x, rb_y, edge_x, edge_y);
+	// float distance_from_edge = calculate_distance(rb_x, rb_y, edge_x, edge_y);
 	float yaw_error = rb_yaw - edge_goal_yaw;
 
-	if (distance_from_edge > EDGE_REVERSE_DISTANCE && yaw_error < YAW_TOLERANCE){
+	if (yaw_error < YAW_TOLERANCE){
 		edge_linX = 0.0;
 		edge_angZ = 0.0;
 		return prev_task;
-	}
-	else if (distance_from_edge < EDGE_REVERSE_DISTANCE){
-		edge_linX = edge_linX_sign * MAX_SPEED;
-		edge_angZ = 0.0;
-		return EDGE;
 	}
 	else if (fabs(yaw_error) > YAW_TOLERANCE){
 		edge_linX = 0.0;

@@ -17,7 +17,13 @@ float modulo(float numerator, float denominator){
  * @return angle from -180 to 180 DEG
 */
 float wrap_to_pi(float angle){
-    return (modulo((angle + 180.0),360.0)) - 180.0;
+	if (angle == 180){
+		return -180.0;
+	}
+	if (fabs(angle) > 180.0){
+		return (sgn(angle) * (fabs(angle) - 360.0));
+	}
+	return angle;
 }
 
 /**

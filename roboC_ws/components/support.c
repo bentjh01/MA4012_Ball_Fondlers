@@ -17,7 +17,13 @@ float modulo(float numerator, float denominator){
  * @return angle from -180 to 180 DEG
 */
 float wrap_to_pi(float angle){
-    return (modulo((angle + 180.0),360.0)) - 180.0;
+	if (angle == 180){
+		return -180.0;
+	}
+	if (fabs(angle) > 180.0){
+		return (sgn(angle) * (fabs(angle) - 360.0));
+	}
+	return angle;
 }
 
 /**
@@ -56,18 +62,6 @@ float low_pass_filter(float input, float prev_input, float alpha){
 */
 float discretise_yaw(float yaw){
     return round(yaw / 45) * 45;
-}
-
-/**
- * @brief Calculates the distance between two points in a 2D plane.
- * @param x1 The x-coordinate of the first point.
- * @param y1 The y-coordinate of the first point.
- * @param x2 The x-coordinate of the second point.
- * @param y2 The y-coordinate of the second point.
- * @return The distance between the two points.
- */
-float calculate_distance(float x1, float y1, float x2, float y2){
-	return sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2));
 }
 
 #endif

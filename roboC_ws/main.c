@@ -12,10 +12,10 @@
 #pragma config(Sensor, dgtl6,  limit_switch_B_pin,      sensorDigitalIn)
 #pragma config(Sensor, dgtl7,  limit_switch_C_pin,      sensorDigitalIn)
 #pragma config(Sensor, dgtl8,  limit_switch_D_pin,      sensorDigitalIn)
-#pragma config(Sensor, dgtl9,  magneto_north_pin,  sensorDigitalIn)
+#pragma config(Sensor, dgtl9,  magneto_west_pin,  sensorDigitalIn)
 #pragma config(Sensor, dgtl10, magneto_south_pin,  sensorDigitalIn)
 #pragma config(Sensor, dgtl11, magneto_east_pin,   sensorDigitalIn)
-#pragma config(Sensor, dgtl12, magneto_west_pin,   sensorDigitalIn)
+#pragma config(Sensor, dgtl12, magneto_north_pin,   sensorDigitalIn)
 #pragma config(Motor,  port2,           servo,         tmotorServoStandard, openLoop)
 #pragma config(Motor,  port6,           motor_R,       tmotorVex393_MC29, PIDControl, encoderPort, dgtl3)
 #pragma config(Motor,  port7,           motor_L,       tmotorVex393_MC29, PIDControl, reversed, encoderPort, dgtl1)
@@ -120,7 +120,8 @@ void update_robot_odom(){
     update_odometry(robot_x, robot_y, robot_yaw, robot_linX, robot_angZ, robot_cmd_linX, robot_cmd_angZ, robot_en_rpmL, robot_en_rpmR, magnetometer_yaw);
     robot_x = get_robot_x();
     robot_y = get_robot_y();
-    robot_yaw = get_robot_yaw();
+    // robot_yaw = get_robot_yaw();
+    robot_yaw = robot_magneto_yaw;
     robot_linX = get_robot_linX();
     robot_angZ = get_robot_angZ();
     return;
@@ -192,7 +193,12 @@ void wait_for_start(start_button){
 
 task main()
 {
-	init_robot();
+	robot_x = 0.0;
+    robot_y = 0.0;
+    robot_yaw = 0.0;
+    robot_linX = 0.0;
+    robot_angZ = 0.0;
+
 	while(1){
 		clearTimer(T1);
         read_sensors();

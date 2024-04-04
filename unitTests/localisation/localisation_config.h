@@ -1,5 +1,11 @@
 #ifndef LOCALISATION_CONFIG_H
 #define LOCALISATION_CONFIG_H
+
+#define EDGE_REVERSE_DISTANCE 0.05
+#define MAX_SPEED 0.2
+#define MAX_TURN 10
+#define EDGE 5
+
 /*______________________________________________________________________________________________________________________
 
 TUNING SENSOR PARAMETERS
@@ -28,7 +34,7 @@ ________________________________________________________________________________
 #define FILTER_GAIN_SHORT_TOP 	1.0 
 
 // MAGNETOMETER PARAMETERS
-#define MAGNETOMETER_OFFSET 0.0
+#define MAGNETOMETER_OFFSET 180.0
 
 /*______________________________________________________________________________________________________________________
 
@@ -60,11 +66,11 @@ TUNING ODOMETRY PARAMETERS
 ______________________________________________________________________________________________________________________*/
 
 // ROBOT POSE
-#define ENCODER_FILTER_GAIN 0.25 // TODO [0,1] takes a value between 0 and 1, the closer to 1 the more filtering
+#define ENCODER_FILTER_GAIN  0.25// TODO [0,1] takes a value between 0 and 1, the closer to 1 the more filtering
 #define MAGNETO_FILTER_GAIN 0.25 // TODO [0,1] takes a value between 0 and 1, the closer to 1 the more filtering
 
-#define LINEAR_TOLERANCE 0.1 //TODO 
-#define YAW_TOLERANCE 0.1 //TODO 
+#define LINEAR_TOLERANCE 0.05 //TODO 
+#define YAW_TOLERANCE 5.0 //TODO 
 
 
 /*______________________________________________________________________________________________________________________
@@ -81,6 +87,7 @@ ________________________________________________________________________________
 
 // ROBOTC CONSTANTS
 #define TRIGGERED           0
+#define NOT_TRIGGERED       1
 #define MAX_POWER 127.0
 
 // TASK PARAMETERS
