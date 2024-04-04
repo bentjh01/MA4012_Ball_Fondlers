@@ -29,53 +29,58 @@
 GLOBAL VARIABLES
 _____________________________________________________________________________________________________________________ */
 
-// Robot pose
-static float robot_x;
-static float robot_y;
-static float robot_yaw;
-static float robot_linX;
-static float robot_angZ;
+// Robot State
+float robot_x = 0.0;
+float robot_y = 0.0;
+float robot_yaw = 0;
+float robot_linX = 0;
+float robot_angZ = 0.0;
 
-static float robot_arm_position;
-static int ball_in_chamber_status;
+float robot_arm_position = 0.0;
 
-// robot command
-static float robot_cmd_rpmR;
-static float robot_cmd_rpmL;
-static float robot_cmd_linX;
-static float robot_cmd_angZ;
+// robot twist
+float robot_cmd_rpmR = 0.0;
+float robot_cmd_rpmL = 0.0;
+float robot_cmd_linX = 0.0;
+float robot_cmd_angZ = 0.0;
 
-static float robot_cmd_arm;
+float robot_cmd_arm_position = 0.0;
+float robot_arm_direction = 0.0;
 
 // robot encoders
-static float robot_en_rpmR;
-static float robot_en_rpmL;
+float robot_en_rpmR = 0.0;
+float robot_en_rpmL = 0.0;
+float robot_en_linX = 0.0;
+float robot_en_angZ = 0.0;
 
-// robot magnetometer
-static float robot_magneto_yaw;
+// magnetometer
+float magnetometer_yaw = 0.0;
 
 // robot line sensors
-static int robot_line_FL;
-static int robot_line_BL;
-static int robot_line_BR;
-static int robot_line_FR;
+int robot_line_FL = 0;
+int robot_line_BL = 0;
+int robot_line_BR = 0;
+int robot_line_FR = 0;
 
 // robot distance sensors
-static float distance_sensor_left;
-static float distance_sensor_right;
-static float distance_sensor_top;
-static float distance_sensor_mid;
+float distance_sensor_left = 0.0;
+float distance_sensor_right = 0.0;
+float distance_sensor_top = 0.0;
+float distance_sensor_mid = 0.0;
 
 // limit siwtches
-static int limit_switch_A;
-static int limit_switch_B;
-static int limit_switch_C;
-static int limit_switch_D;
+int limit_switch_A = 0;
+int limit_switch_B = 0;
+int limit_switch_C = 0;
+int limit_switch_D = 0;
 
 // robot task
 int task_status;
 int prev_task_status;
 
+// opponent detection
+int opp_detected;
+int ball_in_chamber_status;
 /* _____________________________________________________________________________________________________________________
 
 UNCONDITIONAL TASKS
@@ -83,8 +88,8 @@ ________________________________________________________________________________
 
 /// @brief Read all sensors
 void read_sensors(){
-    robot_magneto_yaw = read_compass(SensorValue[magneto_north_pin], SensorValue[magneto_south_pin], SensorValue[magneto_east_pin], SensorValue[magneto_west_pin]);
-    robot_magneto_yaw = wrap_to_pi(robot_magneto_yaw - MAGNETOMETER_OFFSET);
+    magnetometer_yaw = read_compass(SensorValue[magneto_north_pin], SensorValue[magneto_south_pin], SensorValue[magneto_east_pin], SensorValue[magneto_west_pin]);
+    magnetometer_yaw = wrap_to_pi(magnetometer_yaw - MAGNETOMETER_OFFSET);
 
     limit_switch_A = SensorValue[limit_switch_A_pin];
     limit_switch_B = SensorValue[limit_switch_B_pin];
@@ -106,33 +111,32 @@ void read_sensors(){
     robot_en_rpmL = getMotorEncoder(motor_L) * 60/DT /ENCODER_RESOLUTION;
 	robot_en_rpmR = getMotorEncoder(motor_R) * 60/DT /ENCODER_RESOLUTION;
     
-	robot_arm_position = get_arm_position(SensorValue[limit_switch_A_pin], SensorValue[limit_switch_B_pin], SensorValue[limit_switch_C_pin]);
-
 	resetMotorEncoder(motor_R);
 	resetMotorEncoder(motor_L);
 	return;
 }
 
 void update_robot_odom(){
-    update_odometry(robot_x, robot_y, robot_yaw, robot_linX, robot_angZ, robot_cmd_linX, robot_cmd_angZ, robot_en_rpmL, robot_en_rpmR, magnetometer_yaw);
-    robot_x = get_robot_x();
-    robot_y = get_robot_y();
-    // robot_yaw = get_robot_yaw();
-    robot_yaw = robot_magneto_yaw;
-    robot_linX = get_robot_linX();
-    robot_angZ = get_robot_angZ();
+    robot_x = update_odometry_x(robot_x, robot_yaw, robot_linX, robot_en_rpmL, robot_en_rpmR, DT);
+    robot_y = update_odometry_y(robot_y, robot_yaw, robot_linX, robot_en_rpmL, robot_en_rpmR, DT);
+    robot_yaw = update_odometry_yaw(robot_yaw, robot_angZ, robot_en_rpmL, robot_en_rpmR, magnetometer_yaw, DT);
+    // robot_yaw = magnetometer_yaw;
+    robot_linX = update_odometry_linX(robot_linX, robot_en_rpmL, robot_en_rpmR, DT);
+    robot_angZ = update_odometry_angZ(robot_cmd_angZ, robot_en_rpmL, robot_en_rpmR, DT);
     return;
 }
 
 void robot_execute(){
-	set_motor_status(robot_en_rpmL, robot_en_rpmR);
-	robot_base_move(robot_cmd_linX, robot_cmd_angZ);
-	robot_cmd_linX = get_cmd_linX();
-	robot_cmd_angZ = get_cmd_angZ();
-	robot_cmd_rpmL = get_cmd_rpmL();
-	robot_cmd_rpmR = get_cmd_rpmR();
+	robot_cmd_rpmL = calculate_rpmL(robot_cmd_linX, robot_cmd_angZ);
+	robot_cmd_rpmR = calculate_rpmR(robot_cmd_linX, robot_cmd_angZ);
+	robot_cmd_rpmL = limit_rpmL(robot_cmd_rpmL, robot_cmd_rpmR);
+	robot_cmd_rpmR = limit_rpmR(robot_cmd_rpmL, robot_cmd_rpmR);
+	robot_move_closed(robot_cmd_rpmL, robot_cmd_rpmR, robot_en_rpmL, robot_en_rpmR);
+	robot_cmd_linX = calculate_linear_x(robot_cmd_rpmL, robot_cmd_rpmR);
+	robot_cmd_angZ = calculate_angular_z(robot_cmd_rpmL, robot_cmd_rpmR);
 
-	robot_arm_move(robot_cmd_arm);
+	robot_arm_position = get_arm_position(robot_arm_position, robot_arm_direction, limit_switch_A, limit_switch_B, limit_switch_C);
+	robot_arm_direction = robot_arm_move(robot_cmd_arm_position, robot_arm_position);
 	return;
 }
 
@@ -148,25 +152,12 @@ void init_robot(){
 	int ready = 0;
 	while (ready != 1){
 		read_sensors();
-
-		// Init arm
-		if (robot_arm_position < 180.0){
-			robot_arm_move(180.0);
-		}
-		else{
-			robot_arm_move(0.0);
-		}
-
-		// Reset encoders
-		resetMotorEncoder(motor_L);
-		resetMotorEncoder(motor_R);
+		robot_execute();
+		robot_arm_direction=robot_arm_move(0.0, robot_arm_position);
 
         // Reset odom
         robot_x = 0.0;
         robot_y = 0.0;
-        robot_yaw = 0.0;
-        robot_linX = 0.0;
-        robot_angZ = 0.0;
 
 		// Ready criteria
 		if (robot_arm_position < SERVO_TOLERANCE){
@@ -222,26 +213,35 @@ task main()
 					// task_status = home_task(robot_x, robot_y, robot_yaw, robot_magneto_yaw, robot_line_FL, robot_line_BL, robot_line_BR, robot_line_FR);
 					robot_cmd_linX = get_home_linX();
 					robot_cmd_angZ = get_home_angZ();
-					robot_cmd_arm = get_home_servo();
+					robot_cmd_arm_position = get_home_servo();
 					break;
 				case SEARCH:
-					task_status = COLLECT;
-					// task_status = search_task(sensorA, sensorB, sensorC);
-					// robot_cmd_linX = search_linX();
-					// robot_cmd_angZ = search_angZ();
+					opp_detected = opponent_detection(distance_sensor_top);
+
+					// task_status = GOTO;
+					task_status = search_task(robot_x, robot_y, robot_yaw, distance_sensor_left, distance_sensor_right, distance_sensor_mid, opp_detected);
+					robot_cmd_linX = get_search_linX();
+					robot_cmd_angZ = get_search_angZ();
 					break;
+				case GOTO:
+					opp_detected = opponent_detection(distance_sensor_top);
+
+					// task_status = COLLECT;
+					task_status = goto_task(robot_x, robot_y, robot_yaw, distance_sensor_left, distance_sensor_right, distance_sensor_mid, opp_detected);
+					robot_cmd_linX = get_goto_linX();
+					robot_cmd_angZ = get_goto_angZ();
 				case COLLECT:
 					task_status = DELIVER;
 					// task_status = collect_task(robot_x, robot_y, robot_yaw, robot_arm_position, ball_in_chamber_status, limit_switch_D);
 					robot_cmd_linX = get_collect_linX();
 					robot_cmd_angZ = get_collect_angZ();
-					robot_cmd_arm = get_collect_servo();
+					robot_cmd_arm_position = get_collect_servo();
 					break;
 				case DELIVER:
 					task_status = deliver_task(robot_yaw, robot_arm_position, ball_in_chamber_status, limit_switch_D);
 					robot_cmd_linX = get_deliver_linX();
 					robot_cmd_angZ = get_deliver_angZ();
-					robot_cmd_arm = get_deliver_servo();
+					robot_cmd_arm_position = get_deliver_servo();
 					break;
 			}
 		}
@@ -249,3 +249,4 @@ task main()
 		while (time1[T1] < DT * 1000){}
 	}
 }
+

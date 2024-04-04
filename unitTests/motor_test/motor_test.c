@@ -44,49 +44,55 @@ Note the following:
 	value, the faster steady state speed is achieved but too high will cause oscillations. please observe the integral component the PID
 3. Code found between the TEST_CODE_BEGIN and TEST_CODE_END are strictly for testing and not to be used in the final robot
 */
-
-// TEST CODE BEGIN
-float calc_linear_x(float rpmL, float rpmR){
-	float linX = (rpmR + rpmL) / RADIAN_T0_RPM * WHEEL_DIAMETER /4;
-	return linX;
-}
-
-float calc_angular_z(float rpmL, float rpmR){
-	float angZ = (rpmR - rpmL) * WHEEL_DIAMETER/ROBOT_TRACK / RADIAN_T0_RPM / DEGREE_TO_RADIAN;
-	return angZ;
-}
-// TEST CODE END
-
-/* _____________________________________________________________________________________________________________________
-
-SENSORS
-_____________________________________________________________________________________________________________________ */
-
-static int limit_switch_A;
-static int limit_switch_B;
-static int limit_switch_C;
-
-static float robot_en_rpmR;
-static float robot_en_rpmL;
-
-// TESTING CODE BEGIN
-static float robot_en_linX;
-static float robot_en_angZ;
-// TESTING CODE END
-
-static float robot_arm_position;
-
 /* _____________________________________________________________________________________________________________________
 
 GLOBAL VARIABLES
 _____________________________________________________________________________________________________________________ */
 
-static float robot_cmd_linX;
-static float robot_cmd_angZ;
-static float robot_cmd_rpmL;
-static float robot_cmd_rpmR;
+// Robot State
+float robot_x = 0.0;
+float robot_y = 0.0;
+float robot_yaw = 0;
+float robot_linX = 0;
+float robot_angZ = 0.0;
 
-static float robot_cmd_arm;
+float robot_arm_position = 0.0;
+
+// robot twist
+float robot_cmd_rpmL = 0.0;
+float robot_cmd_rpmR = 0.0;
+float robot_cmd_linX = 0.0;
+float robot_cmd_angZ = 0.0;
+
+float robot_cmd_arm_position = 0.0;
+float robot_arm_direction = 0.0;
+
+// robot encoders
+float robot_en_rpmR = 0.0;
+float robot_en_rpmL = 0.0;
+float robot_en_linX = 0.0;
+float robot_en_angZ = 0.0;
+
+// magnetometer
+float magnetometer_yaw = 0.0;
+
+// robot line sensors
+int robot_line_FL = 0;
+int robot_line_BL = 0;
+int robot_line_BR = 0;
+int robot_line_FR = 0;
+
+// robot distance sensors
+float distance_sensor_left = 0.0;
+float distance_sensor_right = 0.0;
+float distance_sensor_top = 0.0;
+float distance_sensor_mid = 0.0;
+
+// limit siwtches
+int limit_switch_A = 0;
+int limit_switch_B = 0;
+int limit_switch_C = 0;
+int limit_switch_D = 0;
 
 static int loop_ms;
 
@@ -95,33 +101,32 @@ void read_sensors(void){
     limit_switch_A = SensorValue[limit_switch_A_pin];
     limit_switch_B = SensorValue[limit_switch_B_pin];
     limit_switch_C = SensorValue[limit_switch_C_pin];
-
-	robot_arm_position = get_arm_position(SensorValue[limit_switch_A_pin], SensorValue[limit_switch_B_pin], SensorValue[limit_switch_C_pin]);
+	limit_switch_D = SensorValue[limit_switch_D_pin];
 
 	robot_en_rpmR = getMotorEncoder(motor_R) / ENCODER_RESOLUTION * 60.0/DT;
 	robot_en_rpmL = getMotorEncoder(motor_L) / ENCODER_RESOLUTION * 60.0/DT;
 
 	// TESTING CODE BEGIN
-	robot_en_linX = calc_linear_x(robot_en_rpmR, robot_en_rpmR);
-	robot_en_angZ = calc_angular_z(robot_en_rpmR, robot_en_rpmL);
+	robot_en_linX = calculate_linear_x(robot_en_rpmR, robot_en_rpmR);
+	robot_en_angZ = calculate_angular_z(robot_en_rpmR, robot_en_rpmL);
 	// TESTING CODE END
-
-	set_motor_status(robot_en_rpmL, robot_en_rpmR);
 
 	resetMotorEncoder(motor_R);
 	resetMotorEncoder(motor_L);
 }
 
+/// @brief Executes the `cmd` variables
 void robot_execute(){
-	float motor_rpmL = calcualte_rpmL(robot_cmd_linX, robot_cmd_angZ);
-	float motor_rpmR = calcualte_rpmR(robot_cmd_linX, robot_cmd_angZ);
-	motor_rpmL = limit_rpmL(motor_rpmL, motor_rpmR);
-	motor_rpmR = limit_rpmR(motor_rpmL, motor_rpmR);
-	robot_move_closed(motor_rpmL, motor_rpmR, robot_en_rpmL, robot_en_rpmR);
-	robot_cmd_linX = calculate_linear_x(motor_rpmL, motor_rpmR);
-	robot_cmd_angZ = calculate_angular_z(motor_rpmL, motor_rpmR);
+	robot_cmd_rpmL = calculate_rpmL(robot_cmd_linX, robot_cmd_angZ);
+	robot_cmd_rpmR = calculate_rpmR(robot_cmd_linX, robot_cmd_angZ);
+	robot_cmd_rpmL = limit_rpmL(robot_cmd_rpmL, robot_cmd_rpmR);
+	robot_cmd_rpmR = limit_rpmR(robot_cmd_rpmL, robot_cmd_rpmR);
+	robot_move_closed(robot_cmd_rpmL, robot_cmd_rpmR, robot_en_rpmL, robot_en_rpmR);
+	robot_cmd_linX = calculate_linear_x(robot_cmd_rpmL, robot_cmd_rpmR);
+	robot_cmd_angZ = calculate_angular_z(robot_cmd_rpmL, robot_cmd_rpmR);
 
-	robot_arm_move(robot_cmd_arm);
+	robot_arm_position = get_arm_position(robot_arm_position, robot_arm_direction,limit_switch_A,limit_switch_B, limit_switch_C);
+	robot_arm_direction = robot_arm_move(robot_cmd_arm_position, robot_arm_position);
 }
 /**
  * @brief Initialises the robot
@@ -131,17 +136,13 @@ void init(){
 	while (ready != 1){
 		read_sensors();
 		// Init arm
-		if (robot_arm_position < 180.0){
-			robot_arm_move(180.0);
-		}
-		else{
-			robot_arm_move(0.0);
-		}
-		// Reset encoders
-		resetMotorEncoder(motor_L);
-		resetMotorEncoder(motor_R);
+		robot_arm_direction = robot_arm_move(0.0, robot_arm_position);
+
+		robot_x = 0.0;
+		robot_y = 0.0;
+
 		// Ready criteria
-		if (robot_arm_position < ARM_TOLERANCE){
+		if (robot_arm_position < SERVO_TOLERANCE){
 			ready = 1;
 			break;
 		}
@@ -176,11 +177,8 @@ void constant_power(int motor_power_R, int motor_power_L){
  * @param angZ desired angular velocity in DEG/S
 */
 void constant_speed(float linX, float angZ){
-	robot_base_move(robot_cmd_linX, robot_cmd_angZ);
-	robot_cmd_linX = get_cmd_linX();
-	robot_cmd_angZ = get_cmd_angZ();
-	robot_cmd_rpmL = get_cmd_rpmL();
-	robot_cmd_rpmR = get_cmd_rpmR();
+	robot_cmd_linX = linX;
+	robot_cmd_angZ = angZ;
 	return;
 }
 
@@ -190,11 +188,11 @@ void constant_speed(float linX, float angZ){
  * @param rpmR desired RIGHT wheel rpm
 */
 void constant_rpm(float rpmL, float rpmR){
-	robot_move_rpm(rpmL, rpmR);
-	robot_cmd_linX = NULL;
-	robot_cmd_angZ = NULL;
-	robot_cmd_rpmL = get_cmd_rpmL();
-	robot_cmd_rpmR = get_cmd_rpmR();
+	robot_move_closed(rpmL, rpmR, robot_en_rpmL, robot_en_rpmR);
+	robot_cmd_rpmL = rpmL;
+	robot_cmd_rpmR = rpmR;
+	robot_cmd_linX = calculate_linear_x(rpmL, rpmR);
+	robot_cmd_angZ = calculate_angular_z(rpmL, rpmR);
 	return;
 }
 // TEST CODE END
@@ -204,7 +202,7 @@ task main()
 	init();
 	while(1){
 		read_sensors();
-		// robot_execute(robot_cmd_linX, robot_cmd_angZ, robot_cmd_arm);
+		robot_execute();
 		clearTimer(T1);
 		// Main Loop
 
@@ -224,7 +222,7 @@ task main()
 		________________________________________*/		
 
 		// set a position
-		robot_arm_move(0.0);
+		robot_cmd_arm_position = 0.0;
 	
 
 		while (time1[T1] < DT * 1000){}

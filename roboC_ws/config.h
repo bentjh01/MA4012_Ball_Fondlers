@@ -14,7 +14,11 @@ ________________________________________________________________________________
 #define FILTER_GAIN_LONG_R 	    1.0 //(output = prev_input) 0 < FILTER_GAIN < 1 (output = new_input)
 #define FILTER_GAIN_LONG_MID 	1.0 //(output = prev_input) 0 < FILTER_GAIN < 1 (output = new_input)
 #define FILTER_GAIN_SHORT_TOP 	1.0 //(output = prev_input) 0 < FILTER_GAIN < 1 (output = new_input)
-#define BALL_IN_CHAMBER_DISTANCE 0.0 // [cm] TODO
+#define BALL_IN_CHAMBER_DISTANCE 9.9 // [cm] TODO
+#define BALL_THRESHOLD_LNR          45.0 //cm wrt to edge of ramp
+#define BALL_THRESHOLD_MID          35.0 //cm wrt to edge of ramp
+#define OPP_CLOSENESS_THRESHOLD     15.0 //cm wrt to edge of ramp
+#define READY_TO_COLLECT_THRESHOLD  4.0 //cm wrt to edge of ramp
 
 // LINE SENSOR
 #define LINE_FL_THRESHOLD       348.0 // Midpoint of black point and yellow point
@@ -34,7 +38,6 @@ ________________________________________________________________________________
 
 // MAGNETOMETER PARAMETERS
 #define MAGNETOMETER_OFFSET 180.0 // [deg] 
-#define MAGNETOMETER_OFFSET 45.0 // [deg] TODO BEARING OF THE ROBOT WHEN AT START
 
 /*______________________________________________________________________________________________________________________
 
@@ -48,10 +51,12 @@ ________________________________________________________________________________
 #define MOTOR_L_KP 0.5 //TODO
 #define MOTOR_L_KI 0.0 //TODO
 #define MOTOR_L_KD 0.001 //TODO
+#define INTEGRAL_LIMIT_L 15.0
 
 #define MOTOR_R_KP 0.5 //TODO
 #define MOTOR_R_KI 0.0 //TODO
 #define MOTOR_R_KD 0.001 //TODO
+#define INTEGRAL_LIMIT_R 15.0
 
 // SERVO
 #define SERVO_TOLERANCE 5.0 // [deg] TODO
@@ -66,8 +71,8 @@ TUNING ODOMETRY PARAMETERS
 ______________________________________________________________________________________________________________________*/
 
 // ROBOT POSE
-#define ENCODER_FILTER_GAIN 0.8 // TODO [0,1] takes a value between 0 and 1, the closer to 1 the more filtering
-#define MAGNETO_FILTER_GAIN 1.0 // TODO [0,1] takes a value between 0 and 1, the closer to 1 the more filtering
+#define ENCODER_FILTER 0.8 // TODO [0,1] takes a value between 0 and 1, the closer to 1 the more filtering
+#define MAGNETO_FILTER 1.0 // TODO [0,1] takes a value between 0 and 1, the closer to 1 the more filtering
 
 #define LINEAR_TOLERANCE 0.05 //TODO 
 #define YAW_TOLERANCE 10.0 // [deg] TODO 
@@ -79,6 +84,10 @@ ________________________________________________________________________________
 
 // EDGE TASK
 #define EDGE_REVERSE_DISTANCE 0.05 // [m] TODO
+
+// SEARCH TASK
+#define SEARCH_COUNT_THRESHOLD      25
+#define CHANGE_POSITION_DISTANCE    0.80
 
 // DELIVERY TASK
 #define SERVO_DELIVER_POSITION 180.0 //TODO
@@ -124,6 +133,10 @@ ________________________________________________________________________________
 #define ARENA_X        2.4 // [m] Length
 #define ARENA_Y        1.2 // [m] Width
 #define ARENA_BEARING    0.0 // [degrees] North
+#define FRONT_WALL  12
+#define BACK_WALL   6
+#define LEFT_WALL   9
+#define RIGHT_WALL  3
 
 // BEARING DEFINITION
 #define NORTH           0.0
