@@ -14,7 +14,11 @@ ________________________________________________________________________________
 #define FILTER_GAIN_LONG_R 	    1.0 //(output = prev_input) 0 < FILTER_GAIN < 1 (output = new_input)
 #define FILTER_GAIN_LONG_MID 	1.0 //(output = prev_input) 0 < FILTER_GAIN < 1 (output = new_input)
 #define FILTER_GAIN_SHORT_TOP 	1.0 //(output = prev_input) 0 < FILTER_GAIN < 1 (output = new_input)
-#define BALL_IN_CHAMBER_DISTANCE 0.0 // [cm] TODO
+#define BALL_IN_CHAMBER_DISTANCE 9.9 // [cm] TODO
+#define BALL_THRESHOLD_LNR          45.0 //cm wrt to edge of ramp
+#define BALL_THRESHOLD_MID          35.0 //cm wrt to edge of ramp
+#define OPP_CLOSENESS_THRESHOLD     15.0 //cm wrt to edge of ramp
+#define READY_TO_COLLECT_THRESHOLD  4.0 //cm wrt to edge of ramp
 
 // LINE SENSOR
 #define LINE_FL_THRESHOLD       348.0 // Midpoint of black point and yellow point
@@ -79,6 +83,10 @@ ________________________________________________________________________________
 
 // EDGE TASK
 #define EDGE_REVERSE_DISTANCE 0.05 // [m] TODO
+
+// SEARCH TASK
+#define SEARCH_COUNT_THRESHOLD      25
+#define CHANGE_POSITION_DISTANCE    0.80
 
 // DELIVERY TASK
 #define SERVO_DELIVER_POSITION 180.0 //TODO

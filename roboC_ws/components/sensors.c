@@ -123,3 +123,54 @@ float calculate_short_distance(float sensor_val){
   float distance_cm = pow(base, exponent);
   return distance_cm;
 }
+
+/// @brief Checks for ball in chamber using the middle short distance sensor
+/// @param mid_sensor_distance 
+/// @return TRIGGERED for ball in chamber, NOT_TRIGGERED for no ball in chamber
+int check_ball_in_chamber(float mid_sensor_distance){
+  if (mid_sensor_distance < BALL_IN_CHAMBER_DISTANCE){
+    return TRIGGERED;
+  }
+  else{
+    return NOT_TRIGGERED;
+  }
+}
+
+/// @brief Checks the threshold of a sensor
+/// @param sensor_val current sensor value
+/// @param threshold
+/// @return TRIGGERED if sensor_val > threshold, NOT_TRIGGERED otherwise
+int check_threshold(float sensor_val, float threshold){
+  if (sensor_val > threshold){
+    return TRIGGERED;
+  }
+  else{
+    return NOT_TRIGGERED;
+  }
+}
+
+int opponent_detection(float short_sensor_dist){
+  // may need to move this to components into sensors.c
+  if(short_sensor_dist <= OPP_CLOSENESS_THRESHOLD){
+    //Theres an opp robot close in front
+    return 1;
+  }
+  else{
+    return 0;
+  }
+}
+
+int detect_ball(float left_sensor_dist, float right_sensor_dist, float mid_sensor_dist, int opp_detected){
+  // Returns 1 if a ball is detected, 0 otherwise
+  // return 0 when there is no detection
+  //ignore opp robot
+  if (left_sensor_dist <= BALL_THRESHOLD_LNR || right_sensor_dist <= BALL_THRESHOLD_LNR){
+    return 1;
+  }
+  else if(mid_sensor_dist <= BALL_THRESHOLD_MID && !opp_detected){
+    return 1;
+  }
+  else{
+    return 0;
+  }
+}
