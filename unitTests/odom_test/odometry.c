@@ -72,12 +72,12 @@ float update_odometry_yaw(float yaw, float angZ, float rpmL, float rpmR, float m
     float state_yaw = yaw + angZ * dt;
 
     // Predict the state of the robot using encoders
-    float encoder_yaw = yaw + calculate_angular_z(rpmR, rpmR) * dt;
+    float encoder_yaw = yaw + calculate_angular_z(rpmL, rpmR) * dt;
 
     float encoder_yaw_innovation = encoder_yaw - state_yaw;
     float magnetometer_yaw_innovation = magneto_yaw - discretise_yaw(state_yaw);
-    // float output_yaw = state_yaw + ENCODER_FILTER * encoder_yaw_innovation + MAGNETO_FILTER * magnetometer_yaw_innovation;
-    float output_yaw = state_yaw + ENCODER_FILTER * encoder_yaw_innovation;
+    float output_yaw = state_yaw + ENCODER_FILTER * encoder_yaw_innovation + MAGNETO_FILTER * magnetometer_yaw_innovation;
+    // float output_yaw = state_yaw + ENCODER_FILTER * encoder_yaw_innovation;
     output_yaw = wrap_to_pi(output_yaw);
 
     return output_yaw;
@@ -111,18 +111,13 @@ float update_odometry_linX(float cmd_linX, float rpmL, float rpmR, float dt){
  * @param dt The time interval between updates.
  * @return The updated odometry angular Z value.
  */
-float update_odometry_angZ(float yaw, float cmd_angZ, float rpmL, float rpmR, float  magneto_yaw, float dt){
+float update_odometry_angZ(float cmd_angZ, float rpmL, float rpmR, float dt){
     // Predict the state of the robot using encoders
     float encoder_angZ = calculate_angular_Z(rpmL, rpmR);
 
-    // Predict the state of the robot using the magnetometer
-    float magneto_angZ = (magneto_yaw - discretise_yaw(yaw))/dt;
-
     // Calculate the innovation
     float encoder_angular_velocity_innovation = encoder_angZ - cmd_angZ;
-    float magnetometer_angular_velocity_innovation = magneto_angZ - cmd_angZ;
 
     // Apply a alpha beta filter
-    // return cmd_angZ + ENCODER_FILTER * encoder_angular_velocity_innovation + MAGNETO_SPEED_FILTER * magnetometer_angular_velocity_innovation;
     return cmd_angZ + ENCODER_FILTER * encoder_angular_velocity_innovation;
 }

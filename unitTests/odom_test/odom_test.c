@@ -122,7 +122,7 @@ void update_robot_odom(){
     robot_yaw = update_odometry_yaw(robot_yaw, robot_angZ, robot_en_rpmL, robot_en_rpmR, magnetometer_yaw, DT);
     // robot_yaw = magnetometer_yaw;
     robot_linX = update_odometry_linX(robot_linX, robot_en_rpmL, robot_en_rpmR, DT);
-    robot_angZ = update_odometry_angZ(robot_yaw, robot_cmd_angZ, robot_en_rpmL, robot_en_rpmR, magnetometer_yaw, DT);
+    robot_angZ = update_odometry_angZ(robot_cmd_angZ, robot_en_rpmL, robot_en_rpmR, DT);
     return;
 }
 
@@ -189,7 +189,7 @@ task main()
 		// main Loop
 
         // robot_cmd_linX = move_distance(1.0);
-        robot_cmd_angZ = rotate_angle(45.0);
+        robot_cmd_angZ = rotate_angle(-135.0);
 
         // end of main loop
 		while (time1[T1] < DT * 1000){}

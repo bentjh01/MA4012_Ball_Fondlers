@@ -67,8 +67,7 @@ ________________________________________________________________________________
 
 // ROBOT POSE
 #define ENCODER_FILTER  0.8// TODO [0,1] takes a value between 0 and 1, the closer to 1 the more filtering
-#define MAGNETO_FILTER 0.25 // TODO [0,1] takes a value between 0 and 1, the closer to 1 the more filtering
-#define MAGNETO_SPEED_FILTER 0.25 // TODO [0,1] takes a value between 0 and 1, the closer to 1 the more filtering
+#define MAGNETO_FILTER 1.0 // TODO [0,1] takes a value between 0 and 1, the closer to 1 the more filtering
 
 #define LINEAR_TOLERANCE 0.05 //TODO 
 #define YAW_TOLERANCE 15.0 //TODO 
