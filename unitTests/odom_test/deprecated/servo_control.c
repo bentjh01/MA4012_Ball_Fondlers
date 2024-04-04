@@ -31,7 +31,7 @@ float robot_arm_move(float set_position, float arm_position){
     int set_servo_power = 0;
     // position of arm is -1 at most open, and 180 at most closed
     // when motor is set to positive, arm swings inwards
-	if (fabs(set_position - arm_position) > ARM_TOLERANCE){
+	if (fabs(set_position - arm_position) > SERVO_TOLERANCE){
 		int set_servo_power = sgn(set_position - arm_position) * MAX_POWER;
 	}
     motor[servo] = set_servo_power;
