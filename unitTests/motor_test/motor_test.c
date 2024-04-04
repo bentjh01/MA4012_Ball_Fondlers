@@ -141,7 +141,7 @@ void init(){
 		resetMotorEncoder(motor_L);
 		resetMotorEncoder(motor_R);
 		// Ready criteria
-		if (robot_arm_position < ARM_TOLERANCE){
+		if (robot_arm_position < SERVO_TOLERANCE){
 			ready = 1;
 			break;
 		}

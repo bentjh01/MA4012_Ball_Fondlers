@@ -38,7 +38,6 @@ ________________________________________________________________________________
 
 // MAGNETOMETER PARAMETERS
 #define MAGNETOMETER_OFFSET 180.0 // [deg] 
-#define MAGNETOMETER_OFFSET 45.0 // [deg] TODO BEARING OF THE ROBOT WHEN AT START
 
 /*______________________________________________________________________________________________________________________
 
@@ -72,8 +71,8 @@ TUNING ODOMETRY PARAMETERS
 ______________________________________________________________________________________________________________________*/
 
 // ROBOT POSE
-#define ENCODER_FILTER_GAIN 0.8 // TODO [0,1] takes a value between 0 and 1, the closer to 1 the more filtering
-#define MAGNETO_FILTER_GAIN 1.0 // TODO [0,1] takes a value between 0 and 1, the closer to 1 the more filtering
+#define ENCODER_FILTER 0.8 // TODO [0,1] takes a value between 0 and 1, the closer to 1 the more filtering
+#define MAGNETO_FILTER 1.0 // TODO [0,1] takes a value between 0 and 1, the closer to 1 the more filtering
 
 #define LINEAR_TOLERANCE 0.10 //TODO 
 #define YAW_TOLERANCE 10.0 // [deg] TODO 
