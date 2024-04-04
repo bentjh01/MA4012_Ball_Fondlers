@@ -114,7 +114,7 @@ int goto_task(float x, float y, float yaw, float left_sensor_dist, float right_s
             goto_angZ = -20.0;
 
             //When approximately facing towards the ball
-            if(fabs(yaw-goto_target_yaw) < GOTO_YAW_TOLERANCE){
+            if(fabs(yaw-goto_target_yaw) < YAW_TOLERANCE){
                 //move forward
                 goto_linX = 0.20;
                 goto_angZ = 0.0;
@@ -145,7 +145,7 @@ int goto_task(float x, float y, float yaw, float left_sensor_dist, float right_s
             goto_angZ = 20.0;
 
             //When approximately facing towards the ball
-            if(fabs(yaw-goto_target_yaw) < GOTO_YAW_TOLERANCE){
+            if(fabs(yaw-goto_target_yaw) < YAW_TOLERANCE){
                 //move forward
                 goto_linX = 0.20;
                 goto_angZ = 0.0;
