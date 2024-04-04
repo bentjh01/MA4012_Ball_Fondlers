@@ -10,7 +10,7 @@ ________________________________________________________________________________
 float calcualte_rpmL(float linX, float angZ){
 	float radian_per_sec = angZ * DEGREE_TO_RADIAN;
 	float rpmL = (linX - radian_per_sec*ROBOT_TRACK/2)/(WHEEL_DIAMETER/2) * RADIAN_T0_RPM;
-	return rpmL ;
+	return rpmL;
 }
 
 float calcualte_rpmR(float linX, float angZ){
@@ -19,7 +19,7 @@ float calcualte_rpmR(float linX, float angZ){
 	return rpmR;
 }
 
-float limit_rpmL(float rpmR, float rpmL){
+float limit_rpmL(float rpmL, float rpmR){
 	if (fabs(rpmR) <= MAX_WHEEL_RPM && fabs(rpmL) <= MAX_WHEEL_RPM){
 		return rpmL;
 		}
@@ -34,7 +34,8 @@ float limit_rpmL(float rpmR, float rpmL){
 	return rpmL;
 }
 
-float limit_rpmR(float rpmR, float rpmL){
+// Limits the rpm to the maximum wheel rpm not by cutoff but by scaling
+float limit_rpmR(float rpmL, float rpmR){
 	if (fabs(rpmR) <= MAX_WHEEL_RPM && fabs(rpmL) <= MAX_WHEEL_RPM){
 		return rpmR;
 		}
@@ -49,13 +50,13 @@ float limit_rpmR(float rpmR, float rpmL){
 	return rpmR;
 }
 
-float calculate_linear_x(float rpmR, float rpmL){
+float calculate_linear_x(float rpmL, float rpmR){
 	float linX = (rpmR + rpmL) / RADIAN_T0_RPM * WHEEL_DIAMETER /4;
 	return linX;
 }
 
-float calculate_angular_z(float rpmR, float rpmL){
-	float angZ = (rpmR - rpmL) * WHEEL_DIAMETER/ROBOT_TRACK / RADIAN_T0_RPM / DEGREE_TO_RADIAN;
+float calculate_angular_z(float rpmL, float rpmR){
+	float angZ = (rpmR - rpmL) * WHEEL_DIAMETER/2 /ROBOT_TRACK / RADIAN_T0_RPM / DEGREE_TO_RADIAN;
 	return angZ;
 }
 

@@ -1,85 +1,46 @@
-#ifndef MOTOR_CONTROL_C
-#define MOTOR_CONTROL_C
+#include "config.h"
 
-#include "../config.h"
-#include "motor.c"
 #include "controller.c"
+#include "motor.c"
+#include "differential_drive.c"
 
 /* _____________________________________________________________________________________________________________________
 
 MOTORS CONTROL
 _____________________________________________________________________________________________________________________ */
 
-/**
- * @brief Open loop control of motor speed rpm
- * @param rpmR The right motor speed in rpm
- * @param rpmL The left motor speed in rpm
-*/
-void robot_move_open_rpm(float rpmR, float rpmL){
-	motor[motor_R] = rpmR / MAX_WHEEL_RPM * 127;
-	motor[motor_L] = rpmL / MAX_WHEEL_RPM * 127;
+// RPM to POWER conversion
+float rpm_to_power(float rpm){
+    if (rpm == 0) return 0;
+    return sgn(rpm) * RPM_GAIN * pow(E, EXPONENT_GAIN * fabs(rpm));
 }
 
 /**
  * @brief Open loop control of motor speed rpm
- * @param rpmR The right motor speed in rpm
- * @param rpmL The left motor speed in rpm
+ * @param rpmL The right motor speed in rpm
+ * @param rpmR The left motor speed in rpm
 */
-void robot_move_open(float linear_x, float angular_z){
-	float rpmR = calcualte_rpmR(linear_x, angular_z);
-	float rpmL = calcualte_rpmL(linear_x, angular_z);
-	rpmR = limit_rpmR(rpmR, rpmL);
-	rpmL = limit_rpmL(rpmR, rpmL);
-	motor[motor_R] = rpmR / MAX_WHEEL_RPM * 127;
-	motor[motor_L] = rpmL / MAX_WHEEL_RPM * 127;
+void robot_move_open(float rpmL, float rpmR){
+	motor[motor_R] = rpm_to_power(rpmR);
+	motor[motor_L] = rpm_to_power(rpmL);
+	return;
 }
 
 /**
- * @brief Closed loop control of motor speed rpm
- * @param en_rpmR The right motor speed in rpm
- * @param en_rpmL The left motor speed in rpm
- * @param cmd_rpmR The desired right motor speed in rpm
- * @param cmd_rpmL The desired left motor speed in rpm
-*/
-void robot_move_closed_rpm(float en_rpmR, float en_rpmL, float cmd_rpmR, float cmd_rpmL){
-	int motor_power_R = pid_R(en_rpmR, cmd_rpmR);
-	int motor_power_L = pid_L(en_rpmL, cmd_rpmL);
-	motor_power_R = limit_byte(motor_power_R);
+ * @brief Moves the robot by controlling the motors.
+ * @param cmd_rpmL The desired RPM (Rotations Per Minute) for the left motor.
+ * @param cmd_rpmR The desired RPM (Rotations Per Minute) for the right motor.
+ * @param en_rpmL The actual RPM (Rotations Per Minute) of the left motor.
+ * @param en_rpmR The actual RPM (Rotations Per Minute) of the right motor.
+ */
+void robot_move_closed(float cmd_rpmL, float cmd_rpmR, float en_rpmL, float en_rpmR){
+	float biasL = rpm_to_power(cmd_rpmL);
+	float biasR = rpm_to_power(cmd_rpmR);
+	int motor_power_L = pid_L(cmd_rpmL, en_rpmL, biasL);
+	int motor_power_R = pid_R(cmd_rpmR, en_rpmR, biasR);
 	motor_power_L = limit_byte(motor_power_L);
-	motor[motor_R] = motor_power_R;
-	motor[motor_L] = motor_power_L;
-}
-
-/**
- * @brief Closed loop control of robot movement
- * @param en_rpmR The right motor speed in rpm
- * @param en_rpmL The left motor speed in rpm
- * @param linear_X The linear velocity of the robot
- * @param angular_Z The angular velocity of the robot
-*/
-void robot_move_closed(float en_rpmR, float en_rpmL, float linear_X, float angular_Z){
-	float cmd_rpmR = calcualte_rpmR(linear_X, angular_Z);
-	float cmd_rpmL = calcualte_rpmL(linear_X, angular_Z);
-	int motor_power_R = pid_R(en_rpmR, cmd_rpmR);
-	int motor_power_L = pid_L(en_rpmL, cmd_rpmL);
 	motor_power_R = limit_byte(motor_power_R);
-	motor_power_L = limit_byte(motor_power_L);
-	motor[motor_R] = motor_power_R;
 	motor[motor_L] = motor_power_L;
+	motor[motor_R] = motor_power_R;
+	return;
 }
-
-/**
- * @brief Open loop control of servo displacement
- * @param displacement The servo displacement
-*/
-// TODO- Encorporate Limit switch to know servo rough position. @Unizz20
-void robot_servo_move(int displacement){
-	int move_time_ms = displacement * SERVO_DISPLACEMNT_FACTOR;
-	int servo_power = limit_byte(displacement * SERVO_POWER_FACTOR);
-	while (time1[T2] < move_time_ms){
-		motor[servo] = servo_power;
-	}
-	motor[servo] = 0;
-}
-
-#endif //MOTOR_CONTROL_C

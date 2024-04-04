@@ -5,6 +5,9 @@
 2. Write a check-if-ball-is-detected function to check if ball is detected and differentiate between ball and opponent
 */
 
+static float seach_task_linX = 0.0;
+static float search_task_angZ = 0.0;
+
 int search_task(float x, float y, float yaw, float sensor_A, float sensor_B){
     int success = 0;
     if (success == 1){
@@ -28,4 +31,16 @@ int ball_detected(float sensor_A, float sensor_B, float sensor_C, float sensor_D
     else{
         return 0;
     }
+}
+
+/// @brief Function to get the linear for the search task
+/// @return linear velocity in m/s
+float get_search_linX(){
+    return 0.0;
+}
+
+/// @brief Function to get the angular velocity for the search task
+/// @return angular velocity in deg/s
+float get_search_angZ(){
+    return 0.0;
 }
