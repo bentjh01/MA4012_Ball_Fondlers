@@ -33,9 +33,3 @@ float get_home_linX(){
 float get_home_angZ(){
     return home_angZ;
 }
-
-/// @brief Fetches the command position of the servo
-/// @return postion of the servo [deg]
-float get_home_angZ(){
-    return home_angZ;
-}
