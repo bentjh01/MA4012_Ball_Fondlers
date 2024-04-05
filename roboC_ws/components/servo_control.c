@@ -18,7 +18,8 @@ float get_arm_position(float arm_position, float servo_direction, int switch_A, 
         return SWITCH_C_POSITION;
     }
     else{
-        return arm_position + (sgn(servo_direction) * SERVO_POSITION_GAIN);
+        // return arm_position + (sgn(servo_direction) * SERVO_POSITION_GAIN);
+        return arm_position;
     }
 }
 
@@ -32,8 +33,8 @@ float robot_arm_move(float set_position, float arm_position){
     // position of arm is -1 at most open, and 180 at most closed
     // when motor is set to positive, arm swings inwards
 	if (fabs(set_position - arm_position) > SERVO_TOLERANCE){
-		int set_servo_power = sgn(set_position - arm_position) * MAX_POWER;
+		set_servo_power = sgn(set_position - arm_position) * MAX_POWER;
 	}
-    motor[servo] = set_servo_power;
+    motor[servo] = -set_servo_power;
     return sgn(set_position - arm_position);
 }

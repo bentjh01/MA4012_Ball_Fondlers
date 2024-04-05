@@ -107,7 +107,7 @@ ________________________________________________________________________________
 // ROBOTC CONSTANTS
 #define TRIGGERED           0
 #define NOT_TRIGGERED       0
-#define MAX_POWER           127.0
+#define MAX_POWER           127
 #define SUCCESS             1
 #define FAIL                0
 #define INVALID             9999
