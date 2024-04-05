@@ -222,7 +222,7 @@ task main()
 		________________________________________*/
 
 		// set a position
-		robot_cmd_arm_position = 180.0;
+		robot_cmd_arm_position = 90.0;
 
 
 		while (time1[T1] < DT * 1000){}
