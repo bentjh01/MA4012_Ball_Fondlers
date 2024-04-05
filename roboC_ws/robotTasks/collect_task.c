@@ -1,34 +1,28 @@
 #include "../config.h"
 
-// @Unizz20
-
-/*
-1. the ball is in collection point
-2. ensure that the ball is collected
-3. if ball escapes collection point, return to search_task
-*/
-
-static float collect_linX = 0.0;
-static float collect_angZ = 0.0;
 static float collect_servo = 0.0;
 
-int collect_task(){
-    int success = 0;
-    if (success == 1){
+int collect_task(float servo_position, float distance_sensor_mid, float distance_sensor_top, int ball_in_chamber){
+    float collect_arm_position_err = SERVO_COLLECT_POSITION - servo_position;
+
+    if (distance_sensor_mid < 0.05 && distance_sensor_top > 0.05){
+        collect_set_servo = SERVO_COLLECT_POSITION;
+    }
+
+    if (fabs(collect_arm_position_err) < SERVO_TOLERANCE && ball_in_chamber == TRIGGERED){
         return DELIVER;
     }
-    else{
+
+    else if (ball_in_chamber == NOT_TRIGGERED){
+        return SEARCH;
+    }
+
+    else {
         return COLLECT;
     }
 }
 
-float get_collect_linX(){
-    return collect_linX;
-}
 
-float get_collect_angZ(){
-    return collect_angZ;
-}
 
 float get_collect_servo(){
     return collect_servo;
