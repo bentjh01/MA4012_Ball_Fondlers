@@ -35,12 +35,12 @@ Note the following:
 	- MOTOR_R_KP
 	- MOTOR_R_KI
 	- MOTOR_R_KD
-	- SERVO_ARM_TOLERANCE = the tolerance of the arm's position. it is used to determine if the servo motor should stop. 
+	- SERVO_ARM_TOLERANCE = the tolerance of the arm's position. it is used to determine if the servo motor should stop.
 	- SERVO_POSITION_GAIN = the estimated angle of displacement when the servo is activated in one cycle. i.e. in 0.05 [s] how much does the arm move
 	- SWITCH_A_POSITION = the position of the limit switch A which is somewhere in the outward position
 	- SWITCH_B_POSITION = the position of the limit switch B which is somewhere in the middle position
 	- SWITCH_C_POSITION = the position of the limit switch C which is somewhere in the inward position
-2. 	IMPORTANT!! The characteristic of the motor and the code sets up the KI value to be the most important. The higher the 
+2. 	IMPORTANT!! The characteristic of the motor and the code sets up the KI value to be the most important. The higher the
 	value, the faster steady state speed is achieved but too high will cause oscillations. please observe the integral component the PID
 3. Code found between the TEST_CODE_BEGIN and TEST_CODE_END are strictly for testing and not to be used in the final robot
 */
@@ -171,7 +171,7 @@ void constant_power(int motor_power_R, int motor_power_L){
 	return;
 }
 
-/** 
+/**
  * @brief Sets the motors to a constant speed and updates the commanded rpm and speeds based on limitations
  * @param linX desired linear velocity in M/S
  * @param angZ desired angular velocity in DEG/S
@@ -199,7 +199,7 @@ void constant_rpm(float rpmL, float rpmR){
 
 task main()
 {
-	init();
+	// init();
 	while(1){
 		read_sensors();
 		robot_execute();
@@ -211,19 +211,19 @@ task main()
 		/*________________________________________
 
 		DRIVE MOTOR TESTING
-		________________________________________*/		
+		________________________________________*/
 		// constant_power(20, 0);
-		constant_rpm(60, 60);
+		// constant_rpm(60, 60);
 		// constant_speed(0.4, 0.4);
 
 		/*________________________________________
 
 		SERVO MOTOR TESTING
-		________________________________________*/		
+		________________________________________*/
 
 		// set a position
-		robot_cmd_arm_position = 0.0;
-	
+		robot_cmd_arm_position = 90.0;
+
 
 		while (time1[T1] < DT * 1000){}
 		loop_ms = time1[T1];

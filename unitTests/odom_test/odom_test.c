@@ -160,10 +160,18 @@ void init_robot(){
 // TEST CODE BEGIN
 // moves robot forward by a distance in [metre]
 float move_distance(float distance_forward){
-    if (robot_x < distance_forward){
-        return MAX_SPEED;
-    }
+	if (distance_forward < 0){
+		if (robot_x > distance_forward){
+			return sgn(distance_forward - robot_x) * MAX_SPEED;
+		}
 	return 0.0;
+	}
+	else{
+    if (robot_x < distance_forward){
+        return sgn(distance_forward - robot_x) * MAX_SPEED;
+		}
+		return 0.0;
+    }
 }
 
 // rotates the robot to face angle
@@ -188,8 +196,8 @@ task main()
         robot_execute();
 		// main Loop
 
-        // robot_cmd_linX = move_distance(1.0);
-        robot_cmd_angZ = rotate_angle(-135.0);
+        robot_cmd_linX = move_distance(-0.3);
+        // robot_cmd_angZ = rotate_angle(0.0);
 
         // end of main loop
 		while (time1[T1] < DT * 1000){}

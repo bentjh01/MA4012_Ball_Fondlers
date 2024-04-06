@@ -37,7 +37,8 @@ ________________________________________________________________________________
 #define FILTER_GAIN_LINE_FR 	1.0 //(output = prev_input) 0 < FILTER_GAIN < 1 (output = new_input)
 
 // MAGNETOMETER PARAMETERS
-#define MAGNETOMETER_OFFSET 180.0 // [deg] 
+// #define MAGNETOMETER_OFFSET 180.0 // [deg] 
+#define MAGNETOMETER_OFFSET 45.0 // [deg] 
 
 /*______________________________________________________________________________________________________________________
 
@@ -61,6 +62,7 @@ ________________________________________________________________________________
 // SERVO
 #define SERVO_TOLERANCE 5.0 // [deg] TODO
 #define SERVO_POSITION_GAIN 1.0 // [deg] TODO
+#define SERVO_GAIN 0.3
 #define SWITCH_A_POSITION 0.0 //[deg] TODO
 #define SWITCH_B_POSITION 90.0 //[deg] TODO
 #define SWITCH_C_POSITION 180.0 //[deg] TODO
@@ -75,7 +77,7 @@ ________________________________________________________________________________
 #define MAGNETO_FILTER 1.0 // TODO [0,1] takes a value between 0 and 1, the closer to 1 the more filtering
 
 #define LINEAR_TOLERANCE 0.05 //TODO 
-#define YAW_TOLERANCE 10.0 // [deg] TODO 
+#define YAW_TOLERANCE 15.0 // [deg] TODO 
 
 /*______________________________________________________________________________________________________________________
 
@@ -107,7 +109,7 @@ ________________________________________________________________________________
 // ROBOTC CONSTANTS
 #define TRIGGERED           0
 #define NOT_TRIGGERED       0
-#define MAX_POWER           127.0
+#define MAX_POWER           127
 #define SUCCESS             1
 #define FAIL                0
 #define INVALID             9999
