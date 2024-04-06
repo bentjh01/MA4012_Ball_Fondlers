@@ -4,11 +4,11 @@
 
 TUNING SENSOR PARAMETERS
 ______________________________________________________________________________________________________________________*/
-// SHARP DISTANCE SENSOR
-#define MID_SENSOR_OFFSET -13.27
-#define TOP_SENSOR_OFFSET 21.5 //TODO
+// SHARP DISTANCE SENSOR (measured on 6 April 2024)
+#define MID_SENSOR_OFFSET 15.23
+#define TOP_SENSOR_OFFSET 0.0
 #define LEFT_SENSOR_OFFSET 1.5
-#define RIGHT_SENSOR_OFFSET 2.9
+#define RIGHT_SENSOR_OFFSET 1.9
 
 #define FILTER_GAIN_LONG_L 	    1.0 //(output = prev_input) 0 < FILTER_GAIN < 1 (output = new_input)
 #define FILTER_GAIN_LONG_R 	    1.0 //(output = prev_input) 0 < FILTER_GAIN < 1 (output = new_input)
