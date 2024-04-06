@@ -7,5 +7,6 @@
 #include "collect_task.c"
 #include "deliver_task.c"
 #include "home_task.c"
+#include "goto_task.c"
 
 #endif // ROBOT_TASKS_H
