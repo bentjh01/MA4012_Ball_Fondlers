@@ -21,6 +21,8 @@ static int goto_correction_mode = 0;
 static int goto_different_sign;
 static float goto_linX;
 static float goto_angZ;
+static int goto_startup_phase = 1;
+static float goto_angular_difference;
 
 // int goto_opponent_detected(float short_sensor_dist){
 //     //may need to move this to components into sensors.c
@@ -66,14 +68,33 @@ float calculate_goto_target_yaw(float goto_initial_yaw, float yaw){
     }
 }
 
-int goto_task(float x, float y, float yaw, float left_sensor_dist, float right_sensor_dist, float mid_sensor_dist, int opp_detected){
+int goto_task(float x, float y, float yaw, float left_sensor_dist, float right_sensor_dist, float mid_sensor_dist, int opp_detected, float ball_yaw){
+    if(goto_startup_phase){
+    	//turn to ball_yaw
+    	goto_angular_difference = ball_yaw - yaw;
+
+    	if(goto_angular_difference <= -180) {
+        goto_angular_difference = goto_angular_difference+360;
+      }
+      else if (goto_angular_difference > 180){
+      	goto_angular_difference = goto_angular_difference-360;
+      }
+
+      goto_linX = 0.0;
+      goto_angZ = -0.5 * goto_angular_difference;
+
+	    if(fabs(yaw-ball_yaw) <= YAW_TOLERANCE){
+	    	goto_startup_phase = 0;
+	    }
+
+    	return GOTO;
+    }
+
     ball_location = get_ball_location(left_sensor_dist, right_sensor_dist, mid_sensor_dist, opp_detected);     //get latest ball location
 
-    //Check if new detection there is new detection that is different from the previous (Cos if e.g. detect left, then left again, can be 2 different balls)
+    //Check if there is new detection that is different from the previous (Cos if e.g. detect left, then left again, can be 2 different balls)
     if(ball_location != 0 && prev_ball_location != ball_location){
         //stop movement
-        goto_linX = 0.0;
-        goto_angZ = 0.0;
         prev_ball_location = ball_location;                     //save prev ball location
     }
 
@@ -82,13 +103,15 @@ int goto_task(float x, float y, float yaw, float left_sensor_dist, float right_s
         //stop movement
         goto_linX = 0.0;
         goto_angZ = 0.0;
+        goto_startup_phase = 1;
         return SEARCH;
+        //return GOTO;
     }
-    else if(ball_location == FRONT && mid_sensor_dist > READY_TO_COLLECT_THRESHOLD && !opp_detected){
+    else if(ball_location == FRONT && !opp_detected){
         //Ball in front, check if need to move forward to get closer to the ball
         if(mid_sensor_dist > READY_TO_COLLECT_THRESHOLD){
-            //move forward 
-            goto_linX = 0.50;
+            //move forward
+            goto_linX = 0.20;
             goto_angZ = 0.0;
             return GOTO;
         }
@@ -96,6 +119,7 @@ int goto_task(float x, float y, float yaw, float left_sensor_dist, float right_s
             //stop movement
             goto_linX = 0.0;
             goto_angZ = 0.0;
+            goto_startup_phase = 1;
             return COLLECT;
         }
     }
@@ -107,11 +131,11 @@ int goto_task(float x, float y, float yaw, float left_sensor_dist, float right_s
             goto_target_yaw = calculate_goto_target_yaw(goto_initial_yaw, yaw); //calculate target yaw (approximate where the ball is)
         }
 
-        //correction mode activated, go to the 
+        //correction mode activated, go to the
         if(goto_correction_mode){
             //rotate CW
-            goto_linX = 0.0;
-            goto_angZ = -20.0;
+            goto_linX = 0.20;
+            goto_angZ = -15.0;
 
             //When approximately facing towards the ball
             if(fabs(yaw-goto_target_yaw) < YAW_TOLERANCE){
@@ -125,8 +149,8 @@ int goto_task(float x, float y, float yaw, float left_sensor_dist, float right_s
         else{
             goto_initial_yaw = yaw;
             //rotate CCW
-            goto_linX = 0.0;
-            goto_angZ = 20.0;
+            goto_linX = 0.20;
+            goto_angZ = 15.0;
             return GOTO;
         }
     }
@@ -138,11 +162,11 @@ int goto_task(float x, float y, float yaw, float left_sensor_dist, float right_s
             goto_target_yaw = calculate_goto_target_yaw(goto_initial_yaw, yaw); //calculate target yaw (approximate where the ball is)
         }
 
-        //correction mode activated, go to the 
+        //correction mode activated, go to the
         if(goto_correction_mode){
             //rotate CCW
-            goto_linX = 0.0;
-            goto_angZ = 20.0;
+            goto_linX = 0.20;
+            goto_angZ = 15.0;
 
             //When approximately facing towards the ball
             if(fabs(yaw-goto_target_yaw) < YAW_TOLERANCE){
@@ -156,8 +180,8 @@ int goto_task(float x, float y, float yaw, float left_sensor_dist, float right_s
         else{
             goto_initial_yaw = yaw;
             //rotate CW
-            goto_linX = 0.0;
-            goto_angZ = -20.0;
+            goto_linX = 0.20;
+            goto_angZ = -15.0;
 
             return GOTO;
         }
