@@ -85,7 +85,7 @@ int ball_in_chamber_status;
 
 SENSORS
 _____________________________________________________________________________________________________________________ */
-void read_sensors(){
+void read_sensors(float dt){
     magnetometer_yaw = read_compass(SensorValue[magneto_north_pin], SensorValue[magneto_south_pin], SensorValue[magneto_east_pin], SensorValue[magneto_west_pin]);
     magnetometer_yaw = wrap_to_pi(magnetometer_yaw - MAGNETOMETER_OFFSET);
 
@@ -104,30 +104,30 @@ void read_sensors(){
 	distance_sensor_left = calculate_long_distance(filter_distance_L(SensorValue[long_distance_L_pin])) - LEFT_SENSOR_OFFSET;
 	distance_sensor_right = calculate_long_distance(filter_distance_R(SensorValue[long_distance_R_pin])) - RIGHT_SENSOR_OFFSET;
 
-    robot_en_rpmL = getMotorEncoder(motor_L) * 60/DT /ENCODER_RESOLUTION;
-	robot_en_rpmR = getMotorEncoder(motor_R) * 60/DT /ENCODER_RESOLUTION;
+    robot_en_rpmL = getMotorEncoder(motor_L) * 60.0/dt /ENCODER_RESOLUTION;
+	robot_en_rpmR = getMotorEncoder(motor_R) * 60.0/dt /ENCODER_RESOLUTION;
     
 	resetMotorEncoder(motor_R);
 	resetMotorEncoder(motor_L);
 	return;
 }
 
-void update_robot_odom(){
-    robot_x = update_odometry_x(robot_x, robot_yaw, robot_linX, robot_en_rpmL, robot_en_rpmR, DT);
-    robot_y = update_odometry_y(robot_y, robot_yaw, robot_linX, robot_en_rpmL, robot_en_rpmR, DT);
-    robot_yaw = update_odometry_yaw(robot_yaw, robot_angZ, robot_en_rpmL, robot_en_rpmR, magnetometer_yaw, DT);
+void update_robot_odom(float dt){
+    robot_x = update_odometry_x(robot_x, robot_yaw, robot_linX, robot_en_rpmL, robot_en_rpmR, dt);
+    robot_y = update_odometry_y(robot_y, robot_yaw, robot_linX, robot_en_rpmL, robot_en_rpmR, dt);
+    robot_yaw = update_odometry_yaw(robot_yaw, robot_angZ, robot_en_rpmL, robot_en_rpmR, magnetometer_yaw, dt);
     // robot_yaw = magnetometer_yaw;
-    robot_linX = update_odometry_linX(robot_linX, robot_en_rpmL, robot_en_rpmR, DT);
-    robot_angZ = update_odometry_angZ(robot_cmd_angZ, robot_en_rpmL, robot_en_rpmR, DT);
+    robot_linX = update_odometry_linX(robot_linX, robot_en_rpmL, robot_en_rpmR, dt);
+    robot_angZ = update_odometry_angZ(robot_cmd_angZ, robot_en_rpmL, robot_en_rpmR, dt);
     return;
 }
 
-void robot_execute(){
+void robot_execute(float dt){
 	robot_cmd_rpmL = calculate_rpmL(robot_cmd_linX, robot_cmd_angZ);
 	robot_cmd_rpmR = calculate_rpmR(robot_cmd_linX, robot_cmd_angZ);
 	robot_cmd_rpmL = limit_rpmL(robot_cmd_rpmL, robot_cmd_rpmR);
 	robot_cmd_rpmR = limit_rpmR(robot_cmd_rpmL, robot_cmd_rpmR);
-	robot_move_closed(robot_cmd_rpmL, robot_cmd_rpmR, robot_en_rpmL, robot_en_rpmR);
+	robot_move_closed(robot_cmd_rpmL, robot_cmd_rpmR, robot_en_rpmL, robot_en_rpmR, dt);
 	robot_cmd_linX = calculate_linear_x(robot_cmd_rpmL, robot_cmd_rpmR);
 	robot_cmd_angZ = calculate_angular_z(robot_cmd_rpmL, robot_cmd_rpmR);
 
@@ -145,22 +145,11 @@ ________________________________________________________________________________
  * @brief Initialises the robot
 */
 void init_robot(){
-	int ready = 0;
-	while (ready != 1){
-		read_sensors();
-		robot_execute();
-		robot_arm_direction=robot_arm_move(0.0, robot_arm_position);
-
-        // Reset odom
-        robot_x = 0.0;
-        robot_y = 0.0;
-
-		// Ready criteria
-		if (robot_arm_position < ARM_TOLERANCE){
-			ready = 1;
-			break;
-		}
-	}
+	robot_x = 0.0;
+	robot_y = 0.0;
+	robot_yaw = 0;
+	robot_linX = 0;
+	robot_angZ = 0.0;
 	return;
 }
 
@@ -185,14 +174,22 @@ float rotate_angle(float angle, int direction){
 int task_status;
 int prev_task_status;
 
+task robot_read(){
+	while(1){
+		clearTimer(T2);
+		read_sensors(DT_READ);
+		update_robot_odom(DT_READ);
+        robot_execute(DT_READ);
+		while (time1[T2] < DT_READ * 1000){}
+	}
+}
+
 task main()
 {
 	init_robot();
 	while(1){
 		clearTimer(T1);
-        read_sensors();
-        update_robot_odom();
-        robot_execute();
+		startTask(robot_read);
 		// main Loop
 		// if (edge_detected(robot_line_FL, robot_line_BL, robot_line_BR, robot_line_FR) == TRIGGRED){
 		if (1 == 2){
@@ -249,7 +246,7 @@ task main()
 				break;
 		}
         // end of main loop
-		while (time1[T1] < DT * 1000){}
+		while (time1[T1] < DT_MAIN * 1000){}
 	}
 }
 
