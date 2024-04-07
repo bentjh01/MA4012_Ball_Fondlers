@@ -151,9 +151,9 @@ void avoid_case_check(float rb_x, float rb_y, float rb_yaw, int FL, int FR, int 
 /// @return the previous task if successful, EDGE otherwise
 int edge_avoid_task(float rb_x, float rb_y, float rb_yaw, int prev_task){
 	float distance_from_edge = calculate_distance(rb_x, rb_y, edge_x, edge_y);
-	float yaw_error = rb_yaw - edge_goal_yaw;
+	float yaw_error = edge_goal_yaw - rb_yaw;
 
-	if (distance_from_edge > EDGE_REVERSE_DISTANCE && yaw_error < YAW_TOLERANCE){
+	if (distance_from_edge > EDGE_REVERSE_DISTANCE && abs(yaw_error) < YAW_TOLERANCE){
 		edge_linX = 0.0;
 		edge_angZ = 0.0;
 		return prev_task;
@@ -165,7 +165,7 @@ int edge_avoid_task(float rb_x, float rb_y, float rb_yaw, int prev_task){
 	}
 	else if (fabs(yaw_error) > YAW_TOLERANCE){
 		edge_linX = 0.0;
-		edge_angZ = sgn(yaw_error) * MAX_TURN;
+		edge_angZ = 0.6 * yaw_error;
 		return EDGE;
 	}
 }

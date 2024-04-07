@@ -202,7 +202,7 @@ task main()
 				// task_status = edge_avoid_task(robot_x, robot_y, robot_yaw, prev_task_status);
 				// robot_cmd_linX = get_edge_avoid_linX();
 				// robot_cmd_angZ = get_edge_avoid_angZ();
-				task_status = DELIVER;
+				task_status = DELIVER; // testing
 				break;
 			case HOME:
 				task_status = SEARCH;
