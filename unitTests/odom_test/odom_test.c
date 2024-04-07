@@ -110,7 +110,7 @@ void read_sensors(float dt){
     robot_en_angZ = calculate_angular_z(robot_en_rpmL, robot_en_rpmR);
     // TEST CODE END
 
-	robot_arm_position = get_arm_position(robot_arm_position,robot_arm_direction, SensorValue[limit_switch_A_pin], SensorValue[limit_switch_B_pin], SensorValue[limit_switch_C_pin]);
+	robot_arm_position = get_arm_position(robot_arm_position,robot_cmd_arm_position, robot_arm_direction, SensorValue[limit_switch_A_pin], SensorValue[limit_switch_B_pin], SensorValue[limit_switch_C_pin]);
 
 	resetMotorEncoder(motor_R);
 	resetMotorEncoder(motor_L);
@@ -154,6 +154,7 @@ void init_robot(){
 	robot_yaw = 0.0;
 	robot_linX = 0.0;
 	robot_angZ = 0.0;
+	robot_arm_position;
 	return;
 }
 
@@ -210,24 +211,25 @@ task main()
         // robot_cmd_linX = move_distance(-0.3);
         // robot_cmd_angZ = rotate_angle(0.0);
 
-		robot_cmd_linX = 0.0;
+		// robot_cmd_linX = 0.0;
 
-		if (robot_yaw < osc && dir == 1){
-			robot_cmd_angZ = Kp * (osc - robot_yaw);
-		}
-		if (robot_yaw > osc){
-			dir = -1;
-		}
+		// if (robot_yaw < osc && dir == 1){
+		// 	robot_cmd_angZ = Kp * (osc - robot_yaw);
+		// }
+		// if (robot_yaw > osc){
+		// 	dir = -1;
+		// }
 
-		if (robot_yaw > -osc && dir == -1){
-			robot_cmd_angZ = Kp * (-osc - robot_yaw);
-		}
+		// if (robot_yaw > -osc && dir == -1){
+		// 	robot_cmd_angZ = Kp * (-osc - robot_yaw);
+		// }
 		
-		if (robot_yaw < -osc){
-			dir = 1;
-		}
+		// if (robot_yaw < -osc){
+		// 	dir = 1;
+		// }
 
 		// robot_move_closed(-60, 60, robot_en_rpmL, robot_cmd_rpmR);
+		robot_cmd_arm_position = 90.0;
 
         // end of main loop
 		loop_ms = time1[T1];

@@ -51,18 +51,18 @@ ________________________________________________________________________________
 
 #define MOTOR_L_KP 0.5 //TODO
 #define MOTOR_L_KI 0.0 //TODO
-#define MOTOR_L_KD 0.001 //TODO
+#define MOTOR_L_KD 0.00 //TODO
 #define INTEGRAL_LIMIT_L 15.0
 
 #define MOTOR_R_KP 0.5 //TODO
 #define MOTOR_R_KI 0.0 //TODO
-#define MOTOR_R_KD 0.001 //TODO
+#define MOTOR_R_KD 0.00 //TODO
 #define INTEGRAL_LIMIT_R 15.0
 
 // SERVO
-#define SERVO_TOLERANCE 5.0 // [deg] TODO
-#define SERVO_POSITION_GAIN 1.0 // [deg] TODO
-#define SERVO_GAIN 0.3
+#define SERVO_TOLERANCE 7.0 // [deg] TODO
+#define SERVO_POSITION_GAIN 7.50 // [deg] TODO
+#define SERVO_KP 0.8
 #define SWITCH_A_POSITION 0.0 //[deg] TODO
 #define SWITCH_B_POSITION 90.0 //[deg] TODO
 #define SWITCH_C_POSITION 180.0 //[deg] TODO
@@ -87,6 +87,9 @@ ________________________________________________________________________________
 // EDGE TASK
 #define EDGE_REVERSE_DISTANCE 0.05 // [m] TODO
 
+// HOME TASK
+#define HOME_AWAY_DISTANCE (ARENA_X * 2.0 / 3.0)
+
 // SEARCH TASK
 #define SEARCH_COUNT_THRESHOLD      25
 #define CHANGE_POSITION_DISTANCE    0.80
@@ -97,6 +100,7 @@ ________________________________________________________________________________
 // DELIVERY TASK
 #define DELIVER_YAW_KP 0.6
 #define SERVO_DELIVER_POSITION 180.0 //TODO
+#define DELIVERY_SERVO_COUNTER   20 //TODO
 
 /*______________________________________________________________________________________________________________________
 
@@ -111,8 +115,8 @@ ________________________________________________________________________________
 #define mVOLT_TO_VOLT       0.001
 
 // ROBOTC CONSTANTS
-#define TRIGGERED           0
-#define NOT_TRIGGERED       0
+#define TRIGGERED           0       // VEX Cortex is all pull-up
+#define NOT_TRIGGERED       1
 #define MAX_POWER           127
 #define SUCCESS             1
 #define FAIL                0

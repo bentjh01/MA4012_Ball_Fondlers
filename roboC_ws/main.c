@@ -199,17 +199,17 @@ task main()
 		}
 		switch (task_status){
 			case EDGE:
-				// task_status = edge_avoid_task(robot_x, robot_y, robot_yaw, prev_task_status);
+				// task_status = edge_avoid_task(robot_x, robot_y, robot_yaw, prev_task_status, robot_arm_position);
 				// robot_cmd_linX = get_edge_avoid_linX();
 				// robot_cmd_angZ = get_edge_avoid_angZ();
-				task_status = DELIVER; // testing
+				task_status = HOME; // testing
 				break;
 			case HOME:
-				task_status = SEARCH;
-				// task_status = home_task(robot_x, robot_y, robot_yaw, robot_magneto_yaw, robot_line_FL, robot_line_BL, robot_line_BR, robot_line_FR);
-				// robot_cmd_linX = get_home_linX();
-				// robot_cmd_angZ = get_home_angZ();
-				// robot_cmd_arm_position = get_home_servo();
+				// task_status = SEARCH;
+				task_status = home_task(robot_x, robot_y, robot_arm_position);
+				robot_cmd_linX = get_home_linX();
+				robot_cmd_angZ = get_home_angZ();
+				robot_cmd_arm_position = get_home_servo();
 				break;
 			case SEARCH:
 				// opp_detected = opponent_detection(distance_sensor_top);
