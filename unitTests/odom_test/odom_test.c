@@ -77,6 +77,7 @@ int limit_switch_B = 0;
 int limit_switch_C = 0;
 int limit_switch_D = 0;
 
+int loop_ms = 0;
 
 /* _____________________________________________________________________________________________________________________
 
@@ -188,7 +189,10 @@ float rotate_angle(float desired_yaw){
 task main()
 {
 	init_robot();
-	robot_x = 0.0;
+	clearTimer(T3);
+	int dir = 1;
+	float osc = 90.0;
+	float Kp = 1.0;
 	while(1){
 		clearTimer(T1);
         read_sensors();
@@ -196,10 +200,30 @@ task main()
         robot_execute();
 		// main Loop
 
-        robot_cmd_linX = move_distance(-0.3);
+        // robot_cmd_linX = move_distance(-0.3);
         // robot_cmd_angZ = rotate_angle(0.0);
 
+		robot_cmd_linX = 0.0;
+
+		if (robot_yaw < osc && dir == 1){
+			robot_cmd_angZ = Kp * (osc - robot_yaw);
+		}
+		if (robot_yaw > osc){
+			dir = -1;
+		}
+
+		if (robot_yaw > -osc && dir == -1){
+			robot_cmd_angZ = Kp * (-osc - robot_yaw);
+		}
+		
+		if (robot_yaw < -osc){
+			dir = 1;
+		}
+
+		// robot_move_closed(-60, 60, robot_en_rpmL, robot_cmd_rpmR);
+
         // end of main loop
+		loop_ms = time1[T1];
 		while (time1[T1] < DT * 1000){}
 	}
 }

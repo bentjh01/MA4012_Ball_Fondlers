@@ -75,7 +75,7 @@ int limit_switch_C = 0;
 int limit_switch_D = 0;
 
 // robot task
-int task_status;
+int task_status = HOME;
 int prev_task_status;
 
 // opponent detection
@@ -186,6 +186,7 @@ task main()
     robot_yaw = 0.0;
     robot_linX = 0.0;
     robot_angZ = 0.0;
+	// init_robot();
 
 	while(1){
 		clearTimer(T1);
@@ -193,8 +194,8 @@ task main()
         update_robot_odom();
         robot_execute();
 		// main Loop
-		// if (edge_detected(robot_line_FL, robot_line_BL, robot_line_BR, robot_line_FR) == TRIGGERED){
-		if (edge_detected(robot_line_FL, robot_line_BL, robot_line_BR, robot_line_FR) == TRIGGERED){
+		// if (edge_detected(robot_line_FL, robot_line_BL, robot_line_BR, robot_line_FR) == TRIGGRED){
+		if (1 == 2){
 			if (task_status != EDGE){
 				prev_task_status = task_status;
 			}
@@ -204,9 +205,10 @@ task main()
 		}
 		switch (task_status){
 			case EDGE:
-				task_status = edge_avoid_task(robot_x, robot_y, robot_yaw, prev_task_status);
-				robot_cmd_linX = get_edge_avoid_linX();
-				robot_cmd_angZ = get_edge_avoid_angZ();
+				// task_status = edge_avoid_task(robot_x, robot_y, robot_yaw, prev_task_status);
+				// robot_cmd_linX = get_edge_avoid_linX();
+				// robot_cmd_angZ = get_edge_avoid_angZ();
+				task_status = DELIVER;
 				break;
 			case HOME:
 				task_status = SEARCH;

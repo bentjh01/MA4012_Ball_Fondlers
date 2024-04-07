@@ -1,9 +1,9 @@
 #include "../config.h"
 
-static float deliver_set_linX;
-static float deliver_set_angZ;
-static float deliver_set_servo;
-static int reset_x = NOT_TRIGGERED;
+float deliver_set_linX;
+float deliver_set_angZ;
+float deliver_set_servo;
+int reset_x = NOT_TRIGGERED;
 
 int deliver_task(float yaw, float servo_position, int ball_in_chamber, int back_limit_switch, int lineBL, int lineBR) {
     float deliver_arm_position_err = SERVO_DELIVER_POSITION - servo_position;
@@ -13,8 +13,8 @@ int deliver_task(float yaw, float servo_position, int ball_in_chamber, int back_
         deliver_set_angZ = -1.0 * sgn(yaw) * MAX_TURN;
     }
     else {
-        deliver_set_linX = MAX_SPEED;
-        deliver_set_angZ = 0;
+        deliver_set_linX = 0.0;
+        deliver_set_angZ = 0.0;
     }
 
     // if (back_limit_switch == TRIGGERED && lineBL == TRIGGERED && lineBR == TRIGGERED) {
