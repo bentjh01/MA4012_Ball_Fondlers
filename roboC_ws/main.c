@@ -224,6 +224,7 @@ task main()
 				// task_status = goto_task(robot_x, robot_y, robot_yaw, distance_sensor_left, distance_sensor_right, distance_sensor_mid, opp_detected);
 				// robot_cmd_linX = get_goto_linX();
 				// robot_cmd_angZ = get_goto_angZ();
+				break;
 			case COLLECT:
 				task_status = DELIVER;
 				// task_status = collect_task(robot_x, robot_y, robot_yaw, robot_arm_position, ball_in_chamber_status, limit_switch_D);
