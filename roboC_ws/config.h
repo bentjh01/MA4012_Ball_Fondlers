@@ -91,7 +91,11 @@ ________________________________________________________________________________
 #define SEARCH_COUNT_THRESHOLD      25
 #define CHANGE_POSITION_DISTANCE    0.80
 
+// COLLECT TASK
+#define SERVO_COLLECT_POSITION 90.0
+
 // DELIVERY TASK
+#define DELIVER_YAW_KP 0.6
 #define SERVO_DELIVER_POSITION 180.0 //TODO
 
 /*______________________________________________________________________________________________________________________

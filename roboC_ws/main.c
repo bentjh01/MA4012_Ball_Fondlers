@@ -76,7 +76,7 @@ int limit_switch_D = 0;
 
 // robot task
 int task_status = HOME;
-int prev_task_status;
+int prev_task_status = HOME;
 
 // opponent detection
 int opp_detected;
@@ -106,7 +106,7 @@ void read_sensors(float dt){
 
     robot_en_rpmL = getMotorEncoder(motor_L) * 60.0/dt /ENCODER_RESOLUTION;
 	robot_en_rpmR = getMotorEncoder(motor_R) * 60.0/dt /ENCODER_RESOLUTION;
-    
+
 	resetMotorEncoder(motor_R);
 	resetMotorEncoder(motor_L);
 	return;
@@ -170,9 +170,6 @@ float rotate_angle(float angle, int direction){
     return sgn(direction) * 45.0;
 }
 // TEST CODE END
-
-int task_status;
-int prev_task_status;
 
 task robot_read(){
 	while(1){
@@ -249,4 +246,3 @@ task main()
 		while (time1[T1] < DT_MAIN * 1000){}
 	}
 }
-
