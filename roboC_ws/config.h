@@ -73,7 +73,7 @@ TUNING ODOMETRY PARAMETERS
 ______________________________________________________________________________________________________________________*/
 
 // ROBOT POSE
-#define ENCODER_FILTER 0.8 // TODO [0,1] takes a value between 0 and 1, the closer to 1 the more filtering
+#define ENCODER_FILTER 1.0 // TODO [0,1] takes a value between 0 and 1, the closer to 1 the more filtering
 #define MAGNETO_FILTER 1.0 // TODO [0,1] takes a value between 0 and 1, the closer to 1 the more filtering
 
 #define LINEAR_TOLERANCE 0.05 //TODO 
@@ -115,8 +115,8 @@ ________________________________________________________________________________
 #define INVALID             9999
 
 // TASK PARAMETERS
-#define DT                  0.05
-#define EDGE                1
+#define DT                  0.01
+#define EDGE                1   
 #define HOME                2
 #define SEARCH              3
 #define GOTO                4
@@ -127,7 +127,7 @@ ________________________________________________________________________________
 #define WHEEL_DIAMETER      0.06926 //m
 #define ROBOT_TRACK         0.213 //m
 #define ENCODER_RESOLUTION  360.0 // [ticks/revolution]
-#define MAX_WHEEL_RPM       100.0 // [rpm]
+#define MAX_WHEEL_RPM       100.0 * 0.8// [rpm]
 #define MAX_SPEED           MAX_WHEEL_RPM/RADIAN_T0_RPM*WHEEL_DIAMETER/2 // [m/s]
 #define MAX_TURN            MAX_WHEEL_RPM/RADIAN_T0_RPM*WHEEL_DIAMETER/ROBOT_TRACK/DEGREE_TO_RADIAN // [deg/s]
 
