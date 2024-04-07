@@ -21,10 +21,10 @@ ________________________________________________________________________________
 #define READY_TO_COLLECT_THRESHOLD  4.0 //cm wrt to edge of ramp
 
 // LINE SENSOR
-#define LINE_FL_THRESHOLD       348.0 // Midpoint of black point and yellow point
-#define LINE_BL_THRESHOLD       188.0 // Midpoint of black point and yellow point
-#define LINE_BR_THRESHOLD       307.0 // Midpoint of black point and yellow point
-#define LINE_FR_THRESHOLD       187.0 // Midpoint of black point and yellow point
+#define LINE_FL_THRESHOLD       800.0 // Midpoint of black point and yellow point
+#define LINE_BL_THRESHOLD       685.0 // Midpoint of black point and yellow point
+#define LINE_BR_THRESHOLD       308.75 // Midpoint of black point and yellow point
+#define LINE_FR_THRESHOLD       760.0// Midpoint of black point and yellow point
 // ARENA
 // #define LINE_FL_THRESHOLD       106.0 // Midpoint of black point and yellow point
 // #define LINE_BL_THRESHOLD       344.0 // Midpoint of black point and yellow point
