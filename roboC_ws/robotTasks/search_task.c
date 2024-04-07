@@ -14,7 +14,7 @@ static float search_initial_y;
 static float search_linX;
 static float search_angZ;
 static float change_position_traveled_distance;
-static int search_reduce = 0.0;
+static int search_reduce = 0;
 
 //NOTE!!!
 //MOVE OPP DETECTION TO
@@ -76,7 +76,7 @@ int search_task(float x, float y, float yaw, float left_sensor_dist, float right
     }
 
     if((fabs(search_initial_yaw)+fabs(yaw)) >= 175.0 && (fabs(search_initial_yaw)+fabs(yaw)) <= 185.00){
-    	search_reduce = 1;
+    	search_reduce = 1; //initiate slowing down before reaching 360 deg
     }
 
     if(search_reduce == 0){
@@ -87,10 +87,6 @@ int search_task(float x, float y, float yaw, float left_sensor_dist, float right
     else{
     	search_linX = 0.0;
       search_angZ = fabs(yaw-search_initial_yaw)/180.0*120.0;
-
-      //if(search_angZ < 60.0){
-      	//search_angZ = 60.0;
-      //}
     }
 
     //check if 360 deg rotation achieved
@@ -107,12 +103,11 @@ int search_task(float x, float y, float yaw, float left_sensor_dist, float right
     //check for ball
     if (search_ball_detected(left_sensor_dist,right_sensor_dist, mid_sensor_dist, opp_detected) == 1){
       //stop movement
-      //search_linX = 0.0;
-      //search_angZ = 0.0;
+      search_linX = 0.0;
+      search_angZ = 0.0;
 
-      //search_startup_phase = 1;                               //reset search_startup_phase
-      //return GOTO;
-    	return SEARCH;
+      search_startup_phase = 1;                               //reset search_startup_phase
+      return GOTO;
     }
     else{
       search_counter += 1; //increment counter
@@ -156,13 +151,12 @@ int search_task(float x, float y, float yaw, float left_sensor_dist, float right
     //check for ball and opp
     if (search_ball_detected(left_sensor_dist,right_sensor_dist, mid_sensor_dist, opp_detected) == 1){
       //stop movement
-      //search_linX = 0.0;
-      //search_angZ = 0.0;
+      search_linX = 0.0;
+      search_angZ = 0.0;
 
-      //search_startup_phase = 1;                               //reset search_startup_phase
-      //changing_search_position = 0;                           //terminate change_search_position
-      //return GOTO;
-    	return SEARCH;
+      search_startup_phase = 1;                               //reset search_startup_phase
+      changing_search_position = 0;                           //terminate change_search_position
+      return GOTO;
     }
     else{
       // return search_opponent_detected(short_sensor_dist) //check for opp robot
