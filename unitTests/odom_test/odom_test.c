@@ -185,13 +185,23 @@ float rotate_angle(float desired_yaw){
 }
 // TEST CODE END
 
+task robot_read(){
+	while(1){
+		clearTimer(T2);
+		read_sensors(DT_READ);
+		update_robot_odom(DT_READ);
+        robot_execute(DT_READ);
+		while (time1[T2] < DT_READ * 1000){}
+	}
+}
+
 task main()
 {
 	init_robot();
 	clearTimer(T3);
 	int dir = 1;
 	float osc = 90.0;
-	float Kp = 1.0;
+	float Kp = 0.80;
 	startTask(robot_read);
 	while(1){
 		clearTimer(T1);
@@ -222,15 +232,5 @@ task main()
         // end of main loop
 		loop_ms = time1[T1];
 		while (time1[T1] < DT_MAIN * 1000){}
-	}
-}
-
-task robot_read(){
-	while(1){
-		clearTimer(T2);
-		read_sensors(DT_READ);
-		update_robot_odom(DT_READ);
-        robot_execute(DT_READ);
-		while (time1[T2] < DT_READ * 1000){}
 	}
 }

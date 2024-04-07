@@ -151,13 +151,4 @@ ________________________________________________________________________________
 #define SOUTH_EAST      -135.0
 #define SOUTH           -180.0
 
-
-// UNDEFINED YET (CAUSED ERROR)
-#define INTEGRAL_LIMIT_R 1.0
-#define INTEGRAL_LIMIT_L 1.0
-#define ENCODER_FILTER 0.8
-#define MAGNETO_FILTER 1.0
-#define ARM_TOLERANCE 10.0
-#define GOTO_YAW_TOLERANCE 10.0
-
 #endif // CONFIG_H
