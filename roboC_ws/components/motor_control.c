@@ -35,15 +35,16 @@ void robot_move_open(float rpmL, float rpmR){
  * @param cmd_rpmR The desired RPM (Rotations Per Minute) for the right motor.
  * @param en_rpmL The actual RPM (Rotations Per Minute) of the left motor.
  * @param en_rpmR The actual RPM (Rotations Per Minute) of the right motor.
+ * @param dt The time interval between each call to the function.
  */
-void robot_move_closed(float cmd_rpmL, float cmd_rpmR, float en_rpmL, float en_rpmR){
+void robot_move_closed(float cmd_rpmL, float cmd_rpmR, float en_rpmL, float en_rpmR, float dt){
 	if (cmd_rpmL == INVALID || cmd_rpmR == INVALID || en_rpmL == INVALID || en_rpmR == INVALID){
 		return;
 	}
 	float biasL = rpm_to_power(cmd_rpmL);
 	float biasR = rpm_to_power(cmd_rpmR);
-	int motor_power_L = pid_L(cmd_rpmL, en_rpmL, biasL);
-	int motor_power_R = pid_R(cmd_rpmR, en_rpmR, biasR);
+	int motor_power_L = pid_L(cmd_rpmL, en_rpmL, biasL, dt);
+	int motor_power_R = pid_R(cmd_rpmR, en_rpmR, biasR, dt);
 	motor_power_L = limit_byte(motor_power_L);
 	motor_power_R = limit_byte(motor_power_R);
 	motor[motor_L] = motor_power_L;

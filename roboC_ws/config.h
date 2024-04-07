@@ -115,7 +115,8 @@ ________________________________________________________________________________
 #define INVALID             9999
 
 // TASK PARAMETERS
-#define DT                  0.01
+#define DT_MAIN                  0.05
+#define DT_READ                  0.01
 #define EDGE                1   
 #define HOME                2
 #define SEARCH              3
