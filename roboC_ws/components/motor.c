@@ -29,11 +29,11 @@ float limit_rpmL(float rpmL, float rpmR){
 	}
 
 	// Limit the RPM of the left wheel
-	// if (fabs(rpmR) <= MAX_WHEEL_RPM && fabs(rpmL) <= MAX_WHEEL_RPM){
-	// 	Lprev_cmd_rpmL = rpmL;
-	// 	Lprev_cmd_rpmR = rpmR;
-	// 	return rpmL;
-	// 	}
+	if (fabs(rpmR) <= MAX_WHEEL_RPM && fabs(rpmL) <= MAX_WHEEL_RPM){
+		Lprev_cmd_rpmL = rpmL;
+		Lprev_cmd_rpmR = rpmR;
+		return rpmL;
+		}
 
 	// Scale down the RPM of the left wheel
 	float higher_rpm;
@@ -76,11 +76,11 @@ float limit_rpmR(float rpmL, float rpmR){
 	}
 
 	// Limit the RPM of the right wheel
-	// if (fabs(rpmR) <= MAX_WHEEL_RPM && fabs(rpmL) <= MAX_WHEEL_RPM){
-	// 	Rprev_cmd_rpmL = rpmL;
-	// 	Rprev_cmd_rpmR = rpmR;
-	// 	return rpmR;
-	// }
+	if (fabs(rpmR) <= MAX_WHEEL_RPM && fabs(rpmL) <= MAX_WHEEL_RPM){
+		Rprev_cmd_rpmL = rpmL;
+		Rprev_cmd_rpmR = rpmR;
+		return rpmR;
+	}
 	// Scale down the RPM of the right wheel
 	float higher_rpm;
 	if (fabs(rpmR) > fabs(rpmL)){
