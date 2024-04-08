@@ -173,8 +173,8 @@ task robot_read(){
 
 task main()
 {
-	init_robot();
 	startTask(robot_read);
+	init_robot();
 	while(1){
 		clearTimer(T1);
 		// main Loop
