@@ -92,6 +92,9 @@ ________________________________________________________________________________
 #define SEARCH_COUNT_THRESHOLD      25
 #define CHANGE_POSITION_DISTANCE    0.80
 
+// GOTO TASK
+#define GOTO_SWEEP_TIME 3.0
+
 // COLLECT TASK
 #define SERVO_COLLECT_POSITION 90.0
 
