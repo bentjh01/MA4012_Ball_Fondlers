@@ -147,17 +147,36 @@ ________________________________________________________________________________
  * @brief Initialises the robot
 */
 void init_robot(){
-	task_status = HOME;
-	robot_x = 0.0;
-	robot_y = 0.0;
-	robot_yaw = 0;
-	robot_linX = 0;
-	robot_angZ = 0.0;
-	robot_cmd_arm_position = 0.0;
-	robot_cmd_angZ = 0.0;
-	robot_cmd_linX = 0.0;
-	resetMotorEncoder(motor_L);
-	resetMotorEncoder(motor_R);
+	int ready = 0;
+	while (ready != 1){
+		int limit_state = SensorValue(limit_switch_C);
+		read_sensors();
+		robot_execute();
+		robot_arm_direction=robot_arm_move(0.0, robot_arm_position);
+
+		// Reset odom
+		robot_x = 0.0;
+		robot_y = 0.0;
+
+		// // Ready criteria
+		// if (robot_arm_position < ARM_TOLERANCE){
+		// 	ready = 1;
+		// 	break;
+
+		if (limit_state == 0){
+			while(true){
+				int limit_state = SensorValue(limit_switch_C);
+				if (limit_state == 1){
+					while (robot_x < 1.2){
+						reset_start_linX = MAX_SPEED;
+						ready = 1;
+						break;
+					}
+				}
+			}
+			return;
+		}
+	}
 	return;
 }
 
