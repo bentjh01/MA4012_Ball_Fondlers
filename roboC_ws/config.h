@@ -86,7 +86,7 @@ ________________________________________________________________________________
 #define EDGE_YAW_KP 0.6
 
 // HOME TASK
-#define HOME_AWAY_DISTANCE (ARENA_X * 1.0 / 2.0)
+#define HOME_AWAY_DISTANCE 0.4//(ARENA_X * 1.0 / 2.0)
 
 // SEARCH TASK
 #define SEARCH_COUNT_THRESHOLD      25
