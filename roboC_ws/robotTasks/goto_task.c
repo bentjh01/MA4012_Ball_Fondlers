@@ -97,7 +97,7 @@ int goto_task(float x, float y, float yaw, float left_sensor_dist, float right_s
 	    		goto_sweep_counter = 0;
 	    		activate_goto_sweep = 1;
 	    		goto_linX = 0.0;
-        	goto_angZ = -15.0;
+        		goto_angZ = -15.0;
 	    	}
 	    }
     	return GOTO;
@@ -111,7 +111,7 @@ int goto_task(float x, float y, float yaw, float left_sensor_dist, float right_s
     	//check for ball
     	if(ball_location != 0){
     		goto_linX = 0.0;
-        goto_angZ = 0.0;
+        	goto_angZ = 0.0;
     		activate_goto_sweep = 0;
     		return GOTO;
     	}
@@ -123,7 +123,7 @@ int goto_task(float x, float y, float yaw, float left_sensor_dist, float right_s
     		}
     		else{
     			goto_linX = 0.0;
-        	goto_angZ = 15.0;
+        		goto_angZ = 15.0;
     		}
     	}
     	else{
@@ -132,9 +132,9 @@ int goto_task(float x, float y, float yaw, float left_sensor_dist, float right_s
     		}
     		else{
     			goto_linX = 0.0;
-        	goto_angZ = 0.0;
-        	activate_goto_sweep = 0;
-        	return SEARCH;
+        		goto_angZ = 0.0;
+        		activate_goto_sweep = 0;
+        		return SEARCH;
     		}
     	}
     	return GOTO;
