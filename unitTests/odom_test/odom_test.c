@@ -212,6 +212,7 @@ task main()
 
 		robot_cmd_linX = 0.0;
 
+		// osc == oscillation
 		if (robot_yaw < osc && dir == 1){
 			robot_cmd_angZ = Kp * (osc - robot_yaw);
 		}

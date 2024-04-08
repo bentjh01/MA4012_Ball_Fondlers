@@ -8,6 +8,14 @@ int reset_x = NOT_TRIGGERED;
 int deliver_task(float yaw, float servo_position, int ball_in_chamber, int back_limit_switch, int lineBL, int lineBR) {
     float deliver_arm_position_err = SERVO_DELIVER_POSITION - servo_position;
 
+    // Correcting the error when trasition -s180
+    if (deliver_arm_position_err <= -180.0){
+        deliver_arm_position_err += 360.0;
+    }
+    else if (deliver_arm_position_err > 180.0){
+        deliver_arm_position_err -= 360.0;
+    }
+
     if (fabs(yaw) > YAW_TOLERANCE) {
         deliver_set_linX = 0;
         deliver_set_angZ = -1.0 * sgn(yaw) * MAX_TURN;
