@@ -92,10 +92,10 @@ void read_sensors(float dt){
     limit_switch_C = SensorValue[limit_switch_C_pin];
     limit_switch_D = SensorValue[limit_switch_D_pin];
 
-	robot_line_FL = filter_line_FL(SensorValue[line_FL_pin]);
-	robot_line_BL = filter_line_BL(SensorValue[line_BL_pin]);
-	robot_line_BR = filter_line_BR(SensorValue[line_BR_pin]);
-	robot_line_FR = filter_line_FR(SensorValue[line_FR_pin]);
+	robot_line_FL = check_threshold(filter_line_FL(SensorValue[line_FL_pin]), LINE_FL_THRESHOLD);
+	robot_line_BL = check_threshold(filter_line_BL(SensorValue[line_BL_pin]), LINE_BL_THRESHOLD);
+	robot_line_BR = check_threshold(filter_line_BR(SensorValue[line_BR_pin]), LINE_BR_THRESHOLD);
+	robot_line_FR = check_threshold(filter_line_FR(SensorValue[line_FR_pin]), LINE_FR_THRESHOLD);
 
 	distance_sensor_mid = calculate_long_distance(filter_distance_mid(SensorValue[long_distance_M_pin])) - MID_SENSOR_OFFSET;
 	distance_sensor_top = calculate_short_distance(filter_distance_top(SensorValue[short_distance_T_pin])) - TOP_SENSOR_OFFSET;

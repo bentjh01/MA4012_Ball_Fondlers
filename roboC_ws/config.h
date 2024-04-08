@@ -21,24 +21,19 @@ ________________________________________________________________________________
 #define READY_TO_COLLECT_THRESHOLD  4.0 //cm wrt to edge of ramp
 
 // LINE SENSOR
-#define LINE_FL_THRESHOLD       800.0 // Midpoint of black point and yellow point
-#define LINE_BL_THRESHOLD       685.0 // Midpoint of black point and yellow point
-#define LINE_BR_THRESHOLD       308.75 // Midpoint of black point and yellow point
-#define LINE_FR_THRESHOLD       760.0// Midpoint of black point and yellow point
-// ARENA
-// #define LINE_FL_THRESHOLD       106.0 // Midpoint of black point and yellow point
-// #define LINE_BL_THRESHOLD       344.0 // Midpoint of black point and yellow point
-// #define LINE_BR_THRESHOLD       173.0 // Midpoint of black point and yellow point
-// #define LINE_FR_THRESHOLD       1385.0 // Midpoint of black point and yellow point
+#define LINE_FL_THRESHOLD       1252.0 // Midpoint of black point and yellow point
+#define LINE_BL_THRESHOLD       1147.0 // Midpoint of black point and yellow point
+#define LINE_BR_THRESHOLD       1114.75 // Midpoint of black point and yellow point
+#define LINE_FR_THRESHOLD       1320.0// Midpoint of black point and yellow point
 
-#define FILTER_GAIN_LINE_FL 	1.0 //(output = prev_input) 0 < FILTER_GAIN < 1 (output = new_input)
-#define FILTER_GAIN_LINE_BL 	1.0 // (output = prev_input) 0 < FILTER_GAIN < 1 (output = new_input)
-#define FILTER_GAIN_LINE_BR 	1.0 //(output = prev_input) 0 < FILTER_GAIN < 1 (output = new_input)
-#define FILTER_GAIN_LINE_FR 	1.0 //(output = prev_input) 0 < FILTER_GAIN < 1 (output = new_input)
+#define FILTER_GAIN_LINE_FL 	0.60 //(output = prev_input) 0 < FILTER_GAIN < 1 (output = new_input)
+#define FILTER_GAIN_LINE_BL 	0.60 // (output = prev_input) 0 < FILTER_GAIN < 1 (output = new_input)
+#define FILTER_GAIN_LINE_BR 	0.60 //(output = prev_input) 0 < FILTER_GAIN < 1 (output = new_input)
+#define FILTER_GAIN_LINE_FR 	0.60 //(output = prev_input) 0 < FILTER_GAIN < 1 (output = new_input)
 
 // MAGNETOMETER PARAMETERS
-// #define MAGNETOMETER_OFFSET 180.0 // [deg] 
-#define MAGNETOMETER_OFFSET 45.0 // [deg] 
+#define MAGNETOMETER_OFFSET 180.0 // [deg] 
+// #define MAGNETOMETER_OFFSET 45.0 // [deg] 
 
 /*______________________________________________________________________________________________________________________
 

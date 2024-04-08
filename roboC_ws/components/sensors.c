@@ -141,7 +141,7 @@ int check_ball_in_chamber(float mid_sensor_distance){
 /// @param threshold
 /// @return TRIGGERED if sensor_val > threshold, NOT_TRIGGERED otherwise
 int check_threshold(float sensor_val, float threshold){
-  if (sensor_val > threshold){
+  if (sensor_val < threshold){
     return TRIGGERED;
   }
   else{

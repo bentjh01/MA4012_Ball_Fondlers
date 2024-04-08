@@ -2,6 +2,7 @@
 
 /**
  * @brief Updates the value of the arm position. 
+ * @param 
  * @param switch_A digital reading of limit switch A
  * @param switch_B digital reading of limit switch B
  * @param switch_C digital reading of limit switch C
