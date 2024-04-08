@@ -129,9 +129,6 @@ void avoid_case_check(float rb_x, float rb_y, float rb_yaw, int FL, int FR, int 
 		}
 
 		edge_goal_yaw = wrap_to_pi(rb_yaw + rotate_ang);
-		if (FL == TRIGGERED){
-			edge_goal_yaw = NOT 
-		}
 		return;
 	}
 	//status 2: only backward sensors detetcted
@@ -174,18 +171,17 @@ int edge_avoid_task(float rb_x, float rb_y, float rb_yaw, int prev_task){
 		return prev_task;
 	}
 	// else if (distance_from_edge < EDGE_REVERSE_DISTANCE){
-	// else if (rev_counter < 10){
-	else{
+	else if (rev_counter < 10){
 		// edge_linX = edge_linX_sign * distance_from_edge * 1.2;// MAX_SPEED;
-		edge_linX = edge_linX_sign * MAX_SPEED;
+		edge_linX = MAX_SPEED;
 		edge_angZ = 0.0;
 		return EDGE;
 	}
-	// else if (fabs(yaw_error) > YAW_TOLERANCE){
-	// 	edge_linX = 0.0;
-	// 	edge_angZ = EDGE_YAW_KP * yaw_error;
-	// 	return EDGE;
-	// }
+	else if (fabs(yaw_error) > YAW_TOLERANCE){
+		edge_linX = 0.0;
+		edge_angZ = EDGE_YAW_KP * yaw_error;
+		return EDGE;
+	}
 	return EDGE;
 }
 

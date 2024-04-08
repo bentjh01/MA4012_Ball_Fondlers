@@ -40,19 +40,19 @@ ________________________________________________________________________________
 TUNING MOTOR PARAMETERS
 ______________________________________________________________________________________________________________________*/
 
+// ENCODERS
+#define FILTER_ENCODER 0.5
+
 // DRIVE
-#define EXPONENT_GAIN 0.0215
-#define RPM_GAIN 11.627
+#define MOTOR_L_KP 1.0 
+#define MOTOR_L_KI 0.005
+#define MOTOR_L_KD 0.00
+#define MOTOR_L_INTEGRAL_MAX 127
 
-#define MOTOR_L_KP 0.25 //TODO
-#define MOTOR_L_KI 0.02 //TODO
-#define MOTOR_L_KD 0.00 //TODO
-#define INTEGRAL_LIMIT_L MAX_WHEEL_RPM * 0.5
-
-#define MOTOR_R_KP 0.25 //TODO
-#define MOTOR_R_KI 0.02 //TODO
-#define MOTOR_R_KD 0.00 //TODO
-#define INTEGRAL_LIMIT_R MAX_WHEEL_RPM * 0.5
+#define MOTOR_R_KP 1.0 
+#define MOTOR_R_KI 0.005
+#define MOTOR_R_KD 0.00
+#define MOTOR_R_INTEGRAL_MAX 127
 
 // SERVO
 #define SERVO_TOLERANCE 7.0 // [deg] TODO
@@ -68,7 +68,7 @@ TUNING ODOMETRY PARAMETERS
 ______________________________________________________________________________________________________________________*/
 
 // ROBOT POSE
-#define ENCODER_FILTER 0.60 // TODO [0,1] takes a value between 0 and 1, the closer to 1 the more filtering
+#define ENCODER_FILTER 0.5  // TODO [0,1] takes a value between 0 and 1, the closer to 1 the more filtering
 #define MAGNETO_FILTER 1.0 // TODO [0,1] takes a value between 0 and 1, the closer to 1 the more filtering
 
 #define LINEAR_TOLERANCE 0.05 //TODO 
@@ -99,7 +99,7 @@ ________________________________________________________________________________
 #define SERVO_COLLECT_POSITION 90.0
 
 // DELIVERY TASK
-#define DELIVER_YAW_KP 0.05
+#define DELIVER_YAW_KP 0.6
 #define SERVO_DELIVER_POSITION 180.0 //TODO
 #define DELIVERY_SERVO_COUNTER   20 //TODO
 
@@ -125,7 +125,7 @@ ________________________________________________________________________________
 
 // TASK PARAMETERS
 #define DT_MAIN                  0.05
-#define DT_READ                  0.01
+#define DT_READ                  0.05
 #define EDGE                1   
 #define HOME                2
 #define SEARCH              3
@@ -137,7 +137,7 @@ ________________________________________________________________________________
 #define WHEEL_DIAMETER      0.06926 //m
 #define ROBOT_TRACK         0.213 //m
 #define ENCODER_RESOLUTION  360.0 // [ticks/revolution]
-#define MAX_WHEEL_RPM       100.0 * 0.5// [rpm]
+#define MAX_WHEEL_RPM       100.0 * 0.8// [rpm]
 #define MAX_SPEED           MAX_WHEEL_RPM/RADIAN_T0_RPM*WHEEL_DIAMETER/2 // [m/s]
 #define MAX_TURN            MAX_WHEEL_RPM/RADIAN_T0_RPM*WHEEL_DIAMETER/ROBOT_TRACK/DEGREE_TO_RADIAN // [deg/s]
 
