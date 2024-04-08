@@ -23,6 +23,8 @@ static float goto_linX;
 static float goto_angZ;
 static int goto_startup_phase = 1;
 static float goto_angular_difference;
+static int activate_goto_sweep = 0;
+static int goto_sweep_counter = 0;
 
 // int goto_opponent_detected(float short_sensor_dist){
 //     //may need to move this to components into sensors.c
@@ -85,17 +87,59 @@ int goto_task(float x, float y, float yaw, float left_sensor_dist, float right_s
 
 	    if(fabs(yaw-ball_yaw) <= YAW_TOLERANCE){
 	    	goto_startup_phase = 0;
+	    	
+	    	//check if sweep is needed
+	    	ball_location = get_ball_location(left_sensor_dist, right_sensor_dist, mid_sensor_dist, opp_detected);     //get latest ball location
+	    	if(ball_location == 0){
+	    		goto_sweep_counter = 0;
+	    		activate_goto_sweep = 1;
+	    		goto_linX = 0.0;
+        	goto_angZ = -15.0;
+	    	}
 	    }
-
     	return GOTO;
     }
-
+    
+    if(activate_goto_sweep){
+    	//sweep until something is detected
+    	//check for ball
+    	ball_location = get_ball_location(left_sensor_dist, right_sensor_dist, mid_sensor_dist, opp_detected);     //get latest ball location
+    	if(ball_location != 0){
+    		goto_linX = 0.0;
+        goto_angZ = 0.0;
+    		activate_goto_sweep = 0;
+    		return GOTO;
+    	}
+    	
+    	//sweep
+    	if(goto_angZ < 0.0){
+    		if(goto_sweep_counter < round(GOTO_SWEEP_TIME/DT_MAIN)){
+    			goto_sweep_counter += 1;
+    		}
+    		else{
+    			goto_linX = 0.0;
+        	goto_angZ = 15.0;
+    		}
+    	}
+    	else{
+    		if(goto_sweep_counter < round(3.0*GOTO_SWEEP_TIME/DT_MAIN)){
+    			goto_sweep_counter += 1;
+    		}
+    		else{
+    			goto_linX = 0.0;
+        	goto_angZ = 0.0;
+        	activate_goto_sweep = 0;
+        	return SEARCH;
+    		}
+    	}
+    	return GOTO;
+    }
+    
     ball_location = get_ball_location(left_sensor_dist, right_sensor_dist, mid_sensor_dist, opp_detected);     //get latest ball location
 
     //Check if there is new detection that is different from the previous (Cos if e.g. detect left, then left again, can be 2 different balls)
     if(ball_location != 0 && prev_ball_location != ball_location){
-        //stop movement
-        prev_ball_location = ball_location;                     //save prev ball location
+        prev_ball_location = ball_location; //save prev ball location
     }
 
     if(ball_location == FRONT && opp_detected){
