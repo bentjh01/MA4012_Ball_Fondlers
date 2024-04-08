@@ -72,7 +72,7 @@ ________________________________________________________________________________
 #define MAGNETO_FILTER 1.0 // TODO [0,1] takes a value between 0 and 1, the closer to 1 the more filtering
 
 #define LINEAR_TOLERANCE 0.05 //TODO 
-#define YAW_TOLERANCE 15.0 // [deg] TODO 
+#define YAW_TOLERANCE 22.50 // [deg] TODO 
 
 #define MOTOR_ACCL_LIM 5.0 // [rpm]
 
@@ -96,7 +96,7 @@ ________________________________________________________________________________
 #define SERVO_COLLECT_POSITION 90.0
 
 // DELIVERY TASK
-#define DELIVER_YAW_KP 0.2
+#define DELIVER_YAW_KP 0.6
 #define SERVO_DELIVER_POSITION 180.0 //TODO
 #define DELIVERY_SERVO_COUNTER   20 //TODO
 
