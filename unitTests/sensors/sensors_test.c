@@ -105,8 +105,8 @@ void read_sensors(){
 	distance_sensor_left = calculate_long_distance(filter_distance_L(SensorValue[long_distance_L_pin])) - LEFT_SENSOR_OFFSET;
 	distance_sensor_right = calculate_long_distance(filter_distance_R(SensorValue[long_distance_R_pin])) - RIGHT_SENSOR_OFFSET;
 
-    robot_en_rpmL = getMotorEncoder(motor_L) * 60/DT /ENCODER_RESOLUTION;
-	robot_en_rpmR = getMotorEncoder(motor_R) * 60/DT /ENCODER_RESOLUTION;
+    robot_en_rpmL = getMotorEncoder(motor_L) * 60/DT_READ /ENCODER_RESOLUTION;
+	robot_en_rpmR = getMotorEncoder(motor_R) * 60/DT_READ /ENCODER_RESOLUTION;
 	resetMotorEncoder(motor_R);
 	resetMotorEncoder(motor_L);
 
@@ -137,9 +137,9 @@ task main()
 		clearTimer(T1);
 		read_sensors();
 		// Main Loop
-		floppy(1000);
+		// floppy(1000);
 
-		while (time1[T1] < DT * 1000){}
+		while (time1[T1] < DT_READ * 1000){}
 		loop_ms = time1[T1];
 	}
 }

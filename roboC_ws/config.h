@@ -21,24 +21,19 @@ ________________________________________________________________________________
 #define READY_TO_COLLECT_THRESHOLD  4.0 //cm wrt to edge of ramp
 
 // LINE SENSOR
-#define LINE_FL_THRESHOLD       348.0 // Midpoint of black point and yellow point
-#define LINE_BL_THRESHOLD       188.0 // Midpoint of black point and yellow point
-#define LINE_BR_THRESHOLD       307.0 // Midpoint of black point and yellow point
-#define LINE_FR_THRESHOLD       187.0 // Midpoint of black point and yellow point
-// ARENA
-// #define LINE_FL_THRESHOLD       106.0 // Midpoint of black point and yellow point
-// #define LINE_BL_THRESHOLD       344.0 // Midpoint of black point and yellow point
-// #define LINE_BR_THRESHOLD       173.0 // Midpoint of black point and yellow point
-// #define LINE_FR_THRESHOLD       1385.0 // Midpoint of black point and yellow point
+#define LINE_FL_THRESHOLD       1252.0 // Midpoint of black point and yellow point
+#define LINE_BL_THRESHOLD       1147.0 // Midpoint of black point and yellow point
+#define LINE_BR_THRESHOLD       1114.75 // Midpoint of black point and yellow point
+#define LINE_FR_THRESHOLD       1320.0// Midpoint of black point and yellow point
 
-#define FILTER_GAIN_LINE_FL 	1.0 //(output = prev_input) 0 < FILTER_GAIN < 1 (output = new_input)
-#define FILTER_GAIN_LINE_BL 	1.0 // (output = prev_input) 0 < FILTER_GAIN < 1 (output = new_input)
-#define FILTER_GAIN_LINE_BR 	1.0 //(output = prev_input) 0 < FILTER_GAIN < 1 (output = new_input)
-#define FILTER_GAIN_LINE_FR 	1.0 //(output = prev_input) 0 < FILTER_GAIN < 1 (output = new_input)
+#define FILTER_GAIN_LINE_FL 	0.60 //(output = prev_input) 0 < FILTER_GAIN < 1 (output = new_input)
+#define FILTER_GAIN_LINE_BL 	0.60 // (output = prev_input) 0 < FILTER_GAIN < 1 (output = new_input)
+#define FILTER_GAIN_LINE_BR 	0.60 //(output = prev_input) 0 < FILTER_GAIN < 1 (output = new_input)
+#define FILTER_GAIN_LINE_FR 	0.60 //(output = prev_input) 0 < FILTER_GAIN < 1 (output = new_input)
 
 // MAGNETOMETER PARAMETERS
-// #define MAGNETOMETER_OFFSET 180.0 // [deg] 
-#define MAGNETOMETER_OFFSET 45.0 // [deg] 
+#define MAGNETOMETER_OFFSET 180.0 // [deg] 
+// #define MAGNETOMETER_OFFSET 45.0 // [deg] 
 
 /*______________________________________________________________________________________________________________________
 
@@ -51,18 +46,18 @@ ________________________________________________________________________________
 
 #define MOTOR_L_KP 0.5 //TODO
 #define MOTOR_L_KI 0.0 //TODO
-#define MOTOR_L_KD 0.001 //TODO
+#define MOTOR_L_KD 0.00 //TODO
 #define INTEGRAL_LIMIT_L 15.0
 
 #define MOTOR_R_KP 0.5 //TODO
 #define MOTOR_R_KI 0.0 //TODO
-#define MOTOR_R_KD 0.001 //TODO
+#define MOTOR_R_KD 0.00 //TODO
 #define INTEGRAL_LIMIT_R 15.0
 
 // SERVO
-#define SERVO_TOLERANCE 5.0 // [deg] TODO
-#define SERVO_POSITION_GAIN 1.0 // [deg] TODO
-#define SERVO_GAIN 0.3
+#define SERVO_TOLERANCE 7.0 // [deg] TODO
+#define SERVO_POSITION_GAIN 7.50 // [deg] TODO
+#define SERVO_KP 0.8
 #define SWITCH_A_POSITION 0.0 //[deg] TODO
 #define SWITCH_B_POSITION 90.0 //[deg] TODO
 #define SWITCH_C_POSITION 180.0 //[deg] TODO
@@ -79,6 +74,8 @@ ________________________________________________________________________________
 #define LINEAR_TOLERANCE 0.05 //TODO 
 #define YAW_TOLERANCE 15.0 // [deg] TODO 
 
+#define MOTOR_ACCL_LIM 5.0 // [rpm]
+
 /*______________________________________________________________________________________________________________________
 
 TUNABLE TASK PARAMETERS
@@ -86,13 +83,22 @@ ________________________________________________________________________________
 
 // EDGE TASK
 #define EDGE_REVERSE_DISTANCE 0.05 // [m] TODO
+#define EDGE_YAW_KP 0.6
+
+// HOME TASK
+#define HOME_AWAY_DISTANCE (ARENA_X * 1.0 / 2.0)
 
 // SEARCH TASK
 #define SEARCH_COUNT_THRESHOLD      25
 #define CHANGE_POSITION_DISTANCE    0.80
 
+// COLLECT TASK
+#define SERVO_COLLECT_POSITION 90.0
+
 // DELIVERY TASK
+#define DELIVER_YAW_KP 0.2
 #define SERVO_DELIVER_POSITION 180.0 //TODO
+#define DELIVERY_SERVO_COUNTER   20 //TODO
 
 /*______________________________________________________________________________________________________________________
 
@@ -107,8 +113,8 @@ ________________________________________________________________________________
 #define mVOLT_TO_VOLT       0.001
 
 // ROBOTC CONSTANTS
-#define TRIGGERED           0
-#define NOT_TRIGGERED       0
+#define TRIGGERED           0       // VEX Cortex is all pull-up
+#define NOT_TRIGGERED       1
 #define MAX_POWER           127
 #define SUCCESS             1
 #define FAIL                0

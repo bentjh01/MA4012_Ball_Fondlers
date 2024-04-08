@@ -76,7 +76,7 @@ int limit_switch_D = 0;
 
 // robot task
 int task_status = HOME;
-int prev_task_status;
+int prev_task_status = HOME;
 
 // opponent detection
 int opp_detected;
@@ -94,19 +94,21 @@ void read_sensors(float dt){
     limit_switch_C = SensorValue[limit_switch_C_pin];
     limit_switch_D = SensorValue[limit_switch_D_pin];
 
-	robot_line_FL = filter_line_FL(SensorValue[line_FL_pin]);
-	robot_line_BL = filter_line_BL(SensorValue[line_BL_pin]);
-	robot_line_BR = filter_line_BR(SensorValue[line_BR_pin]);
-	robot_line_FR = filter_line_FR(SensorValue[line_FR_pin]);
+	robot_line_FL = check_threshold(filter_line_FL(SensorValue[line_FL_pin]), LINE_FL_THRESHOLD);
+	robot_line_BL = check_threshold(filter_line_BL(SensorValue[line_BL_pin]), LINE_BL_THRESHOLD);
+	robot_line_BR = check_threshold(filter_line_BR(SensorValue[line_BR_pin]), LINE_BR_THRESHOLD);
+	robot_line_FR = check_threshold(filter_line_FR(SensorValue[line_FR_pin]), LINE_FR_THRESHOLD);
 
 	distance_sensor_mid = calculate_long_distance(filter_distance_mid(SensorValue[long_distance_M_pin])) - MID_SENSOR_OFFSET;
 	distance_sensor_top = calculate_short_distance(filter_distance_top(SensorValue[short_distance_T_pin])) - TOP_SENSOR_OFFSET;
 	distance_sensor_left = calculate_long_distance(filter_distance_L(SensorValue[long_distance_L_pin])) - LEFT_SENSOR_OFFSET;
 	distance_sensor_right = calculate_long_distance(filter_distance_R(SensorValue[long_distance_R_pin])) - RIGHT_SENSOR_OFFSET;
 
+	ball_in_chamber_status = check_ball_in_chamber(distance_sensor_mid);
+
     robot_en_rpmL = getMotorEncoder(motor_L) * 60.0/dt /ENCODER_RESOLUTION;
 	robot_en_rpmR = getMotorEncoder(motor_R) * 60.0/dt /ENCODER_RESOLUTION;
-    
+
 	resetMotorEncoder(motor_R);
 	resetMotorEncoder(motor_L);
 	return;
@@ -131,7 +133,7 @@ void robot_execute(float dt){
 	robot_cmd_linX = calculate_linear_x(robot_cmd_rpmL, robot_cmd_rpmR);
 	robot_cmd_angZ = calculate_angular_z(robot_cmd_rpmL, robot_cmd_rpmR);
 
-	robot_arm_position = get_arm_position(robot_arm_position, robot_arm_direction, limit_switch_A, limit_switch_B, limit_switch_C);
+	robot_arm_position = get_arm_position(robot_arm_position, robot_cmd_arm_position , robot_arm_direction, limit_switch_A, limit_switch_B, limit_switch_C);
 	robot_arm_direction = robot_arm_move(robot_cmd_arm_position, robot_arm_position);
 	return;
 }
@@ -150,6 +152,7 @@ void init_robot(){
 	robot_yaw = 0;
 	robot_linX = 0;
 	robot_angZ = 0.0;
+	task_status = HOME;
 	return;
 }
 
@@ -171,9 +174,6 @@ float rotate_angle(float angle, int direction){
 }
 // TEST CODE END
 
-int task_status;
-int prev_task_status;
-
 task robot_read(){
 	while(1){
 		clearTimer(T2);
@@ -191,7 +191,7 @@ task main()
 		clearTimer(T1);
 		startTask(robot_read);
 		// main Loop
-		// if (edge_detected(robot_line_FL, robot_line_BL, robot_line_BR, robot_line_FR) == TRIGGRED){
+		// if (edge_detected(robot_line_FL, robot_line_BL, robot_line_BR, robot_line_FR) == TRIGGERED){
 		if (1 == 2){
 			if (task_status != EDGE){
 				prev_task_status = task_status;
@@ -202,17 +202,17 @@ task main()
 		}
 		switch (task_status){
 			case EDGE:
-				// task_status = edge_avoid_task(robot_x, robot_y, robot_yaw, prev_task_status);
-				// robot_cmd_linX = get_edge_avoid_linX();
-				// robot_cmd_angZ = get_edge_avoid_angZ();
-				task_status = DELIVER;
+				task_status = edge_avoid_task(robot_x, robot_y, robot_yaw, prev_task_status);
+				robot_cmd_linX = get_edge_avoid_linX();
+				robot_cmd_angZ = get_edge_avoid_angZ();
+				// task_status = HOME; // testing
 				break;
 			case HOME:
-				task_status = SEARCH;
-				// task_status = home_task(robot_x, robot_y, robot_yaw, robot_magneto_yaw, robot_line_FL, robot_line_BL, robot_line_BR, robot_line_FR);
-				// robot_cmd_linX = get_home_linX();
-				// robot_cmd_angZ = get_home_angZ();
-				// robot_cmd_arm_position = get_home_servo();
+				// task_status = SEARCH;
+				task_status = home_task(robot_x, robot_y, robot_arm_position);
+				robot_cmd_linX = get_home_linX();
+				robot_cmd_angZ = get_home_angZ();
+				robot_cmd_arm_position = get_home_servo();
 				break;
 			case SEARCH:
 				// opp_detected = opponent_detection(distance_sensor_top);
@@ -227,6 +227,7 @@ task main()
 				// task_status = goto_task(robot_x, robot_y, robot_yaw, distance_sensor_left, distance_sensor_right, distance_sensor_mid, opp_detected);
 				// robot_cmd_linX = get_goto_linX();
 				// robot_cmd_angZ = get_goto_angZ();
+				break;
 			case COLLECT:
 				task_status = DELIVER;
 				// task_status = collect_task(robot_x, robot_y, robot_yaw, robot_arm_position, ball_in_chamber_status, limit_switch_D);
@@ -249,4 +250,3 @@ task main()
 		while (time1[T1] < DT_MAIN * 1000){}
 	}
 }
-
