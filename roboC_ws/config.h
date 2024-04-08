@@ -45,7 +45,7 @@ ________________________________________________________________________________
 #define RPM_GAIN 11.627
 
 #define MOTOR_L_KP 0.5 //TODO
-#define MOTOR_L_KI 0.0 //TODO
+#define MOTOR_L_KI 0.01 //TODO
 #define MOTOR_L_KD 0.00 //TODO
 #define INTEGRAL_LIMIT_L 15.0
 

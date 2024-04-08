@@ -1,8 +1,8 @@
 #include "../config.h"
 
 /**
- * @brief Updates the value of the arm position. 
- * @param 
+ * @brief Updates the value of the arm position.
+ * @param
  * @param switch_A digital reading of limit switch A
  * @param switch_B digital reading of limit switch B
  * @param switch_C digital reading of limit switch C
@@ -34,12 +34,12 @@ float get_arm_position(float arm_position, float set_cmd, float servo_direction,
     }
     else if (prev_switch == SWITCH_B_POSITION && servo_direction < 0){
         prev_switch = SWITCH_A_POSITION;
-       return (SWITCH_A_POSITION + SWITCH_B_POSITION)/2.0; 
+       return (SWITCH_A_POSITION + SWITCH_B_POSITION)/2.0;
     }
     else{
         return arm_position;
     }
-    
+
     if (switch_A == TRIGGERED){
         return SWITCH_A_POSITION;
     }
@@ -71,7 +71,7 @@ float robot_arm_move(float set_position, float arm_position){
 	if (fabs(err_arm) > SERVO_TOLERANCE){
 		// set_servo_power = sgn(err_arm) * MAX_POWER * SERVO_GAIN;
 		set_servo_power = err_arm * SERVO_KP;
-        set_servo_power = limit_byte(set_servo_power);
+    set_servo_power = limit_byte(set_servo_power);
 	}
     motor[servo] = -set_servo_power;
     if (sgn(err_arm) == 0){
