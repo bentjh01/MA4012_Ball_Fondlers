@@ -46,8 +46,8 @@ void robot_move_closed(float cmd_rpmL, float cmd_rpmR, float en_rpmL, float en_r
 	float biasR = rpm_to_power(cmd_rpmR);
 	int motor_power_L = pid_L(cmd_rpmL, en_rpmL, biasL, dt);
 	int motor_power_R = pid_R(cmd_rpmR, en_rpmR, biasR, dt);
-	motor_power_L = limit_byte(motor_power_L);
-	motor_power_R = limit_byte(motor_power_R);
+	motor_power_L = limit_byteL(motor_power_L, motor_power_R);
+	motor_power_R = limit_byteR(motor_power_L, motor_power_R);
 	motor[motor_L] = motor_power_L;
 	motor[motor_R] = motor_power_R;
 	return;
