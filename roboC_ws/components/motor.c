@@ -96,20 +96,20 @@ float limit_rpmR(float rpmL, float rpmR){
 	return rpmR;
 }
 
-// /**
-//  * Limits the input power value to a range of -127 to 127.
-//  *
-//  * @param power The input power value to be limited.
-//  * @return The limited power value within the range of -127 to 127.
-//  */
-// int limit_byte(float power){
-// 	if (power > 127){
-// 		power = 127;
-// 	} else if (power < -127){
-// 		power = -127;
-// 	}
-// 	return power;
-// }
+/**
+ * Limits the input power value to a range of -127 to 127.
+ *
+ * @param power The input power value to be limited.
+ * @return The limited power value within the range of -127 to 127.
+ */
+int limit_byte(float power){
+	if (power > 127){
+		power = 127;
+	} else if (power < -127){
+		power = -127;
+	}
+	return power;
+}
 
 /**
  * Limits the input power value to a range of -127 to 127.
