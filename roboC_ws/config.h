@@ -74,6 +74,8 @@ ________________________________________________________________________________
 #define LINEAR_TOLERANCE 0.05 //TODO 
 #define YAW_TOLERANCE 15.0 // [deg] TODO 
 
+#define MOTOR_ACCL_LIM 5.0 // [rpm]
+
 /*______________________________________________________________________________________________________________________
 
 TUNABLE TASK PARAMETERS
@@ -81,9 +83,10 @@ ________________________________________________________________________________
 
 // EDGE TASK
 #define EDGE_REVERSE_DISTANCE 0.05 // [m] TODO
+#define EDGE_YAW_KP 0.6
 
 // HOME TASK
-#define HOME_AWAY_DISTANCE (ARENA_X * 2.0 / 3.0)
+#define HOME_AWAY_DISTANCE (ARENA_X * 1.0 / 2.0)
 
 // SEARCH TASK
 #define SEARCH_COUNT_THRESHOLD      25
@@ -93,7 +96,7 @@ ________________________________________________________________________________
 #define SERVO_COLLECT_POSITION 90.0
 
 // DELIVERY TASK
-#define DELIVER_YAW_KP 0.6
+#define DELIVER_YAW_KP 0.2
 #define SERVO_DELIVER_POSITION 180.0 //TODO
 #define DELIVERY_SERVO_COUNTER   20 //TODO
 

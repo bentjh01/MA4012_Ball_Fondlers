@@ -50,17 +50,17 @@ void avoid_case_check(float rb_x, float rb_y, float rb_yaw, int FL, int FR, int 
 	//status 1: forward sensor detetcted
 
 	// FL or FR is detected, BL and BR are not detected
-	if ((FL == 1 || FR == 1) && (BL != 1 && BR != 1)){
+	if ((FL == TRIGGERED || FR == TRIGGERED) && (BL == NOT_TRIGGERED && BR == NOT_TRIGGERED)){
 		edge_linX_sign = -1;
 		// robot facing deliver wall
 		if (rb_yaw >= -175 && rb_yaw < -95) {
 			// wall on right, turn left
-			if (FR == 1 && FL == 0){
+			if (FR == TRIGGERED && FL == NOT_TRIGGERED){
 				alpha = 180 - rb_yaw;
 				rotate_ang = (180 - 2*alpha) * (1);
 			} 
 			// wall on left, turn right
-			else if (FR == 0 && FL == 1) {
+			else if (FR == NOT_TRIGGERED && FL == TRIGGERED) {
 				alpha = rb_yaw - 90;
 				rotate_ang = (180 - 2*alpha) * (-1);
 			}
@@ -77,12 +77,10 @@ void avoid_case_check(float rb_x, float rb_y, float rb_yaw, int FL, int FR, int 
 		// robot facing far wall
 		} else if (rb_yaw >= -85 && rb_yaw < -5) {
 			// robot at right wall
-			if (FR == 1 && FL == 0){
-				alpha = 90 - rb_yaw;
-				rotate_ang = (180 - 2*alpha) * (1);
-			} 
-			// robot at far wall
-			else if (FR == 0 && FL == 1) {
+			if (FR == TRIGGERED && FL == NOT_TRIGGERED){
+				alpha = 90 - rb_yaw; rotate_ang = (180 - 2*alpha) * (1);
+			} // robot at far wall
+			else if (FR == NOT_TRIGGERED && FL == TRIGGERED) {
 				alpha = rb_yaw;
 				rotate_ang = (180 - 2*alpha) * (-1);
 			}
@@ -94,12 +92,12 @@ void avoid_case_check(float rb_x, float rb_y, float rb_yaw, int FL, int FR, int 
 		// robot facing far wall
 		} else if (rb_yaw >= 5 && rb_yaw < 85) {
 			// robot at far wall
-			if (FR == 1 && FL == 0){
+			if (FR == TRIGGERED && FL == NOT_TRIGGERED){
 				alpha = rb_yaw;
 				rotate_ang = (180 - 2*alpha) * (1);
 			} 
 			// robot at left wall
-			else if (FR == 0 && FL == 1) {
+			else if (FR == NOT_TRIGGERED && FL == TRIGGERED) {
 				alpha = 90 - rb_yaw;
 				rotate_ang = (180 - 2*alpha) * (-1);
 			}
@@ -114,12 +112,12 @@ void avoid_case_check(float rb_x, float rb_y, float rb_yaw, int FL, int FR, int 
 		// robot facing delivery wall
 		} else if (rb_yaw >= 95 && rb_yaw < 175) {
 			// robot at left wall
-			if (FR == 1 && FL == 0){
+			if (FR == TRIGGERED && FL == NOT_TRIGGERED){
 				alpha = rb_yaw - 90;
 				rotate_ang = (180 - 2*alpha) * (1);
 			} 
 			// robot at delivery wall
-			else if (FR == 0 && FL == 1) {
+			else if (FR == NOT_TRIGGERED && FL == TRIGGERED) {
 				alpha = 180 - rb_yaw;
 				rotate_ang = (180 - 2*alpha) * (-1);
 			}
@@ -128,20 +126,21 @@ void avoid_case_check(float rb_x, float rb_y, float rb_yaw, int FL, int FR, int 
 			rotate_ang = -180;
 		}
 
-		edge_goal_yaw = rb_yaw + rotate_ang;
+		edge_goal_yaw = wrap_to_pi(rb_yaw + rotate_ang);
 		return;
 	}
 	//status 2: only backward sensors detetcted
-	else if((BL == 1 || BR == 1) && (FL != 1 && FR != 1)){
+	else if((BL == TRIGGERED || BR == TRIGGERED) && (FL == NOT_TRIGGERED && FR == NOT_TRIGGERED)){
 		edge_goal_yaw = 0.0;
 		edge_linX_sign = 1;
 		return;
 	}
 	//Some special cases: in corner
 	else{
-		edge_goal_yaw = rb_yaw;
+		edge_goal_yaw = wrap_to_pi(rb_yaw);
 		return;
 	}
+	return;
 }
 
 /// @brief Performs edge avoidance
@@ -159,15 +158,16 @@ int edge_avoid_task(float rb_x, float rb_y, float rb_yaw, int prev_task){
 		return prev_task;
 	}
 	else if (distance_from_edge < EDGE_REVERSE_DISTANCE){
-		edge_linX = edge_linX_sign * MAX_SPEED;
+		edge_linX = edge_linX_sign * distance_from_edge * 1.2;// MAX_SPEED;
 		edge_angZ = 0.0;
 		return EDGE;
 	}
 	else if (fabs(yaw_error) > YAW_TOLERANCE){
 		edge_linX = 0.0;
-		edge_angZ = 0.6 * yaw_error;
+		edge_angZ = EDGE_YAW_KP * yaw_error;
 		return EDGE;
 	}
+	return EDGE;
 }
 
 /// @brief Fetches the commanded linear velocity

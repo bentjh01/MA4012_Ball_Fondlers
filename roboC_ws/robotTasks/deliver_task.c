@@ -20,15 +20,18 @@ int deliver_task(float yaw, float servo_position, int ball_in_chamber, int back_
 
     // if (back_limit_switch == TRIGGERED && lineBL == TRIGGERED && lineBR == TRIGGERED) {
     if (back_limit_switch == TRIGGERED) {
-        delivery_counter ++;
+        // delivery_counter ++;
         deliver_set_servo = SERVO_DELIVER_POSITION;
         reset_x = TRIGGERED;
     }
     
     // CHECK SUCCESS CRITERIA
     // if (ball_in_chamber == NOT_TRIGGERED && delivery_counter > SERVO_POSITION_GAIN) {
-    if (delivery_counter > SERVO_POSITION_GAIN) {
+    if (servo_position == SERVO_DELIVER_POSITION) {
         reset_x = TRIGGERED;
+        deliver_set_servo = 0.0;
+        deliver_set_angZ = 0.0;
+        deliver_set_linX=0.0;
         delivery_counter = 0;
         return HOME;
     }

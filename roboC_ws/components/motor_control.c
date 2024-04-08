@@ -41,6 +41,7 @@ void robot_move_closed(float cmd_rpmL, float cmd_rpmR, float en_rpmL, float en_r
 	if (cmd_rpmL == INVALID || cmd_rpmR == INVALID || en_rpmL == INVALID || en_rpmR == INVALID){
 		return;
 	}
+
 	float biasL = rpm_to_power(cmd_rpmL);
 	float biasR = rpm_to_power(cmd_rpmR);
 	int motor_power_L = pid_L(cmd_rpmL, en_rpmL, biasL, dt);
