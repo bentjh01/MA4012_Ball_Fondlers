@@ -160,8 +160,8 @@ int goto_task(float x, float y, float yaw, float left_sensor_dist, float right_s
             return GOTO;
         }
         else{
-            //stop movement
-            goto_linX = 0.0;
+            //slow forward and pass to collect_task
+            goto_linX = 0.1;
             goto_angZ = 0.0;
             goto_startup_phase = 1;
             return COLLECT;
