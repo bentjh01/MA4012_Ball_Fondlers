@@ -12,6 +12,7 @@ static float edge_goal_yaw = 0.0;
 static float edge_x = 0.0;
 static float edge_y = 0.0;
 static float edge_linX_sign = 1;
+static int rev_counter= 0;
 
 /// @brief Detects if a line sensor is triggered
 /// @param FL Front Left sensor
@@ -47,6 +48,7 @@ void avoid_case_check(float rb_x, float rb_y, float rb_yaw, int FL, int FR, int 
 	float rotate_ang;
 	edge_x = rb_x;
 	edge_y = rb_y;
+	rev_counter = 0.0;
 	//status 1: forward sensor detetcted
 
 	// FL or FR is detected, BL and BR are not detected
@@ -127,6 +129,9 @@ void avoid_case_check(float rb_x, float rb_y, float rb_yaw, int FL, int FR, int 
 		}
 
 		edge_goal_yaw = wrap_to_pi(rb_yaw + rotate_ang);
+		if (FL == TRIGGERED){
+			edge_goal_yaw = NOT 
+		}
 		return;
 	}
 	//status 2: only backward sensors detetcted
@@ -148,9 +153,11 @@ void avoid_case_check(float rb_x, float rb_y, float rb_yaw, int FL, int FR, int 
 /// @param rb_y robot's y position
 /// @param rb_yaw robot's current yaw
 /// @return the previous task if successful, EDGE otherwise
+
 int edge_avoid_task(float rb_x, float rb_y, float rb_yaw, int prev_task){
 	float distance_from_edge = calculate_distance(rb_x, rb_y, edge_x, edge_y);
 	float yaw_error = edge_goal_yaw - rb_yaw;
+	rev_counter ++;
 
     // Correcting the error when trasition -s180
     if (yaw_error <= -180.0){
@@ -160,21 +167,25 @@ int edge_avoid_task(float rb_x, float rb_y, float rb_yaw, int prev_task){
         yaw_error -= 360.0;
     }
 
-	if (distance_from_edge > EDGE_REVERSE_DISTANCE && abs(yaw_error) < YAW_TOLERANCE){
+	// if (distance_from_edge > EDGE_REVERSE_DISTANCE && abs(yaw_error) < YAW_TOLERANCE){
+	if (rev_counter > 10){
 		edge_linX = 0.0;
 		edge_angZ = 0.0;
 		return prev_task;
 	}
-	else if (distance_from_edge < EDGE_REVERSE_DISTANCE){
-		edge_linX = edge_linX_sign * distance_from_edge * 1.2;// MAX_SPEED;
+	// else if (distance_from_edge < EDGE_REVERSE_DISTANCE){
+	// else if (rev_counter < 10){
+	else{
+		// edge_linX = edge_linX_sign * distance_from_edge * 1.2;// MAX_SPEED;
+		edge_linX = edge_linX_sign * MAX_SPEED;
 		edge_angZ = 0.0;
 		return EDGE;
 	}
-	else if (fabs(yaw_error) > YAW_TOLERANCE){
-		edge_linX = 0.0;
-		edge_angZ = EDGE_YAW_KP * yaw_error;
-		return EDGE;
-	}
+	// else if (fabs(yaw_error) > YAW_TOLERANCE){
+	// 	edge_linX = 0.0;
+	// 	edge_angZ = EDGE_YAW_KP * yaw_error;
+	// 	return EDGE;
+	// }
 	return EDGE;
 }
 
