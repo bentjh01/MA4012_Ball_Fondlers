@@ -83,7 +83,7 @@ int goto_task(float x, float y, float yaw, float left_sensor_dist, float right_s
       }
 
       goto_linX = 0.0;
-      goto_angZ = 0.5 * goto_angular_difference;
+      goto_angZ = GOTO_ALIGN_BALL_GAIN * goto_angular_difference;
 
 	    if(fabs(yaw-ball_yaw) <= YAW_TOLERANCE){
 	    	goto_startup_phase = 0;
