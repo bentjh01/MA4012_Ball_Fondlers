@@ -21,19 +21,12 @@ static int rev_counter= 0;
 /// @param FR Front Right sensor
 /// @return returns TRIGGERED if a sensor is triggered, NOT_TRIGGERED otherwise
 int edge_detected(int FL, int BL, int BR, int FR){
-	if (FL == TRIGGERED){
+	if (FL == TRIGGERED || BL == TRIGGERED || BR == TRIGGERED || FR == TRIGGERED){
 		return TRIGGERED;
 	}
-	if (BL == TRIGGERED){
-		return TRIGGERED;
+	else{
+		return NOT_TRIGGERED;
 	}
-	if (BR == TRIGGERED){
-		return TRIGGERED;
-	}
-	if (FR == TRIGGERED){
-		return TRIGGERED;
-	}
-	return NOT_TRIGGERED;
 }
 
 /// @brief Determines the goal yaw based on the robot's current yaw and the sensor that is triggered
@@ -49,7 +42,7 @@ void avoid_case_check(float rb_x, float rb_y, float rb_yaw, int FL, int FR, int 
 	edge_x = rb_x;
 	edge_y = rb_y;
 	rev_counter = 0.0;
-	//status 1: forward sensor detetcted
+	//status 1: forward sensor detected
 
 	// FL or FR is detected, BL and BR are not detected
 	if ((FL == TRIGGERED || FR == TRIGGERED) && (BL == NOT_TRIGGERED && BR == NOT_TRIGGERED)){
@@ -59,11 +52,13 @@ void avoid_case_check(float rb_x, float rb_y, float rb_yaw, int FL, int FR, int 
 			// wall on right, turn left
 			if (FR == TRIGGERED && FL == NOT_TRIGGERED){
 				alpha = 180 - rb_yaw;
+				//alpha = 180 - fabs(rb_yaw); //Bryan: if the above alpha doesnt work, might be this bottom one instead
 				rotate_ang = (180 - 2*alpha) * (1);
 			} 
 			// wall on left, turn right
 			else if (FR == NOT_TRIGGERED && FL == TRIGGERED) {
 				alpha = rb_yaw - 90;
+				//alpha = fabs(rb_yaw) - 90; //Bryan: if the above alpha doesnt work, might be this bottom one instead
 				rotate_ang = (180 - 2*alpha) * (-1);
 			}
 
@@ -80,10 +75,13 @@ void avoid_case_check(float rb_x, float rb_y, float rb_yaw, int FL, int FR, int 
 		} else if (rb_yaw >= -85 && rb_yaw < -5) {
 			// robot at right wall
 			if (FR == TRIGGERED && FL == NOT_TRIGGERED){
-				alpha = 90 - rb_yaw; rotate_ang = (180 - 2*alpha) * (1);
+				alpha = 90 - rb_yaw;
+				//alpha = 90 - fabs(rb_yaw); //Bryan: if the above alpha doesnt work, might be this bottom one instead
+				rotate_ang = (180 - 2*alpha) * (1);
 			} // robot at far wall
 			else if (FR == NOT_TRIGGERED && FL == TRIGGERED) {
 				alpha = rb_yaw;
+				//alpha = fabs(rb_yaw); //Bryan: if the above alpha doesnt work, might be this bottom one instead
 				rotate_ang = (180 - 2*alpha) * (-1);
 			}
 
