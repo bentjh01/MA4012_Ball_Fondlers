@@ -152,6 +152,14 @@ int edge_avoid_task(float rb_x, float rb_y, float rb_yaw, int prev_task){
 	float distance_from_edge = calculate_distance(rb_x, rb_y, edge_x, edge_y);
 	float yaw_error = edge_goal_yaw - rb_yaw;
 
+    // Correcting the error when trasition -s180
+    if (yaw_error <= -180.0){
+        yaw_error += 360.0;
+    }
+    else if (yaw_error > 180.0){
+        yaw_error -= 360.0;
+    }
+
 	if (distance_from_edge > EDGE_REVERSE_DISTANCE && abs(yaw_error) < YAW_TOLERANCE){
 		edge_linX = 0.0;
 		edge_angZ = 0.0;
