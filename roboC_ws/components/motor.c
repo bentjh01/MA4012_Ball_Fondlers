@@ -125,8 +125,14 @@ int limit_byteL(float powerL, float powerR){
 	} else {
 		higher_power = fabs(powerR);
 	}
+	if (powerL <= MAX_POWER && powerR <= MAX_POWER){
+		return powerL;
+	}
+
+	if (higher_power > 0.0){
 	powerL = powerL / higher_power * MAX_POWER;
 	powerR = powerR / higher_power * MAX_POWER;
+	}
 
 	return powerL;
 }
@@ -146,9 +152,12 @@ int limit_byteR(float powerL, float powerR){
 	} else {
 		higher_power = fabs(powerR);
 	}
-	if (powerR )
+	if (powerL <= MAX_POWER && powerR <= MAX_POWER){
+		return powerR;
+	}
+	if (higher_power > 0.0){
 	powerL = powerL / higher_power * MAX_POWER;
 	powerR = powerR / higher_power * MAX_POWER;
-
+	}
 	return powerR;
 }

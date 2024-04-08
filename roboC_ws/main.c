@@ -191,8 +191,8 @@ task main()
 		clearTimer(T1);
 		startTask(robot_read);
 		// main Loop
-		// if (edge_detected(robot_line_FL, robot_line_BL, robot_line_BR, robot_line_FR) == TRIGGERED){
-		if (1 == 2){
+		if (edge_detected(robot_line_FL, robot_line_BL, robot_line_BR, robot_line_FR) == TRIGGERED){
+		// if (1 == 2){
 			if (task_status != EDGE){
 				prev_task_status = task_status;
 			}
@@ -209,7 +209,7 @@ task main()
 				break;
 			case HOME:
 				// task_status = SEARCH;
-				task_status = home_task(robot_x, robot_y, robot_arm_position);
+				task_status = home_task(robot_x, robot_y, robot_yaw, robot_arm_position);
 				robot_cmd_linX = get_home_linX();
 				robot_cmd_angZ = get_home_angZ();
 				robot_cmd_arm_position = get_home_servo();
