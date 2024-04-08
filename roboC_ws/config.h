@@ -94,6 +94,7 @@ ________________________________________________________________________________
 
 // GOTO TASK
 #define GOTO_SWEEP_TIME 3.0
+#define GOTO_SWEEP_GAIN 0.5
 
 // COLLECT TASK
 #define SERVO_COLLECT_POSITION 90.0
