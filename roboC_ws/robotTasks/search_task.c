@@ -24,7 +24,7 @@ static float search_angular_difference;
 //MOVE OPP DETECTION TO
 //MAIN CODE GET SENSOR READING IN CM
 
-int 
+
 
 int search_task(float x, float y, float yaw, float left_sensor_dist, float right_sensor_dist, float mid_sensor_dist, int opp_detected, float search_current_rpmL, float search_current_rpmR){
   //Scanning
@@ -41,11 +41,7 @@ int search_task(float x, float y, float yaw, float left_sensor_dist, float right
       search_startup_phase = 0;         //set search_startup_phase
       search_reduce = 0;		//reset search_proportional_offset
 
-      //rotate ccw, try find detection
-      //search_linX = 0.0;
-      //search_angZ = 120.0;
-
-      search_initial_yaw = yaw; //initialize yaw, correcting for momentum error 45 deg
+      search_initial_yaw = yaw; //initialize yaw
 
       if(search_initial_yaw < -180.0){
       	search_initial_yaw = search_initial_yaw + 360;
