@@ -45,19 +45,6 @@ void avoid_case_check(float rb_x, float rb_y, float rb_yaw, int FL, int FR, int 
 	edge_y = rb_y;
 	rev_counter = 0.0;
 	//status 1: forward sensor detected
-	// if (edge_line_case == 0110 || edge_line_case == 0111 || edge_line_case == 1110){
-	// 	if (fabs(rb_yaw) < YAW_TOLERANCE){
-	// 		edge_goal_yaw = SOUTH;
-	// 	}
-	// 	else if (fabs(rb_yaw) < 90.0){
-	// 		edge_goal_yaw = -rb_yaw;
-	// 	}
-	// }
-	// else {
-	// 	edge_goal_yaw = rb_yaw;
-	// }
-	// edge_goal_yaw = wrap_to_pi(rb_yaw + rotate_ang);
-	// return;
 
 	// FL or FR is detected, BL and BR are not detected
 	if ((FL == TRIGGERED || FR == TRIGGERED) && (BL == NOT_TRIGGERED && BR == NOT_TRIGGERED)){
@@ -144,7 +131,6 @@ void avoid_case_check(float rb_x, float rb_y, float rb_yaw, int FL, int FR, int 
 		edge_goal_yaw = wrap_to_pi(rb_yaw + rotate_ang);
 		return;
 	}
-		edge_goal_yaw = wrap_to_pi(rb_yaw + rotate_ang);
 	//status 2: only backward sensors detetcted
 	else if((BL == TRIGGERED || BR == TRIGGERED) && (FL == NOT_TRIGGERED && FR == NOT_TRIGGERED)){
 		edge_goal_yaw = 0.0;
