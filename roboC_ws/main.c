@@ -80,7 +80,13 @@ int prev_task_status = HOME;
 
 // opponent detection
 int opp_detected;
+
+// ball status
 int ball_in_chamber_status;
+int ball_detected;
+float ball_x_memory;
+float ball_y_memory;
+float ball_yaw_memory;
 /* _____________________________________________________________________________________________________________________
 
 SENSORS
@@ -115,6 +121,16 @@ void read_sensors(float dt){
 
 	resetMotorEncoder(motor_R);
 	resetMotorEncoder(motor_L);
+	return;
+}
+
+void check_for_ball(){
+	ball_detected = detect_ball(distance_sensor_left, distance_sensor_right, distance_sensor_mid, opp_detected);
+	if (ball_detected == TRIGGERED){
+		ball_x_memory = robot_x;
+		ball_y_memory = robot_y;
+		ball_yaw_memory = robot_yaw;
+	}
 	return;
 }
 
@@ -185,6 +201,7 @@ task robot_read(){
 	while(1){
 		clearTimer(T2);
 		read_sensors(DT_READ);
+		check_for_ball();
 		update_robot_odom(DT_READ);
         robot_execute(DT_READ);
 		while (time1[T2] < DT_READ * 1000){}
@@ -240,6 +257,7 @@ task main()
 				// opp_detected = opponent_detection(distance_sensor_top);
 				task_status = GOTO;
 				// task_status = search_task(robot_x, robot_y, robot_yaw, distance_sensor_left, distance_sensor_right, distance_sensor_mid, opp_detected, robot_en_rpmL, robot_en_rpmR);
+				// task_status = search_task_alt(ball_detected);
 				// robot_cmd_linX = get_search_linX();
 				// robot_cmd_angZ = get_search_angZ();
 				break;

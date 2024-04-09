@@ -1,13 +1,29 @@
 #include "../config.h"
 
-float deliver_set_linX;
-float deliver_set_angZ;
-float deliver_set_servo;
+float deliver_set_linX = 0.0;
+float deliver_set_angZ = 0.0;
+float deliver_set_servo = SERVO_COLLECT_POSITION;
 int reset_x = NOT_TRIGGERED;
 
 int deliver_task(float yaw, float servo_position, int ball_in_chamber, int back_limit_switch, int lineBL, int lineBR) {
-    static int delivery_counter;
+    static int delivery_startup = TRIGGERED;
+
     float deliver_arm_position_err = SERVO_DELIVER_POSITION - servo_position;
+
+    // Start the delivery task
+    if (delivery_startup == TRIGGERED){
+        // Face the back wall
+        deliver_set_angZ = -yaw * DELIVER_YAW_KP;
+        deliver_set_linX = 0.0;
+            if (abs(yaw) > YAW_TOLERANCE){
+                delivery_startup = NOT_TRIGGERED;
+            }
+    }
+    else {
+        // Move towards the back wall while making small corrections
+        deliver_set_angZ = -yaw * DELIVER_YAW_KP;
+        deliver_set_linX = -MAX_SPEED;
+    }
 
     // Correcting the error when trasition -s180
     if (deliver_arm_position_err <= -180.0){
@@ -17,34 +33,21 @@ int deliver_task(float yaw, float servo_position, int ball_in_chamber, int back_
         deliver_arm_position_err -= 360.0;
     }
 
-    if (abs(yaw) > YAW_TOLERANCE){
-        deliver_set_angZ = -yaw * DELIVER_YAW_KP;
-        deliver_set_linX = 0.0;
-    }
-    else{
-        deliver_set_angZ = 0.0;
-        deliver_set_linX = -MAX_SPEED;
-    }
-
-    // if (back_limit_switch == TRIGGERED && lineBL == TRIGGERED && lineBR == TRIGGERED) {
+    // Move the arm to the delivery position
     if (back_limit_switch == TRIGGERED) {
-        // delivery_counter ++;
         deliver_set_servo = SERVO_DELIVER_POSITION;
         reset_x = TRIGGERED;
     }
     
     // CHECK SUCCESS CRITERIA
-    // if (ball_in_chamber == NOT_TRIGGERED && delivery_counter > SERVO_POSITION_GAIN) {
     if (servo_position == SERVO_DELIVER_POSITION) {
         reset_x = TRIGGERED;
-        deliver_set_servo = 0.0;
+        deliver_set_servo = SERVO_COLLECT_POSITION;
         deliver_set_angZ = 0.0;
         deliver_set_linX=0.0;
-        delivery_counter = 0;
         return HOME;
     }
     else if (ball_in_chamber == NOT_TRIGGERED){
-        delivery_counter = 0;
         return SEARCH;
     }
     else {
