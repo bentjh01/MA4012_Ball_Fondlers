@@ -137,7 +137,7 @@ void avoid_case_check(float rb_x, float rb_y, float rb_yaw, int FL, int FR, int 
 	}
 	//Some special cases: in corner
 	else{
-		edge_goal_yaw = wrap_to_pi(rb_yaw);
+		edge_goal_yaw = wrap_to_pi(rb_yaw-15.0);
 		return;
 	}
 	return;
