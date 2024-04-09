@@ -78,9 +78,10 @@ int limit_switch_D = 0;
 int task_status = HOME;
 int prev_task_status = HOME;
 
-// opponent detection
+// Detection
 int opp_detected;
 int ball_in_chamber_status;
+float detected_ball_yaw;
 /* _____________________________________________________________________________________________________________________
 
 SENSORS
@@ -219,20 +220,22 @@ task main()
 			case SEARCH:
 				// opp_detected = opponent_detection(distance_sensor_top);
 				task_status = GOTO;
-				// task_status = search_task(robot_x, robot_y, robot_yaw, distance_sensor_left, distance_sensor_right, distance_sensor_mid, opp_detected);
+				// task_status = search_task(robot_x, robot_y, robot_yaw, distance_sensor_left, distance_sensor_right, distance_sensor_mid, opp_detected, robot_en_rpmL, robot_en_rpmR);
 				// robot_cmd_linX = get_search_linX();
 				// robot_cmd_angZ = get_search_angZ();
+				// detected_ball_yaw = get_ball_yaw();
 				break;
 			case GOTO:
 				// opp_detected = opponent_detection(distance_sensor_top);
 				task_status = COLLECT;
-				// task_status = goto_task(robot_x, robot_y, robot_yaw, distance_sensor_left, distance_sensor_right, distance_sensor_mid, opp_detected);
+				// task_status = goto_task(robot_x, robot_y, robot_yaw, distance_sensor_left, distance_sensor_right, distance_sensor_mid, opp_detected, detected_ball_yaw);
 				// robot_cmd_linX = get_goto_linX();
 				// robot_cmd_angZ = get_goto_angZ();
 				break;
 			case COLLECT:
 				task_status = DELIVER;
-				// task_status = collect_task(robot_x, robot_y, robot_yaw, robot_arm_position, ball_in_chamber_status, limit_switch_D);
+				// detected_ball_yaw = 0;
+				// task_status = collect_task(robot_arm_position, distance_sensor_mid, opp_detected);
 				// robot_cmd_linX = get_collect_linX();
 				// robot_cmd_angZ = get_collect_angZ();
 				// robot_cmd_arm_position = get_collect_servo();
