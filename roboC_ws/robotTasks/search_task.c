@@ -150,7 +150,7 @@ int search_task(float x, float y, float yaw, float left_sensor_dist, float right
       search_initial_y = y;
     }
 
-    change_position_traveled_distance = sqrt(pow(x-search_initial_x, 2) + pow(y-search_initial_y, 2);
+    change_position_traveled_distance = 0.0//calculate_distance(x, y, search_initial_x, search_initial_y);// sqrt(pow(x-search_initial_x, 2) + pow(y-search_initial_y, 2);
 
     //check for ball and opp
     if (search_ball_detected(left_sensor_dist,right_sensor_dist, mid_sensor_dist, opp_detected) == 1){
@@ -195,3 +195,5 @@ float get_search_angZ(){
 float get_ball_yaw(){
 	return ball_yaw;
 }
+
+

@@ -155,6 +155,7 @@ void init_robot(){
 	robot_cmd_linX = 0.0;
 	robot_cmd_angZ = 0.0;
 	robot_arm_position = SWITCH_C_POSITION;
+	task_status = HOME;
 }
 
 void wait_to_go(){
@@ -193,12 +194,27 @@ task main()
 	while(1){
 		clearTimer(T1);
 		// main Loop
-		// if (edge_detected(robot_line_FL, robot_line_BL, robot_line_BR, robot_line_FR) == TRIGGERED){
-		if (1 == 2){
+		if (edge_detected(robot_line_FL, robot_line_BL, robot_line_BR, robot_line_FR) == TRIGGERED){
+		// if (1 == 2){
+			if(task_status == DELIVER && fabs(robot_yaw) < YAW_TOLERANCE){
+				int line_case = get_edge_line_case();
+				if (line_case == 1001){
+					task_status = DELIVER;
+				}
+				else if (line_case == 1101 || line_case == 1011){
+					if (robot_x <= 0.05){
+						task_status = DELIVER;
+					}
+				}
+			}
+
 			if (task_status != EDGE){
 				prev_task_status = task_status;
 			}
-			task_status = EDGE;
+
+			else{
+				task_status = EDGE;
+			}
 			avoid_case_check(robot_x, robot_y, robot_yaw, robot_line_FL, robot_line_FR, robot_line_BL, robot_line_BR);
 			// wall_case_check(robot_yaw, robot_line_FL, robot_line_FR, robot_line_BL, robot_line_BR); @Unizz20
 		}
@@ -219,14 +235,14 @@ task main()
 			case SEARCH:
 				// opp_detected = opponent_detection(distance_sensor_top);
 				task_status = GOTO;
-				// task_status = search_task(robot_x, robot_y, robot_yaw, distance_sensor_left, distance_sensor_right, distance_sensor_mid, opp_detected);
+				// task_status = search_task(robot_x, robot_y, robot_yaw, distance_sensor_left, distance_sensor_right, distance_sensor_mid, opp_detected, robot_en_rpmL, robot_en_rpmR);
 				// robot_cmd_linX = get_search_linX();
 				// robot_cmd_angZ = get_search_angZ();
 				break;
 			case GOTO:
 				// opp_detected = opponent_detection(distance_sensor_top);
 				task_status = COLLECT;
-				// task_status = goto_task(robot_x, robot_y, robot_yaw, distance_sensor_left, distance_sensor_right, distance_sensor_mid, opp_detected);
+				// task_status = goto_task(robot_x, robot_y, robot_yaw, distance_sensor_left, distance_sensor_right, distance_sensor_mid, opp_detected, ball_yaw);
 				// robot_cmd_linX = get_goto_linX();
 				// robot_cmd_angZ = get_goto_angZ();
 				break;

@@ -44,12 +44,12 @@ ________________________________________________________________________________
 #define FILTER_ENCODER 0.5
 
 // DRIVE
-#define MOTOR_L_KP 1.0 
+#define MOTOR_L_KP 0.8 
 #define MOTOR_L_KI 0.005
 #define MOTOR_L_KD 0.00
 #define MOTOR_L_INTEGRAL_MAX 127
 
-#define MOTOR_R_KP 1.0 
+#define MOTOR_R_KP 0.8 
 #define MOTOR_R_KI 0.005
 #define MOTOR_R_KD 0.00
 #define MOTOR_R_INTEGRAL_MAX 127

@@ -172,16 +172,33 @@ int opponent_detection(float short_sensor_dist){
 }
 
 int detect_ball(float left_sensor_dist, float right_sensor_dist, float mid_sensor_dist, int opp_detected){
-  // Returns 1 if a ball is detected, 0 otherwise
-  // return 0 when there is no detection
-  //ignore opp robot
-  if (left_sensor_dist <= BALL_THRESHOLD_LNR || right_sensor_dist <= BALL_THRESHOLD_LNR){
+  // // Returns 1 if a ball is detected, 0 otherwise
+  // // return 0 when there is no detection
+  // //ignore opp robot
+  // if (left_sensor_dist <= BALL_THRESHOLD_LNR || right_sensor_dist <= BALL_THRESHOLD_LNR){
+  //   return 1;
+  // }
+  // else if(mid_sensor_dist <= BALL_THRESHOLD_MID && !opp_detected){
+  //   return 1;
+  // }
+  // else{
+  //   return 0;
+  // }
+
+  // Alt
+  static float prev_left;
+  static float prev_right;
+  static float prev_mid;
+  float dr = fabs(prev_left-left_sensor_dist);
+  float dl = fabs(prev_right-right_sensor_dist);
+  float dm = fabs(prev_mid-mid_sensor_dist);
+  prev_left = left_sensor_dist;
+  prev_right = right_sensor_dist;
+  prev_mid = mid_sensor_dist;
+
+  if (dr > BALL_THRESHOLD_CHANGE || dl > BALL_THRESHOLD_CHANGE){
     return 1;
   }
-  else if(mid_sensor_dist <= BALL_THRESHOLD_MID && !opp_detected){
-    return 1;
-  }
-  else{
-    return 0;
-  }
+  else if ()
+
 }
