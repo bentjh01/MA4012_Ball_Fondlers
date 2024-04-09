@@ -16,6 +16,7 @@ static float search_angZ;
 static float change_position_traveled_distance;
 static int search_reduce = 0;
 static float ball_yaw;
+static float search_angular_difference;
 
 //NOTE!!!
 //MOVE OPP DETECTION TO
@@ -86,23 +87,22 @@ int search_task(float x, float y, float yaw, float left_sensor_dist, float right
       search_angZ = 60.0;
     }
     else{
-    	search_linX = 0.0;
-      search_angZ = fabs(yaw-search_initial_yaw)/180.0*60.0;
+      search_angular_difference = search_initial_yaw-yaw
+
+      if(search_angular_difference <= -180) {
+        search_angular_difference = search_angular_difference+360;
+      }
+      else if (search_angular_difference > 180){
+        //technically this should never occur since we always want to rotate ccw. But it is here just in case.
+        search_angular_difference = search_angular_difference-360;
+      }
+
+      search_linX = 0.0;
+      search_angZ = fabs(search_angular_difference)/180.0*60.0;
 
       //if(search_angZ < 60.0){
       	//search_angZ = 60.0;
       //}
-    }
-
-    //check if 360 deg rotation achieved
-    if(fabs(yaw-search_initial_yaw) < YAW_TOLERANCE && search_counter >= SEARCH_COUNT_THRESHOLD){
-      //stop movement
-      search_linX = 0.0;
-      search_angZ = 0.0;
-
-      search_startup_phase = 1;                               //reset search_startup_phase
-      changing_search_position = 1;                           //initiate change search position
-      return SEARCH;
     }
 
     //check for ball
@@ -116,12 +116,20 @@ int search_task(float x, float y, float yaw, float left_sensor_dist, float right
       return GOTO;
     	//return SEARCH;
     }
-    else{
-      search_counter += 1; //increment counter
-      //return search_opponent_detected(short_sensor_dist) //use this if want to check for opp robot instead of return 0;
-      return SEARCH;
+
+    search_counter += 1; //increment counter
+
+    //check if 360 deg rotation achieved
+    if(fabs(yaw-search_initial_yaw) < YAW_TOLERANCE && search_counter >= SEARCH_COUNT_THRESHOLD){
+      //stop movement
+      search_linX = 0.0;
+      search_angZ = 0.0;
+
+      search_startup_phase = 1;                               //reset search_startup_phase
+      changing_search_position = 1;                           //initiate change search position
     }
 
+    return SEARCH;
   }
   //Changing search position
   else{
@@ -142,18 +150,7 @@ int search_task(float x, float y, float yaw, float left_sensor_dist, float right
       search_initial_y = y;
     }
 
-    change_position_traveled_distance = sqrt(pow(x-search_initial_x, 2) + pow(y-search_initial_y, 2);
-
-    //check if finished moving to a new search position
-    if(change_position_traveled_distance >= CHANGE_POSITION_DISTANCE){
-      //stop movement
-      search_linX = 0.0;
-      search_angZ = 0.0;
-
-      search_startup_phase = 1;                               //reset search_startup_phase
-      changing_search_position = 0;                           //terminate change_search_position
-      return SEARCH;
-    }
+    change_position_traveled_distance = 0.0//calculate_distance(x, y, search_initial_x, search_initial_y);// sqrt(pow(x-search_initial_x, 2) + pow(y-search_initial_y, 2);
 
     //check for ball and opp
     if (search_ball_detected(left_sensor_dist,right_sensor_dist, mid_sensor_dist, opp_detected) == 1){
@@ -167,12 +164,18 @@ int search_task(float x, float y, float yaw, float left_sensor_dist, float right
       //reset search_startup_phase
       changing_search_position = 0;                           //terminate change_search_position
       return GOTO;
-    	//return SEARCH;
     }
-    else{
-      // return search_opponent_detected(short_sensor_dist) //check for opp robot
-      return SEARCH;
+
+    //check if finished moving to a new search position
+    if(change_position_traveled_distance >= CHANGE_POSITION_DISTANCE){
+      //stop movement
+      search_linX = 0.0;
+      search_angZ = 0.0;
+
+      search_startup_phase = 1;                               //reset search_startup_phase
+      changing_search_position = 0;                           //terminate change_search_position
     }
+    return SEARCH;
   }
 
 }
@@ -192,3 +195,5 @@ float get_search_angZ(){
 float get_ball_yaw(){
 	return ball_yaw;
 }
+
+

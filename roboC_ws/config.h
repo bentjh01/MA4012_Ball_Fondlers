@@ -20,6 +20,9 @@ ________________________________________________________________________________
 #define OPP_CLOSENESS_THRESHOLD     15.0 //cm wrt to edge of ramp
 #define READY_TO_COLLECT_THRESHOLD  4.0 //cm wrt to edge of ramp
 
+#define BALL_THRESHOLD_CHANGE 20 // cm 
+#define LIMIT_DISTANCE_READINGS 40 // 
+
 // LINE SENSOR
 #define LINE_FL_THRESHOLD       1252.0 // Midpoint of black point and yellow point
 #define LINE_BL_THRESHOLD       1147.0 // Midpoint of black point and yellow point
@@ -44,12 +47,12 @@ ________________________________________________________________________________
 #define FILTER_ENCODER 0.5
 
 // DRIVE
-#define MOTOR_L_KP 1.0 
+#define MOTOR_L_KP 0.8 
 #define MOTOR_L_KI 0.005
 #define MOTOR_L_KD 0.00
 #define MOTOR_L_INTEGRAL_MAX 127
 
-#define MOTOR_R_KP 1.0 
+#define MOTOR_R_KP 0.8 
 #define MOTOR_R_KI 0.005
 #define MOTOR_R_KD 0.00
 #define MOTOR_R_INTEGRAL_MAX 127
@@ -94,6 +97,7 @@ ________________________________________________________________________________
 
 // GOTO TASK
 #define GOTO_SWEEP_TIME 3.0
+#define GOTO_ALIGN_BALL_GAIN 0.5
 
 // COLLECT TASK
 #define SERVO_COLLECT_POSITION 90.0

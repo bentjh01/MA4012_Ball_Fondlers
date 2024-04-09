@@ -1,13 +1,5 @@
 #include "../config.h"
 
-// @Unizz20
-
-/*
-1. Opens the claw to collect the ball
-2. Moves to middle of the field
-sucess == claw_opened && middle_of_field
-*/
-
 static float home_linX = 0.0;
 static float home_angZ = 0.0;
 static float home_servo = 0.0;
@@ -22,6 +14,9 @@ int home_task(float x, float y, float yaw, float arm_position){
         return HOME;
     }
     else{
+        home_linX = 0.0;
+        home_angZ = 0.0;
+        home_servo = 0.0;
         return SEARCH;
     }
 }
