@@ -20,6 +20,9 @@ ________________________________________________________________________________
 #define OPP_CLOSENESS_THRESHOLD     15.0 //cm wrt to edge of ramp
 #define READY_TO_COLLECT_THRESHOLD  4.0 //cm wrt to edge of ramp
 
+#define BALL_THRESHOLD_CHANGE 20 // cm 
+#define LIMIT_DISTANCE_READINGS 40 // 
+
 // LINE SENSOR
 #define LINE_FL_THRESHOLD       1252.0 // Midpoint of black point and yellow point
 #define LINE_BL_THRESHOLD       1147.0 // Midpoint of black point and yellow point
