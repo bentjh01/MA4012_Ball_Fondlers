@@ -189,16 +189,20 @@ int detect_ball(float left_sensor_dist, float right_sensor_dist, float mid_senso
   static float prev_left;
   static float prev_right;
   static float prev_mid;
-  float dr = fabs(prev_left-left_sensor_dist);
-  float dl = fabs(prev_right-right_sensor_dist);
-  float dm = fabs(prev_mid-mid_sensor_dist);
+
+  float dr = left_sensor_dist - prev_left;
+  float dl = right_sensor_dist - prev_right;
+  float dm = mid_sensor_dist - mid_sensor_dist;
+
   prev_left = left_sensor_dist;
   prev_right = right_sensor_dist;
   prev_mid = mid_sensor_dist;
 
-  if (dr > BALL_THRESHOLD_CHANGE || dl > BALL_THRESHOLD_CHANGE){
+  if (fabs(dr) > BALL_THRESHOLD_CHANGE || fabs(dl) > BALL_THRESHOLD_CHANGE){
     return 1;
   }
-  else if ()
-
+  if (opp_detected){
+    return 0;
+  }
+  return 0;
 }

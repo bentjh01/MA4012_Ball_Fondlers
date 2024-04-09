@@ -28,12 +28,6 @@ GLOBAL VARIABLES
 _____________________________________________________________________________________________________________________ */
 
 // Robot State
-float robot_x = 0.0;
-float robot_y = 0.0;
-float robot_yaw = 0;
-float robot_linX = 0;
-float robot_angZ = 0.0;
-
 float robot_arm_position = 0.0;
 
 // robot twist
