@@ -12,10 +12,12 @@ ________________________________________________________________________________
 
 #define FILTER_GAIN_LONG_L 	    1.0 //(output = prev_input) 0 < FILTER_GAIN < 1 (output = new_input)
 #define FILTER_GAIN_LONG_R 	    1.0 //(output = prev_input) 0 < FILTER_GAIN < 1 (output = new_input)
-#define FILTER_GAIN_LONG_MID 	1.0 //(output = prev_input) 0 < FILTER_GAIN < 1 (output = new_input)
+#define FILTER_GAIN_LONG_MID 	0.5 //(output = prev_input) 0 < FILTER_GAIN < 1 (output = new_input)
 #define FILTER_GAIN_SHORT_TOP 	1.0 //(output = prev_input) 0 < FILTER_GAIN < 1 (output = new_input)
-#define BALL_IN_CHAMBER_DISTANCE 9.9 // [cm] TODO
-#define BALL_THRESHOLD_LNR          45.0 //cm wrt to edge of ramp
+#define BALL_IN_CHAMBER_DISTANCE 0.0 // [cm]
+//#define BALL_THRESHOLD_LNR          45.0 //cm wrt to edge of ramp
+//#define BALL_THRESHOLD_MID          35.0 //cm wrt to edge of ramp
+#define BALL_THRESHOLD_LNR          35.0 //cm wrt to edge of ramp
 #define BALL_THRESHOLD_MID          35.0 //cm wrt to edge of ramp
 #define OPP_CLOSENESS_THRESHOLD     15.0 //cm wrt to edge of ramp
 #define READY_TO_COLLECT_THRESHOLD  4.0 //cm wrt to edge of ramp
@@ -32,8 +34,8 @@ ________________________________________________________________________________
 #define FILTER_GAIN_LINE_FR 	0.60 //(output = prev_input) 0 < FILTER_GAIN < 1 (output = new_input)
 
 // MAGNETOMETER PARAMETERS
-#define MAGNETOMETER_OFFSET 180.0 // [deg] 
-// #define MAGNETOMETER_OFFSET 45.0 // [deg] 
+#define MAGNETOMETER_OFFSET 180.0 // [deg]
+// #define MAGNETOMETER_OFFSET 45.0 // [deg]
 
 /*______________________________________________________________________________________________________________________
 
@@ -44,12 +46,12 @@ ________________________________________________________________________________
 #define FILTER_ENCODER 0.5
 
 // DRIVE
-#define MOTOR_L_KP 1.0 
+#define MOTOR_L_KP 1.0
 #define MOTOR_L_KI 0.005
 #define MOTOR_L_KD 0.00
 #define MOTOR_L_INTEGRAL_MAX 127
 
-#define MOTOR_R_KP 1.0 
+#define MOTOR_R_KP 1.0
 #define MOTOR_R_KI 0.005
 #define MOTOR_R_KD 0.00
 #define MOTOR_R_INTEGRAL_MAX 127
@@ -71,8 +73,8 @@ ________________________________________________________________________________
 #define ENCODER_FILTER 0.5  // TODO [0,1] takes a value between 0 and 1, the closer to 1 the more filtering
 #define MAGNETO_FILTER 1.0 // TODO [0,1] takes a value between 0 and 1, the closer to 1 the more filtering
 
-#define LINEAR_TOLERANCE 0.05 //TODO 
-#define YAW_TOLERANCE 22.50 // [deg] TODO 
+#define LINEAR_TOLERANCE 0.05 //TODO
+#define YAW_TOLERANCE 22.50 // [deg] TODO
 
 #define MOTOR_ACCL_LIM 100.0 // [rpm]
 
@@ -89,8 +91,9 @@ ________________________________________________________________________________
 #define HOME_AWAY_DISTANCE 0.4//(ARENA_X * 1.0 / 2.0)
 
 // SEARCH TASK
-#define SEARCH_COUNT_THRESHOLD      25
-#define CHANGE_POSITION_DISTANCE    0.80
+#define SEARCH_COUNT_THRESHOLD      75
+#define CHANGE_POSITION_DISTANCE    0.3
+//#define DISTANCE_CHANGE_THRESHOLD		10.0
 
 // GOTO TASK
 #define GOTO_SWEEP_TIME 3.0
@@ -127,7 +130,7 @@ ________________________________________________________________________________
 // TASK PARAMETERS
 #define DT_MAIN                  0.05
 #define DT_READ                  0.05
-#define EDGE                1   
+#define EDGE                1
 #define HOME                2
 #define SEARCH              3
 #define GOTO                4
@@ -160,5 +163,9 @@ ________________________________________________________________________________
 #define EAST            -90.0
 #define SOUTH_EAST      -135.0
 #define SOUTH           -180.0
+
+//Chen test
+#define SCALE_RPM 0.98
+#define OFFSET_RPM 0
 
 #endif // CONFIG_H
