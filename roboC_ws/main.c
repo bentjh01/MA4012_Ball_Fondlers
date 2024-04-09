@@ -106,13 +106,13 @@ void read_sensors(float dt){
 	robot_line_FR = check_threshold(filter_line_FR(SensorValue[line_FR_pin]), LINE_FR_THRESHOLD);
 
 	distance_sensor_mid = calculate_long_distance(filter_distance_mid(SensorValue[long_distance_M_pin])) - MID_SENSOR_OFFSET;
-	distance_sensor_mid = min(distance_sensor_mid, LIMIT_DISTANCE_READINGS);
+	// distance_sensor_mid = min(distance_sensor_mid, LIMIT_DISTANCE_READINGS);
 	distance_sensor_top = calculate_short_distance(filter_distance_top(SensorValue[short_distance_T_pin])) - TOP_SENSOR_OFFSET;
-	distance_sensor_top = min(distance_sensor_top, LIMIT_DISTANCE_READINGS);
+	// distance_sensor_top = min(distance_sensor_top, LIMIT_DISTANCE_READINGS);
 	distance_sensor_left = calculate_long_distance(filter_distance_L(SensorValue[long_distance_L_pin])) - LEFT_SENSOR_OFFSET;
-	distance_sensor_left = min(distance_sensor_left, LIMIT_DISTANCE_READINGS);
+	// distance_sensor_left = min(distance_sensor_left, LIMIT_DISTANCE_READINGS);
 	distance_sensor_right = calculate_long_distance(filter_distance_R(SensorValue[long_distance_R_pin])) - RIGHT_SENSOR_OFFSET;
-	distance_sensor_right = min(distance_sensor_right, LIMIT_DISTANCE_READINGS);
+	// distance_sensor_right = min(distance_sensor_right, LIMIT_DISTANCE_READINGS);
 
 	ball_in_chamber_status = check_ball_in_chamber(distance_sensor_mid);
 
@@ -257,7 +257,8 @@ task main()
 				// opp_detected = opponent_detection(distance_sensor_top);
 				task_status = GOTO;
 				// task_status = search_task(robot_x, robot_y, robot_yaw, distance_sensor_left, distance_sensor_right, distance_sensor_mid, opp_detected, robot_en_rpmL, robot_en_rpmR);
-				// task_status = search_task_alt(ball_detected);
+				// task_status = search_task_alt(distance_sensor_mid, distance_sensor_left, distance_sensor_right, opp_detected);
+				// ball_detected_side = get_search_detected_side();
 				// robot_cmd_linX = get_search_linX();
 				// robot_cmd_angZ = get_search_angZ();
 				break;
@@ -285,7 +286,7 @@ task main()
 					robot_x = 0.0;
 				}
 				break;
-		}
+		
         // end of main loop
 		while (time1[T1] < DT_MAIN * 1000){}
 	}
