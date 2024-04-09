@@ -12,7 +12,6 @@ static float edge_goal_yaw = 0.0;
 static float edge_x = 0.0;
 static float edge_y = 0.0;
 static float edge_linX_sign = 1;
-static int rev_counter= 0;
 static int edge_line_case;
 
 /// @brief Detects if a line sensor is triggered
@@ -43,8 +42,6 @@ void avoid_case_check(float rb_x, float rb_y, float rb_yaw, int FL, int FR, int 
 	float rotate_ang;
 	edge_x = rb_x;
 	edge_y = rb_y;
-	rev_counter = 0.0;
-	//status 1: forward sensor detected
 
 	// FL or FR is detected, BL and BR are not detected
 	if ((FL == TRIGGERED || FR == TRIGGERED) && (BL == NOT_TRIGGERED && BR == NOT_TRIGGERED)){
@@ -171,8 +168,6 @@ int edge_avoid_task(float rb_x, float rb_y, float rb_yaw, int prev_task){
 		return prev_task;
 	}
 	else if (distance_from_edge <= EDGE_REVERSE_DISTANCE){
-	// else if (rev_counter < 10){
-		// edge_linX = edge_linX_sign * distance_from_edge * 1.2;// MAX_SPEED;
 		if (edge_line_case == 0110 || edge_line_case == 0111 || edge_line_case == 1110){
 			edge_linX = -MAX_SPEED;
 		}

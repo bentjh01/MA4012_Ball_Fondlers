@@ -87,9 +87,9 @@ int search_task(float x, float y, float yaw, float left_sensor_dist, float right
       search_angZ = 60.0;
     }
     else{
-      search_angular_difference = search_initial_yaw-yaw
+      search_angular_difference = search_initial_yaw-yaw;
 
-      if(search_angular_difference <= -180) {
+      if (search_angular_difference <= -180) {
         search_angular_difference = search_angular_difference+360;
       }
       else if (search_angular_difference > 180){
@@ -106,7 +106,8 @@ int search_task(float x, float y, float yaw, float left_sensor_dist, float right
     }
 
     //check for ball
-    if (search_ball_detected(left_sensor_dist,right_sensor_dist, mid_sensor_dist, opp_detected) == 1){
+    // if (search_ball_detected(left_sensor_dist,right_sensor_dist, mid_sensor_dist, opp_detected) == 1){
+    if (detect_ball(left_sensor_dist,right_sensor_dist, mid_sensor_dist, opp_detected) == 1){
       //stop movement
       search_linX = 0.0;
       search_angZ = 0.0;
@@ -153,7 +154,7 @@ int search_task(float x, float y, float yaw, float left_sensor_dist, float right
     change_position_traveled_distance = sqrt(pow(x-search_initial_x, 2) + pow(y-search_initial_y, 2));
 
     //check for ball and opp
-    if (search_ball_detected(left_sensor_dist,right_sensor_dist, mid_sensor_dist, opp_detected) == 1){
+    if (detect_ball(left_sensor_dist,right_sensor_dist, mid_sensor_dist, opp_detected) == 1){
       //stop movement
       ball_yaw = yaw;
       search_linX = 0.0;

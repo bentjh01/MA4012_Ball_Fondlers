@@ -106,9 +106,13 @@ void read_sensors(float dt){
 	robot_line_FR = check_threshold(filter_line_FR(SensorValue[line_FR_pin]), LINE_FR_THRESHOLD);
 
 	distance_sensor_mid = calculate_long_distance(filter_distance_mid(SensorValue[long_distance_M_pin])) - MID_SENSOR_OFFSET;
+	distance_sensor_mid = min(distance_sensor_mid, LIMIT_DISTANCE_READINGS);
 	distance_sensor_top = calculate_short_distance(filter_distance_top(SensorValue[short_distance_T_pin])) - TOP_SENSOR_OFFSET;
+	distance_sensor_top = min(distance_sensor_top, LIMIT_DISTANCE_READINGS);
 	distance_sensor_left = calculate_long_distance(filter_distance_L(SensorValue[long_distance_L_pin])) - LEFT_SENSOR_OFFSET;
+	distance_sensor_left = min(distance_sensor_left, LIMIT_DISTANCE_READINGS);
 	distance_sensor_right = calculate_long_distance(filter_distance_R(SensorValue[long_distance_R_pin])) - RIGHT_SENSOR_OFFSET;
+	distance_sensor_right = min(distance_sensor_right, LIMIT_DISTANCE_READINGS);
 
 	ball_in_chamber_status = check_ball_in_chamber(distance_sensor_mid);
 
