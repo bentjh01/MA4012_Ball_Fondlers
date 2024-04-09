@@ -16,9 +16,26 @@ ________________________________________________________________________________
  * @return The limited RPM of the left wheel.
  */
 float limit_rpmL(float rpmL, float rpmR){
+	static float Lprev_cmd_rpmL;
+	static float Lprev_cmd_rpmR;
+	float errL = rpmL - Lprev_cmd_rpmL;
+	float errR = rpmR - Lprev_cmd_rpmR;
+	// Apply acceleration limits
+	if (fabs(errL)>MOTOR_ACCL_LIM){
+		rpmL = (Lprev_cmd_rpmL + sgn(errL) * MOTOR_ACCL_LIM);
+	}
+	if (fabs(errR)>MOTOR_ACCL_LIM){
+		rpmR = (Lprev_cmd_rpmR + sgn(errR) * MOTOR_ACCL_LIM);
+	}
+
+	// Limit the RPM of the left wheel
 	if (fabs(rpmR) <= MAX_WHEEL_RPM && fabs(rpmL) <= MAX_WHEEL_RPM){
+		Lprev_cmd_rpmL = rpmL;
+		Lprev_cmd_rpmR = rpmR;
 		return rpmL;
 		}
+
+	// Scale down the RPM of the left wheel
 	float higher_rpm;
 	if (fabs(rpmR) > fabs(rpmL)){
 		higher_rpm = fabs(rpmR);
@@ -26,7 +43,10 @@ float limit_rpmL(float rpmL, float rpmR){
 		higher_rpm = fabs(rpmL);
 	}
 	rpmL = rpmL/ higher_rpm * MAX_WHEEL_RPM;
+	rpmR = rpmR/ higher_rpm * MAX_WHEEL_RPM;
 
+	Lprev_cmd_rpmL = rpmL;
+	Lprev_cmd_rpmR = rpmR;
 	return rpmL;
 }
 
@@ -43,17 +63,36 @@ float limit_rpmL(float rpmL, float rpmR){
  * @return The limited RPM of the right wheel.
  */
 float limit_rpmR(float rpmL, float rpmR){
+	static float Rprev_cmd_rpmL;
+	static float Rprev_cmd_rpmR;
+	float errL = rpmL - Rprev_cmd_rpmL;
+	float errR = rpmR - Rprev_cmd_rpmR;
+	// Apply acceleration limits
+	if (fabs(errL)>MOTOR_ACCL_LIM){
+		rpmL = (Rprev_cmd_rpmL + sgn(errL) * MOTOR_ACCL_LIM);
+	}
+	if (fabs(errR)>MOTOR_ACCL_LIM){
+		rpmR = (Rprev_cmd_rpmR + sgn(errR) * MOTOR_ACCL_LIM);
+	}
+
+	// Limit the RPM of the right wheel
 	if (fabs(rpmR) <= MAX_WHEEL_RPM && fabs(rpmL) <= MAX_WHEEL_RPM){
+		Rprev_cmd_rpmL = rpmL;
+		Rprev_cmd_rpmR = rpmR;
 		return rpmR;
 	}
+	// Scale down the RPM of the right wheel
 	float higher_rpm;
 	if (fabs(rpmR) > fabs(rpmL)){
 		higher_rpm = fabs(rpmR);
 	} else {
 		higher_rpm = fabs(rpmL);
 	}
+	rpmL = rpmL/ higher_rpm * MAX_WHEEL_RPM;
 	rpmR = rpmR / higher_rpm * MAX_WHEEL_RPM;
 
+	Rprev_cmd_rpmL = rpmL;
+	Rprev_cmd_rpmR = rpmR;
 	return rpmR;
 }
 
@@ -70,4 +109,55 @@ int limit_byte(float power){
 		power = -127;
 	}
 	return power;
+}
+
+/**
+ * Limits the input power value to a range of -127 to 127.
+ *
+ * @param powerL The input power value to be limited.
+ * @param powerR The input power value to be limited.
+ * @return The limited power value within the range of -127 to 127.
+ */
+int limit_byteL(float powerL, float powerR){
+	float higher_power;
+	if (powerL > powerR){
+		higher_power = fabs(powerL);
+	} else {
+		higher_power = fabs(powerR);
+	}
+	if (powerL <= MAX_POWER && powerR <= MAX_POWER){
+		return powerL;
+	}
+
+	if (higher_power > 0.0){
+	powerL = powerL / higher_power * MAX_POWER;
+	powerR = powerR / higher_power * MAX_POWER;
+	}
+
+	return powerL;
+}
+
+
+/**
+ * Limits the input power value to a range of -127 to 127 for the RIGHT WHEEL.
+ *
+ * @param powerL The input power value to be limited.
+ * @param powerR The input power value to be limited.
+ * @return The limited power value within the range of -127 to 127.
+ */
+int limit_byteR(float powerL, float powerR){
+	float higher_power;
+	if (fabs(powerL) > fabs(powerR)){
+		higher_power = fabs(powerL);
+	} else {
+		higher_power = fabs(powerR);
+	}
+	if (powerL <= MAX_POWER && powerR <= MAX_POWER){
+		return powerR;
+	}
+	if (higher_power > 0.0){
+	powerL = powerL / higher_power * MAX_POWER;
+	powerR = powerR / higher_power * MAX_POWER;
+	}
+	return powerR;
 }

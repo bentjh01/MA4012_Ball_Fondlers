@@ -54,6 +54,9 @@ float low_pass_filter(float input, float prev_input, float alpha){
 	return alpha*input + (1-alpha)*prev_input;
 }
 
+
+
+
 /**
  * @brief Discretise the yaw reading into bins of 45 [deg] each
  * @param yaw the yaw reading to discretise

@@ -12,13 +12,17 @@ static float home_linX = 0.0;
 static float home_angZ = 0.0;
 static float home_servo = 0.0;
 
-int home_task(float x, float y, float yaw, float sensor_A, float sensor_B){
-    int success = 0;
-    if (success == 1){
-        return SEARCH;
+int home_task(float x, float y, float yaw, float arm_position){
+    home_servo = 0.0;
+    home_linX = MAX_SPEED;
+    // home_angZ = -1.5 * yaw;
+    home_angZ = 0.0;
+
+    if (arm_position > SERVO_TOLERANCE || x < HOME_AWAY_DISTANCE){
+        return HOME;
     }
     else{
-        return HOME;
+        return SEARCH;
     }
 }
 
@@ -32,4 +36,8 @@ float get_home_linX(){
 /// @return angular velocity [deg/s]
 float get_home_angZ(){
     return home_angZ;
+}
+
+float get_home_servo(){
+    return home_servo;
 }

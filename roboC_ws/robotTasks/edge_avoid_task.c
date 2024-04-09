@@ -12,6 +12,7 @@ static float edge_goal_yaw = 0.0;
 static float edge_x = 0.0;
 static float edge_y = 0.0;
 static float edge_linX_sign = 1;
+static int rev_counter= 0;
 
 /// @brief Detects if a line sensor is triggered
 /// @param FL Front Left sensor
@@ -20,19 +21,12 @@ static float edge_linX_sign = 1;
 /// @param FR Front Right sensor
 /// @return returns TRIGGERED if a sensor is triggered, NOT_TRIGGERED otherwise
 int edge_detected(int FL, int BL, int BR, int FR){
-	if (FL == TRIGGERED){
+	if (FL == TRIGGERED || BL == TRIGGERED || BR == TRIGGERED || FR == TRIGGERED){
 		return TRIGGERED;
 	}
-	if (BL == TRIGGERED){
-		return TRIGGERED;
+	else{
+		return NOT_TRIGGERED;
 	}
-	if (BR == TRIGGERED){
-		return TRIGGERED;
-	}
-	if (FR == TRIGGERED){
-		return TRIGGERED;
-	}
-	return NOT_TRIGGERED;
 }
 
 /// @brief Determines the goal yaw based on the robot's current yaw and the sensor that is triggered
@@ -47,21 +41,24 @@ void avoid_case_check(float rb_x, float rb_y, float rb_yaw, int FL, int FR, int 
 	float rotate_ang;
 	edge_x = rb_x;
 	edge_y = rb_y;
-	//status 1: forward sensor detetcted
+	rev_counter = 0.0;
+	//status 1: forward sensor detected
 
 	// FL or FR is detected, BL and BR are not detected
-	if ((FL == 1 || FR == 1) && (BL != 1 && BR != 1)){
+	if ((FL == TRIGGERED || FR == TRIGGERED) && (BL == NOT_TRIGGERED && BR == NOT_TRIGGERED)){
 		edge_linX_sign = -1;
 		// robot facing deliver wall
 		if (rb_yaw >= -175 && rb_yaw < -95) {
 			// wall on right, turn left
-			if (FR == 1 && FL == 0){
+			if (FR == TRIGGERED && FL == NOT_TRIGGERED){
 				alpha = 180 - rb_yaw;
+				//alpha = 180 - fabs(rb_yaw); //Bryan: if the above alpha doesnt work, might be this bottom one instead
 				rotate_ang = (180 - 2*alpha) * (1);
 			} 
 			// wall on left, turn right
-			else if (FR == 0 && FL == 1) {
+			else if (FR == NOT_TRIGGERED && FL == TRIGGERED) {
 				alpha = rb_yaw - 90;
+				//alpha = fabs(rb_yaw) - 90; //Bryan: if the above alpha doesnt work, might be this bottom one instead
 				rotate_ang = (180 - 2*alpha) * (-1);
 			}
 
@@ -77,13 +74,14 @@ void avoid_case_check(float rb_x, float rb_y, float rb_yaw, int FL, int FR, int 
 		// robot facing far wall
 		} else if (rb_yaw >= -85 && rb_yaw < -5) {
 			// robot at right wall
-			if (FR == 1 && FL == 0){
+			if (FR == TRIGGERED && FL == NOT_TRIGGERED){
 				alpha = 90 - rb_yaw;
+				//alpha = 90 - fabs(rb_yaw); //Bryan: if the above alpha doesnt work, might be this bottom one instead
 				rotate_ang = (180 - 2*alpha) * (1);
-			} 
-			// robot at far wall
-			else if (FR == 0 && FL == 1) {
+			} // robot at far wall
+			else if (FR == NOT_TRIGGERED && FL == TRIGGERED) {
 				alpha = rb_yaw;
+				//alpha = fabs(rb_yaw); //Bryan: if the above alpha doesnt work, might be this bottom one instead
 				rotate_ang = (180 - 2*alpha) * (-1);
 			}
 
@@ -94,12 +92,12 @@ void avoid_case_check(float rb_x, float rb_y, float rb_yaw, int FL, int FR, int 
 		// robot facing far wall
 		} else if (rb_yaw >= 5 && rb_yaw < 85) {
 			// robot at far wall
-			if (FR == 1 && FL == 0){
+			if (FR == TRIGGERED && FL == NOT_TRIGGERED){
 				alpha = rb_yaw;
 				rotate_ang = (180 - 2*alpha) * (1);
 			} 
 			// robot at left wall
-			else if (FR == 0 && FL == 1) {
+			else if (FR == NOT_TRIGGERED && FL == TRIGGERED) {
 				alpha = 90 - rb_yaw;
 				rotate_ang = (180 - 2*alpha) * (-1);
 			}
@@ -114,12 +112,12 @@ void avoid_case_check(float rb_x, float rb_y, float rb_yaw, int FL, int FR, int 
 		// robot facing delivery wall
 		} else if (rb_yaw >= 95 && rb_yaw < 175) {
 			// robot at left wall
-			if (FR == 1 && FL == 0){
+			if (FR == TRIGGERED && FL == NOT_TRIGGERED){
 				alpha = rb_yaw - 90;
 				rotate_ang = (180 - 2*alpha) * (1);
 			} 
 			// robot at delivery wall
-			else if (FR == 0 && FL == 1) {
+			else if (FR == NOT_TRIGGERED && FL == TRIGGERED) {
 				alpha = 180 - rb_yaw;
 				rotate_ang = (180 - 2*alpha) * (-1);
 			}
@@ -128,20 +126,24 @@ void avoid_case_check(float rb_x, float rb_y, float rb_yaw, int FL, int FR, int 
 			rotate_ang = -180;
 		}
 
-		edge_goal_yaw = rb_yaw + rotate_ang;
+		edge_goal_yaw = wrap_to_pi(rb_yaw + rotate_ang);
+		if (FL == TRIGGERED){
+			edge_goal_yaw = NOT 
+		}
 		return;
 	}
 	//status 2: only backward sensors detetcted
-	else if((BL == 1 || BR == 1) && (FL != 1 && FR != 1)){
+	else if((BL == TRIGGERED || BR == TRIGGERED) && (FL == NOT_TRIGGERED && FR == NOT_TRIGGERED)){
 		edge_goal_yaw = 0.0;
 		edge_linX_sign = 1;
 		return;
 	}
 	//Some special cases: in corner
 	else{
-		edge_goal_yaw = rb_yaw;
+		edge_goal_yaw = wrap_to_pi(rb_yaw);
 		return;
 	}
+	return;
 }
 
 /// @brief Performs edge avoidance
@@ -149,25 +151,40 @@ void avoid_case_check(float rb_x, float rb_y, float rb_yaw, int FL, int FR, int 
 /// @param rb_y robot's y position
 /// @param rb_yaw robot's current yaw
 /// @return the previous task if successful, EDGE otherwise
+
 int edge_avoid_task(float rb_x, float rb_y, float rb_yaw, int prev_task){
 	float distance_from_edge = calculate_distance(rb_x, rb_y, edge_x, edge_y);
 	float yaw_error = edge_goal_yaw - rb_yaw;
+	rev_counter ++;
 
-	if (distance_from_edge > EDGE_REVERSE_DISTANCE && abs(yaw_error) < YAW_TOLERANCE){
+    // Correcting the error when trasition -s180
+    if (yaw_error <= -180.0){
+        yaw_error += 360.0;
+    }
+    else if (yaw_error > 180.0){
+        yaw_error -= 360.0;
+    }
+
+	// if (distance_from_edge > EDGE_REVERSE_DISTANCE && abs(yaw_error) < YAW_TOLERANCE){
+	if (rev_counter > 10){
 		edge_linX = 0.0;
 		edge_angZ = 0.0;
 		return prev_task;
 	}
-	else if (distance_from_edge < EDGE_REVERSE_DISTANCE){
+	// else if (distance_from_edge < EDGE_REVERSE_DISTANCE){
+	// else if (rev_counter < 10){
+	else{
+		// edge_linX = edge_linX_sign * distance_from_edge * 1.2;// MAX_SPEED;
 		edge_linX = edge_linX_sign * MAX_SPEED;
 		edge_angZ = 0.0;
 		return EDGE;
 	}
-	else if (fabs(yaw_error) > YAW_TOLERANCE){
-		edge_linX = 0.0;
-		edge_angZ = 0.6 * yaw_error;
-		return EDGE;
-	}
+	// else if (fabs(yaw_error) > YAW_TOLERANCE){
+	// 	edge_linX = 0.0;
+	// 	edge_angZ = EDGE_YAW_KP * yaw_error;
+	// 	return EDGE;
+	// }
+	return EDGE;
 }
 
 /// @brief Fetches the commanded linear velocity
