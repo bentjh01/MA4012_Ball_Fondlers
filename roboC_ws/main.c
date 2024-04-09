@@ -201,6 +201,10 @@ task main()
 				prev_task_status = task_status;
 			}
 			task_status = EDGE;
+
+			if (prev_task_status == DELIVER){
+				task_status = DELIVER;
+			}
 			avoid_case_check(robot_x, robot_y, robot_yaw, robot_line_FL, robot_line_FR, robot_line_BL, robot_line_BR);
 			// wall_case_check(robot_yaw, robot_line_FL, robot_line_FR, robot_line_BL, robot_line_BR); @Unizz20
 		}
