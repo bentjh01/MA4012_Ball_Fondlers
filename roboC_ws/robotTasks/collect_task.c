@@ -58,3 +58,6 @@ float get_collect_linX(){
 float get_collect_angZ(){
     return collect_angZ;
 }
+
+
+int collect_task_alt()
