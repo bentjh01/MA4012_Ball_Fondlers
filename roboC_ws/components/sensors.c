@@ -51,6 +51,17 @@ float filter_distance_top(float input){
   return output;
 }
 
+float filter_encoderL(float en_rpmL){
+  static float prev_en_rpmL;
+  float output = low_pass_filter(en_rpmL, prev_en_rpmL, FILTER_ENCODER);
+  return output;
+}
+
+float filter_encoderR(float en_rpmR){
+  static float prev_en_rpmR;
+  float output = low_pass_filter(en_rpmR, prev_en_rpmR, FILTER_ENCODER);
+  return output;
+}
 
 /**
  * @brief The compass provided is discrete. This returns the current bearing of the robot

@@ -50,18 +50,6 @@ float limit_rpmL(float rpmL, float rpmR){
 	return rpmL;
 }
 
-/**
- * Limits the RPM (Rotations Per Minute) of the right wheel based on the RPM of the left wheel.
- * If the absolute value of the RPM of both wheels is less than or equal to MAX_WHEEL_RPM,
- * the RPM of the right wheel remains unchanged.
- * If the absolute value of the RPM of the right wheel is greater than the RPM of the left wheel,
- * the RPM of the right wheel is scaled down proportionally to the RPM of the left wheel,
- * and then limited to MAX_WHEEL_RPM.
- *
- * @param rpmL The RPM of the left wheel.
- * @param rpmR The RPM of the right wheel.
- * @return The limited RPM of the right wheel.
- */
 float limit_rpmR(float rpmL, float rpmR){
 	static float Rprev_cmd_rpmL;
 	static float Rprev_cmd_rpmR;
@@ -109,55 +97,4 @@ int limit_byte(float power){
 		power = -127;
 	}
 	return power;
-}
-
-/**
- * Limits the input power value to a range of -127 to 127.
- *
- * @param powerL The input power value to be limited.
- * @param powerR The input power value to be limited.
- * @return The limited power value within the range of -127 to 127.
- */
-int limit_byteL(float powerL, float powerR){
-	float higher_power;
-	if (powerL > powerR){
-		higher_power = fabs(powerL);
-	} else {
-		higher_power = fabs(powerR);
-	}
-	if (powerL <= MAX_POWER && powerR <= MAX_POWER){
-		return powerL;
-	}
-
-	if (higher_power > 0.0){
-	powerL = powerL / higher_power * MAX_POWER;
-	powerR = powerR / higher_power * MAX_POWER;
-	}
-
-	return powerL;
-}
-
-
-/**
- * Limits the input power value to a range of -127 to 127 for the RIGHT WHEEL.
- *
- * @param powerL The input power value to be limited.
- * @param powerR The input power value to be limited.
- * @return The limited power value within the range of -127 to 127.
- */
-int limit_byteR(float powerL, float powerR){
-	float higher_power;
-	if (fabs(powerL) > fabs(powerR)){
-		higher_power = fabs(powerL);
-	} else {
-		higher_power = fabs(powerR);
-	}
-	if (powerL <= MAX_POWER && powerR <= MAX_POWER){
-		return powerR;
-	}
-	if (higher_power > 0.0){
-	powerL = powerL / higher_power * MAX_POWER;
-	powerR = powerR / higher_power * MAX_POWER;
-	}
-	return powerR;
 }
