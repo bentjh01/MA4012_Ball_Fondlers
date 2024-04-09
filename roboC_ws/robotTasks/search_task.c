@@ -1,4 +1,6 @@
 #include "../config.h"
+#include "components/components.h"
+
 // @ShaDowFrost2417
 /*
 1. Search for the ball e.g. by turning around
@@ -22,31 +24,6 @@ static float search_angular_difference;
 //MOVE OPP DETECTION TO
 //MAIN CODE GET SENSOR READING IN CM
 
-// int search_opponent_detected(float short_sensor_dist){
-//   // may need to move this to components into sensors.c
-//   if(short_sensor_dist <= OPP_CLOSENESS_THRESHOLD){
-//     //Theres an opp robot close in front
-//     return OPP_DETECTED;
-//   }
-//   else{
-//     return 0;
-//   }
-// }
-
-int search_ball_detected(float left_sensor_dist, float right_sensor_dist, float mid_sensor_dist, int opp_detected){
-  // Returns 1 if a ball is detected, 0 otherwise
-  // return 0 when there is no detection
-  //ignore opp robot
-  if (left_sensor_dist <= BALL_THRESHOLD_LNR || right_sensor_dist <= BALL_THRESHOLD_LNR){
-    return 1;
-  }
-  else if(mid_sensor_dist <= BALL_THRESHOLD_MID && !opp_detected){
-    return 1;
-  }
-  else{
-    return 0;
-  }
-}
 
 
 int search_task(float x, float y, float yaw, float left_sensor_dist, float right_sensor_dist, float mid_sensor_dist, int opp_detected, float search_current_rpmL, float search_current_rpmR){
@@ -64,11 +41,7 @@ int search_task(float x, float y, float yaw, float left_sensor_dist, float right
       search_startup_phase = 0;         //set search_startup_phase
       search_reduce = 0;		//reset search_proportional_offset
 
-      //rotate ccw, try find detection
-      //search_linX = 0.0;
-      //search_angZ = 120.0;
-
-      search_initial_yaw = yaw; //initialize yaw, correcting for momentum error 45 deg
+      search_initial_yaw = yaw; //initialize yaw
 
       if(search_initial_yaw < -180.0){
       	search_initial_yaw = search_initial_yaw + 360;
@@ -106,7 +79,7 @@ int search_task(float x, float y, float yaw, float left_sensor_dist, float right
     }
 
     //check for ball
-    if (search_ball_detected(left_sensor_dist,right_sensor_dist, mid_sensor_dist, opp_detected) == 1){
+    if (detect_ball(left_sensor_dist,right_sensor_dist, mid_sensor_dist, opp_detected) == 1){
       //stop movement
       search_linX = 0.0;
       search_angZ = 0.0;
@@ -153,7 +126,7 @@ int search_task(float x, float y, float yaw, float left_sensor_dist, float right
     change_position_traveled_distance = sqrt(pow(x-search_initial_x, 2) + pow(y-search_initial_y, 2);
 
     //check for ball and opp
-    if (search_ball_detected(left_sensor_dist,right_sensor_dist, mid_sensor_dist, opp_detected) == 1){
+    if (detect_ball(left_sensor_dist,right_sensor_dist, mid_sensor_dist, opp_detected) == 1){
       //stop movement
       ball_yaw = yaw;
       search_linX = 0.0;
