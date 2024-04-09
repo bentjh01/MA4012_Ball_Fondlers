@@ -21,16 +21,7 @@ static int rev_counter= 0;
 /// @param FR Front Right sensor
 /// @return returns TRIGGERED if a sensor is triggered, NOT_TRIGGERED otherwise
 int edge_detected(int FL, int BL, int BR, int FR){
-	if (FL == TRIGGERED){
-		return TRIGGERED;
-	}
-	if (BL == TRIGGERED){
-		return TRIGGERED;
-	}
-	if (BR == TRIGGERED){
-		return TRIGGERED;
-	}
-	if (FR == TRIGGERED){
+	if (FL == TRIGGERED || FR == TRIGGERED || BL == TRIGGERED || BR == TRIGGERED){
 		return TRIGGERED;
 	}
 	return NOT_TRIGGERED;
@@ -48,7 +39,7 @@ void avoid_case_check(float rb_x, float rb_y, float rb_yaw, int FL, int FR, int 
 	float rotate_ang;
 	edge_x = rb_x;
 	edge_y = rb_y;
-	rev_counter = 0.0;
+	rev_counter = 0;
 	//status 1: forward sensor detetcted
 
 	// FL or FR is detected, BL and BR are not detected
