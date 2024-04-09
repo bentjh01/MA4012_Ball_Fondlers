@@ -253,6 +253,7 @@ task main()
 				// opp_detected = opponent_detection(distance_sensor_top);
 				task_status = GOTO;
 				// task_status = search_task(robot_x, robot_y, robot_yaw, distance_sensor_left, distance_sensor_right, distance_sensor_mid, opp_detected, robot_en_rpmL, robot_en_rpmR);
+				// task_status = search_task_alt(ball_detected);
 				// robot_cmd_linX = get_search_linX();
 				// robot_cmd_angZ = get_search_angZ();
 				break;
