@@ -4,7 +4,7 @@ static float collect_servo = 0.0;
 static float collect_linX = 0.0;
 static float collect_angZ = 0.0;
 
-int collect_task(float servo_position, float distance_sensor_mid, int opp_detected){
+int collect_task(float servo_position, float distance_sensor_mid, int opp_detected, int ball_in_chamber){
     float collect_arm_position_err = SERVO_COLLECT_POSITION - servo_position;
 
     //check if ball is ready to collect
@@ -20,20 +20,22 @@ int collect_task(float servo_position, float distance_sensor_mid, int opp_detect
     }
     else{
     	return SEARCH;
+    	//return COLLECT;
     }
 
     //check if ball is caught
-    if (fabs(collect_arm_position_err) < SERVO_TOLERANCE && distance_sensor_mid <= 0){
+    if (fabs(collect_arm_position_err) < SERVO_TOLERANCE && ball_in_chamber == TRIGGERED){
         collect_linX = 0.0;
     	collect_angZ = 0.0;
         return DELIVER;
     }
 
-    else if (fabs(collect_arm_position_err) < SERVO_TOLERANCE && distance_sensor_mid > 0){
+    else if (fabs(collect_arm_position_err) < SERVO_TOLERANCE && ball_in_chamber == NOT_TRIGGERED){
         collect_servo = 0; //open the gate
         collect_linX = 0.0;
     	collect_angZ = 0.0;
         return SEARCH;
+    		//return COLLECT;
     }
 
     else {
