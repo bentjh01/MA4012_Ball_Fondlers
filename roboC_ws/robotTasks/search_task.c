@@ -24,7 +24,7 @@ static float search_angular_difference;
 //MOVE OPP DETECTION TO
 //MAIN CODE GET SENSOR READING IN CM
 
-void search_scan_rotation(){
+void search_scan_rotation(float search_initial_yaw, float yaw){
   //start reducing speed after done with half of the 360 degree rotation (180 degree)
   if((fabs(search_initial_yaw)+fabs(yaw)) >= 175.0 && (fabs(search_initial_yaw)+fabs(yaw)) <= 185.00){
     search_reduce = 1;
@@ -33,7 +33,7 @@ void search_scan_rotation(){
   if(search_reduce == 0){
     //before 180 degree, rotate ccw constant speed
     search_linX = 0.0;
-    search_angZ = 60.0;
+    search_angZ = 120.0;
   }
   else{
     search_angular_difference = search_initial_yaw-yaw
@@ -48,7 +48,7 @@ void search_scan_rotation(){
     }
 
     search_linX = 0.0;
-    search_angZ = fabs(search_angular_difference)/180.0*60.0;
+    search_angZ = fabs(search_angular_difference)*0.667;
 
     //limit lowest speed to 30 degrees/s
     if(search_angZ < 30.0){
@@ -58,7 +58,7 @@ void search_scan_rotation(){
   return;
 }
 
-int search_task(float x, float y, float yaw, float left_sensor_dist, float right_sensor_dist, float mid_sensor_dist, int opp_detected, float search_current_rpmL, float search_current_rpmR){
+int search_task(float x, float y, float yaw, float left_sensor_dist, float right_sensor_dist, float mid_sensor_dist, float top_sensor_dist, int opp_detected, float search_current_rpmL, float search_current_rpmR){
   //Scanning
   if(changing_search_position == 0){
     //Rotate to scan
@@ -78,7 +78,7 @@ int search_task(float x, float y, float yaw, float left_sensor_dist, float right
     }
 
     //check for ball
-    if (detect_ball(left_sensor_dist,right_sensor_dist, mid_sensor_dist, opp_detected) == 1){
+    if (detect_ball(left_sensor_dist,right_sensor_dist, mid_sensor_dist, top_sensor_dist, opp_detected) == 1){
       //stop movement
       search_linX = 0.0;
       search_angZ = 0.0;
@@ -89,7 +89,7 @@ int search_task(float x, float y, float yaw, float left_sensor_dist, float right
     }
 
     //execute rotation
-    search_scan_rotation();
+    search_scan_rotation(search_initial_yaw, yaw);
     search_counter += 1; //increment counter
 
     //check if 360 deg rotation achieved
@@ -114,7 +114,7 @@ int search_task(float x, float y, float yaw, float left_sensor_dist, float right
 
       //initialization and end startup
       search_startup_phase = 0;
-      search_linX = 0.20;
+      search_linX = 0.30;
       search_angZ = 0.0;
       search_initial_x = x;
       search_initial_y = y;
@@ -123,7 +123,7 @@ int search_task(float x, float y, float yaw, float left_sensor_dist, float right
     change_position_traveled_distance = sqrt(pow(x-search_initial_x, 2) + pow(y-search_initial_y, 2));
 
     //check for ball
-    if (detect_ball(left_sensor_dist,right_sensor_dist, mid_sensor_dist, opp_detected) == 1){
+    if (detect_ball(left_sensor_dist,right_sensor_dist, mid_sensor_dist, top_sensor_dist, opp_detected) == 1){
       //stop movement
       ball_yaw = yaw;
       search_linX = 0.0;
@@ -171,7 +171,7 @@ float search_detectM = 0.0;
 /// @brief Alternative search task
 /// @param ball_detection ball detection status
 /// @return the task to be executed
-int search_task_alt(float left_distance, float right_distance, float mid_distance, float top_distance){
+/*int search_task_alt(float left_distance, float right_distance, float mid_distance, float top_distance){
   // 0 for rotate, 1 for move forward
   static int search_state = 0;
 
@@ -195,7 +195,7 @@ int search_task_alt(float left_distance, float right_distance, float mid_distanc
   if (search_state == 0){
     if (move_360(MAX_TURN) == FAIL){
       search_linX = 0.0;
-      search_angZ = MAX_TURN; 
+      search_angZ = MAX_TURN;
     }
     else{
       search_state = 1;
@@ -258,4 +258,4 @@ int get_search_detectR(){
 
 int get_search_detectM(){
   return search_detectM;
-}
+}*/

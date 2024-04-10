@@ -136,7 +136,7 @@ float calculate_short_distance(float sensor_val){
 }
 
 /// @brief Checks for ball in chamber using the middle short distance sensor
-/// @param mid_sensor_distance 
+/// @param mid_sensor_distance
 /// @return TRIGGERED for ball in chamber, NOT_TRIGGERED for no ball in chamber
 int check_ball_in_chamber(float mid_sensor_distance){
   if (mid_sensor_distance < BALL_IN_CHAMBER_DISTANCE){
@@ -171,15 +171,21 @@ int opponent_detection(float short_sensor_dist){
   }
 }
 
-int detect_ball(float left_sensor_dist, float right_sensor_dist, float mid_sensor_dist, int opp_detected){
-  // Returns 1 if a ball is detected, 0 otherwise
+int detect_ball(float left_sensor_dist, float right_sensor_dist, float mid_sensor_dist, float top_sensor_dist, int opp_detected){
+  // Returns 1 if a something that is not an opponent is detected, 0 otherwise
   // return 0 when there is no detection
-  //ignore opp robot
-  if (left_sensor_dist <= BALL_THRESHOLD_LNR || right_sensor_dist <= BALL_THRESHOLD_LNR){
+	//THE ORDER OF CHECK MATTERS! IF NEED ADD SOMETHING ELSE IN THE FUTURE, DONT JUST ADD
+  if (mid_sensor_dist <= BALL_THRESHOLD_MID && !opp_detected){
     return 1;
   }
-  else if(mid_sensor_dist <= BALL_THRESHOLD_MID && !opp_detected){
+  else if(mid_sensor_dist <= BALL_THRESHOLD_MID && opp_detected && fabs(mid_sensor_dist-top_sensor_dist) > OPP_DIFFERENTIATION_THRESHOLD){
     return 1;
+  }
+  else if(mid_sensor_dist <= BALL_THRESHOLD_MID && opp_detected && fabs(mid_sensor_dist-top_sensor_dist) <= OPP_DIFFERENTIATION_THRESHOLD){
+    return 0;
+  }
+  else if(left_sensor_dist <= BALL_THRESHOLD_LNR || right_sensor_dist <= BALL_THRESHOLD_LNR){
+  	return 1;
   }
   else{
     return 0;
@@ -187,14 +193,14 @@ int detect_ball(float left_sensor_dist, float right_sensor_dist, float mid_senso
 }
 
 /// @brief Checks if sensor detects a ball
-/// @param left_sensor_dist 
+/// @param left_sensor_dist
 /// @return 0 if no detection, Distance reading if detection
-float detect_ball_left(float left_sensor_dist){
+/*float detect_ball_left(float left_sensor_dist){
   static float prev_left;
   float dr = prev_left-left_sensor_dist;
   float result;
   left_sensor_dist = min(left_sensor_dist, LIMIT_DISTANCE_READINGS);
-  // falling edge 
+  // falling edge
   if (dr >= BALL_THRESHOLD_CHANGE){
     result = prev_left;
   }
@@ -206,7 +212,7 @@ float detect_ball_left(float left_sensor_dist){
 }
 
 /// @brief Checks if sensor detects a ball
-/// @param right_sensor_dist 
+/// @param right_sensor_dist
 /// @return 0 if no detection, Distance reading if detection
 float detect_ball_right(float right_sensor_dist){
   static float prev_right;
@@ -226,8 +232,8 @@ float detect_ball_right(float right_sensor_dist){
 }
 
 /// @brief Checks if sensor detects a ball or to ignore the detection if it is the opponent robot
-/// @param mid_sensor_dist 
-/// @param top_sensor_dist 
+/// @param mid_sensor_dist
+/// @param top_sensor_dist
 /// @return 0 if no detection, Distance reading if detection
 float detect_ball_mid(float mid_sensor_dist, float top_sensor_dist){
   static float prev_mid;
@@ -252,9 +258,9 @@ float detect_ball_mid(float mid_sensor_dist, float top_sensor_dist){
   return result;
 }
 
-/// @brief Checks if the back wall is detected or if a flat surface is detected by comparing the mean of the left and right sensors with the middle sensor. 
-/// @param left_sensor 
-/// @param right_sensor 
+/// @brief Checks if the back wall is detected or if a flat surface is detected by comparing the mean of the left and right sensors with the middle sensor.
+/// @param left_sensor
+/// @param right_sensor
 /// @param mid_sensor
 /// @return TRIGGERED if back wall is detected, NOT_TRIGGERED otherwise
 int detect_back_wall(float left_sensor, float right_sensor, float mid_sensor){
@@ -276,4 +282,4 @@ int detect_back_wall(float left_sensor, float right_sensor, float mid_sensor){
   // else{
   //   return NOT_TRIGGERED;
   // }
-}
+}*/

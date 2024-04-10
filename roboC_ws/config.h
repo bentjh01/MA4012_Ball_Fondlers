@@ -6,7 +6,7 @@ TUNING SENSOR PARAMETERS
 ______________________________________________________________________________________________________________________*/
 // SHARP DISTANCE SENSOR (measured on 6 April 2024)
 #define MID_SENSOR_OFFSET 15.23
-#define TOP_SENSOR_OFFSET 0.0
+#define TOP_SENSOR_OFFSET -10.0
 #define LEFT_SENSOR_OFFSET 1.5
 #define RIGHT_SENSOR_OFFSET 1.9
 
@@ -14,16 +14,15 @@ ________________________________________________________________________________
 #define FILTER_GAIN_LONG_R 	    1.0 //(output = prev_input) 0 < FILTER_GAIN < 1 (output = new_input)
 #define FILTER_GAIN_LONG_MID 	0.5 //(output = prev_input) 0 < FILTER_GAIN < 1 (output = new_input)
 #define FILTER_GAIN_SHORT_TOP 	1.0 //(output = prev_input) 0 < FILTER_GAIN < 1 (output = new_input)
-#define BALL_IN_CHAMBER_DISTANCE 0.0 // [cm]
-//#define BALL_THRESHOLD_LNR          45.0 //cm wrt to edge of ramp
-//#define BALL_THRESHOLD_MID          35.0 //cm wrt to edge of ramp
-#define BALL_THRESHOLD_LNR          35.0 //cm wrt to edge of ramp
-#define BALL_THRESHOLD_MID          35.0 //cm wrt to edge of ramp
-#define OPP_CLOSENESS_THRESHOLD     15.0 //cm wrt to edge of ramp
-#define READY_TO_COLLECT_THRESHOLD  4.0 //cm wrt to edge of ramp
+#define BALL_IN_CHAMBER_DISTANCE 0.8 // [cm]
+#define BALL_THRESHOLD_LNR          	35.0 //cm wrt to edge of ramp
+#define BALL_THRESHOLD_MID          	35.0 //cm wrt to edge of ramp
+#define OPP_CLOSENESS_THRESHOLD     	35.0 //cm wrt to edge of ramp
+#define OPP_DIFFERENTIATION_THRESHOLD	8.0 //cm
+#define READY_TO_COLLECT_THRESHOLD  	4.0 //cm wrt to edge of ramp
 
-#define BALL_THRESHOLD_CHANGE 20.0 // cm 
-#define LIMIT_DISTANCE_READINGS 40.0 // 
+#define BALL_THRESHOLD_CHANGE 20.0 // cm
+#define LIMIT_DISTANCE_READINGS 40.0 //
 #define OPP_DETECT_THRESHOLD 15.0 // cm
 #define FLAT_SURFACE_THRESHOLD 5.0 // cm
 
@@ -101,8 +100,11 @@ ________________________________________________________________________________
 //#define DISTANCE_CHANGE_THRESHOLD		10.0
 
 // GOTO TASK
-#define GOTO_SWEEP_TIME 3.0
-#define GOTO_ALIGN_BALL_GAIN 0.5
+#define GOTO_SWEEP_TIME         3.0
+#define GOTO_ALIGN_BALL_GAIN    0.833
+#define GOTO_CURVE_LIN_SPEED    0.2
+#define GOTO_CURVE_ANG_SPEED    30.0
+#define BACK_TO_SEARCH_COUNT		30
 
 // COLLECT TASK
 #define SERVO_COLLECT_POSITION 90.0
