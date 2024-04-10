@@ -78,11 +78,12 @@ int limit_switch_D = 0;
 int task_status = HOME;
 int prev_task_status = HOME;
 
-// opponent detection
+// Detection
 int opp_detected;
 
 // ball status
 int ball_in_chamber_status;
+float detected_ball_yaw;
 int ball_detectedL;
 int ball_detectedR;
 int ball_detectedM;
@@ -149,6 +150,7 @@ void update_robot_odom(float dt){
 void robot_execute(float dt){
 	robot_cmd_rpmL = calculate_rpmL(robot_cmd_linX, robot_cmd_angZ);
 	robot_cmd_rpmR = calculate_rpmR(robot_cmd_linX, robot_cmd_angZ);
+	robot_cmd_rpmR = robot_cmd_rpmR * SCALE_RPM - OFFSET_RPM;
 	robot_cmd_rpmL = limit_rpmL(robot_cmd_rpmL, robot_cmd_rpmR);
 	robot_cmd_rpmR = limit_rpmR(robot_cmd_rpmL, robot_cmd_rpmR);
 	robot_move_closed(robot_cmd_rpmL, robot_cmd_rpmR, robot_en_rpmL, robot_en_rpmR);
@@ -212,8 +214,8 @@ task robot_read(){
 
 task main()
 {
-	wait_to_go();
 	startTask(robot_read);
+	wait_to_go();
 	while(1){
 		clearTimer(T1);
 		// main Loop
@@ -249,37 +251,40 @@ task main()
 				// task_status = HOME; // testing
 				break;
 			case HOME:
-				// task_status = SEARCH;
+				//task_status = COLLECT;
 				task_status = home_task(robot_x, robot_y, robot_yaw, robot_arm_position);
 				robot_cmd_linX = get_home_linX();
 				robot_cmd_angZ = get_home_angZ();
 				robot_cmd_arm_position = get_home_servo();
+				//robot_cmd_linX = 0.3;
+				//robot_cmd_angZ = 0.0;
 				break;
 			case SEARCH:
-				// opp_detected = opponent_detection(distance_sensor_top);
-				task_status = GOTO;
-				// task_status = search_task(robot_x, robot_y, robot_yaw, distance_sensor_left, distance_sensor_right, distance_sensor_mid, opp_detected, robot_en_rpmL, robot_en_rpmR);
+				opp_detected = opponent_detection(distance_sensor_top);
+				//task_status = GOTO;
+				task_status = search_task(robot_x, robot_y, robot_yaw, distance_sensor_left, distance_sensor_right, distance_sensor_mid, opp_detected, robot_en_rpmL, robot_en_rpmR, robot_en_rpmL, robot_en_rpmR);
 				// task_status = search_task_alt(distance_sensor_mid, distance_sensor_left, distance_sensor_right, distance_sensor_top);
 				// ball_detected_side = get_search_detected_side();
-				// robot_cmd_linX = get_search_linX();
-				// robot_cmd_angZ = get_search_angZ();
+				robot_cmd_linX = get_search_linX();
+				robot_cmd_angZ = get_search_angZ();
+				detected_ball_yaw = get_ball_yaw();
 				break;
 			case GOTO:
-				// opp_detected = opponent_detection(distance_sensor_top);
-				task_status = COLLECT;
-				// task_status = goto_task(robot_x, robot_y, robot_yaw, distance_sensor_left, distance_sensor_right, distance_sensor_mid, opp_detected, ball_yaw);
-				// robot_cmd_linX = get_goto_linX();
-				// robot_cmd_angZ = get_goto_angZ();
+				opp_detected = opponent_detection(distance_sensor_top);
+				// task_status = COLLECT;
+				task_status = goto_task(robot_x, robot_y, robot_yaw, distance_sensor_left, distance_sensor_right, distance_sensor_mid, opp_detected, detected_ball_yaw, ball_yaw);
+				robot_cmd_linX = get_goto_linX();
+				robot_cmd_angZ = get_goto_angZ();
 				break;
 			case COLLECT:
-				task_status = DELIVER;
-				// task_status = collect_task(robot_x, robot_y, robot_yaw, robot_arm_position, ball_in_chamber_status, limit_switch_D);
-				// robot_cmd_linX = get_collect_linX();
-				// robot_cmd_angZ = get_collect_angZ();
-				// robot_cmd_arm_position = get_collect_servo();
+				//task_status = COLLECT;
+				task_status = collect_task(robot_arm_position, distance_sensor_mid, opp_detected, ball_in_chamber_status);
+				robot_cmd_linX = get_collect_linX();
+				robot_cmd_angZ = get_collect_angZ();
+				robot_cmd_arm_position = get_collect_servo();
 				break;
 			case DELIVER:
-				// task_status = HOME;
+				//task_status = DELIVER;
 				task_status = deliver_task(robot_yaw, robot_arm_position, ball_in_chamber_status, limit_switch_D, robot_line_BR, robot_line_BL);
 				robot_cmd_linX = get_deliver_linX();
 				robot_cmd_angZ = get_deliver_angZ();
@@ -287,6 +292,8 @@ task main()
 				if (get_reset_x() == TRIGGERED){
 					robot_x = 0.0;
 				}
+				//robot_cmd_linX = 0;
+				//robot_cmd_angZ = 0;
 				break;
 		
         // end of main loop
