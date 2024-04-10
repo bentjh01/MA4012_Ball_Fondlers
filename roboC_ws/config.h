@@ -22,6 +22,8 @@ ________________________________________________________________________________
 
 #define BALL_THRESHOLD_CHANGE 20.0 // cm 
 #define LIMIT_DISTANCE_READINGS 40.0 // 
+#define OPP_DETECT_THRESHOLD 15.0 // cm
+#define FLAT_SURFACE_THRESHOLD 5.0 // cm
 
 // LINE SENSOR
 #define LINE_FL_THRESHOLD       1252.0 // Midpoint of black point and yellow point
@@ -95,6 +97,10 @@ ________________________________________________________________________________
 #define SEARCH_COUNT_THRESHOLD      25
 #define CHANGE_POSITION_DISTANCE    0.80
 
+#define MID_DETECTED 1
+#define LEFT_DETECTED 2
+#define RIGHT_DETECTED 3
+
 // GOTO TASK
 #define GOTO_SWEEP_TIME 3.0
 #define GOTO_ALIGN_BALL_GAIN 0.5
@@ -138,6 +144,7 @@ ________________________________________________________________________________
 #define DELIVER             6
 
 // ROBOT PARAMETERS
+#define ROBOT_WIDTH         0.3//m
 #define WHEEL_DIAMETER      0.06926 //m
 #define ROBOT_TRACK         0.213 //m
 #define ENCODER_RESOLUTION  360.0 // [ticks/revolution]

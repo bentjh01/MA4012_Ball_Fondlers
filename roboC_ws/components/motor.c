@@ -69,6 +69,7 @@ float limit_rpmR(float rpmL, float rpmR){
 		Rprev_cmd_rpmR = rpmR;
 		return rpmR;
 	}
+
 	// Scale down the RPM of the right wheel
 	float higher_rpm;
 	if (fabs(rpmR) > fabs(rpmL)){
@@ -97,4 +98,24 @@ int limit_byte(float power){
 		power = -127;
 	}
 	return power;
+}
+
+float scale_rpmL(float rpmL, float rpmR){
+	float higher_rpm;
+	if (fabs(rpmR) > fabs(rpmL)){
+		higher_rpm = fabs(rpmR);
+	} else {
+		higher_rpm = fabs(rpmL);
+	}
+	return rpmL/ higher_rpm * MAX_WHEEL_RPM;
+}
+
+float scale_rpmR(float rpmL, float rpmR){
+	float higher_rpm;
+	if (fabs(rpmR) > fabs(rpmL)){
+		higher_rpm = fabs(rpmR);
+	} else {
+		higher_rpm = fabs(rpmL);
+	}
+	return rpmR/ higher_rpm * MAX_WHEEL_RPM;
 }

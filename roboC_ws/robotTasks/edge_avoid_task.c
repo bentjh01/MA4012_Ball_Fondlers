@@ -151,7 +151,6 @@ void avoid_case_check(float rb_x, float rb_y, float rb_yaw, int FL, int FR, int 
 int edge_avoid_task(float rb_x, float rb_y, float rb_yaw, int prev_task){
 	float distance_from_edge = calculate_distance(rb_x, rb_y, edge_x, edge_y);
 	float yaw_error = edge_goal_yaw - rb_yaw;
-	rev_counter ++;
 
     // Correcting the error when trasition -s180
     if (yaw_error <= -180.0){

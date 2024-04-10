@@ -197,39 +197,50 @@ float get_ball_yaw(){
 	return ball_yaw;
 }
 
+float search_detectL = 0.0;
+float search_detectR = 0.0;
+float search_detectM = 0.0;
 
 /// @brief Alternative search task
 /// @param ball_detection ball detection status
 /// @return the task to be executed
-int search_task_alt(int ball_detection){
+int search_task_alt(float left_distance, float right_distance, float mid_distance, float top_distance){
   // 0 for rotate, 1 for move forward
   static int search_state = 0;
-  if (ball_detection == TRIGGERED){
+
+  // Check if ball is detected
+  search_detectL = detect_ball_left(left_distance);
+  search_detectR = detect_ball_right(right_distance);
+  search_detectM = detect_ball_mid(mid_distance, top_distance);
+
+  if (detect_back_wall(left_distance, right_distance, mid_distance) == TRIGGERED){
+    return SEARCH;
+  }
+  else if (search_detectL != 0 || search_detectR != 0 || search_detectM != 0){
     // Stop the robot and reinitialise
     search_state = 0;
     search_linX = 0.0;
     search_angZ = 0.0;
     return GOTO;
   }
-  else{
-    // performs scan ie. rotate and move forward
-    if (search_state == 0){
-      if (move_360(MAX_TURN) == FAIL){
-        search_linX = 0.0;
-        search_angZ = MAX_TURN; 
-      }
-      else{
-        search_state = 1;
-      }
+
+  // performs scan ie. rotate and move forward
+  if (search_state == 0){
+    if (move_360(MAX_TURN) == FAIL){
+      search_linX = 0.0;
+      search_angZ = MAX_TURN; 
     }
     else{
-      if (move_forward(MAX_SPEED, 0.5) == FAIL){
-        search_linX = MAX_SPEED;
-        search_angZ = 0.0;
-      }
-      else{
-        search_state = 0;
-      }
+      search_state = 1;
+    }
+  }
+  else{
+    if (move_forward(MAX_SPEED, 0.5) == FAIL){
+      search_linX = MAX_SPEED;
+      search_angZ = 0.0;
+    }
+    else{
+      search_state = 0;
     }
   }
   return SEARCH;
@@ -268,4 +279,16 @@ int move_360(float cmd_angZ){
     return SUCCESS;
   }
   return FAIL;
+}
+
+int get_search_detectL(){
+  return search_detectL;
+}
+
+int get_search_detectR(){
+  return search_detectR;
+}
+
+int get_search_detectM(){
+  return search_detectM;
 }
