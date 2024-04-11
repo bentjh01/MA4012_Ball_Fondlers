@@ -4,62 +4,64 @@
 float filter_line_FL(float input){
   static float prev_line_FL_val;
 	float output = low_pass_filter(input, prev_line_FL_val, FILTER_GAIN_LINE_FL);
-	prev_line_FL_val = input;
+	prev_line_FL_val = output;
 	return output;
 }
 float filter_line_BL(float input){
 	static float prev_line_BL_val;
 	float output = low_pass_filter(input, prev_line_BL_val, FILTER_GAIN_LINE_BL);
-	prev_line_BL_val = input;
+	prev_line_BL_val = output;
 	return output;
 }
 float filter_line_BR(float input){
 	static float prev_line_BR_val;
 	float output = low_pass_filter(input, prev_line_BR_val, FILTER_GAIN_LINE_BR);
-	prev_line_BR_val = input;
+	prev_line_BR_val = output;
   return output;
 }
 float filter_line_FR(float input){
 	static float prev_line_FR_val;
 	float output = low_pass_filter(input, prev_line_FR_val, FILTER_GAIN_LINE_FR);
-	prev_line_FR_val = input;
+    prev_line_FR_val = output;
 	return output;
 }
 
 float filter_distance_L(float input){
 	static float prev_dis_L_val;
 	float output = low_pass_filter(input, prev_dis_L_val, FILTER_GAIN_LONG_L);
-	prev_dis_L_val = input;
+	prev_dis_L_val = output;
 	return output;
 }
 float filter_distance_R(float input){
 	static float prev_dis_R_val;
 	float output = low_pass_filter(input, prev_dis_R_val, FILTER_GAIN_LONG_R);
-	prev_dis_R_val = input;
+	prev_dis_R_val = output;
   return output;
 }
 float filter_distance_mid(float input){
 	static float prev_dis_mid_val;
 	float output = low_pass_filter(input, prev_dis_mid_val, FILTER_GAIN_LONG_MID);
-	prev_dis_mid_val = input;
+	prev_dis_mid_val = output;
 	return output;
 }
 float filter_distance_top(float input){
 	static float prev_dis_top_val;
 	float output = low_pass_filter(input, prev_dis_top_val, FILTER_GAIN_SHORT_TOP);
-	prev_dis_top_val = input;
+	prev_dis_top_val = output;
   return output;
 }
 
 float filter_encoderL(float en_rpmL){
   static float prev_en_rpmL;
   float output = low_pass_filter(en_rpmL, prev_en_rpmL, FILTER_ENCODER);
+  prev_en_rpmL = output;
   return output;
 }
 
 float filter_encoderR(float en_rpmR){
   static float prev_en_rpmR;
   float output = low_pass_filter(en_rpmR, prev_en_rpmR, FILTER_ENCODER);
+  prev_en_rpmR = output;
   return output;
 }
 
