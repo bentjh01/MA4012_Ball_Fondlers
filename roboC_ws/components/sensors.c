@@ -176,7 +176,7 @@ int opponent_detection(float short_sensor_dist){
 int detect_ball(float left_sensor_dist, float right_sensor_dist, float mid_sensor_dist, float top_sensor_dist, int opp_detected){
   // Returns 1 if a something that is not an opponent is detected, 0 otherwise
   // return 0 when there is no detection
-	//THE ORDER OF CHECK MATTERS! IF NEED ADD SOMETHING ELSE IN THE FUTURE, DONT JUST ADD
+	//THE ORDER OF CHECK MATTERS!
   if (mid_sensor_dist <= BALL_THRESHOLD_MID && !opp_detected){
     return 1;
   }
@@ -272,9 +272,19 @@ int detect_back_wall(float left_sensor, float right_sensor, float mid_sensor){
 
   float expected_mid_distance = (left_sensor + right_sensor)/2.0;
   if (fabs(mid_sensor - expected_mid_distance) < FLAT_SURFACE_THRESHOLD){
+  	if (expected_mid_distance >= LIMIT_DISTANCE_READINGS){
+  		return NOT_TRIGGERED;
+  	}
     return TRIGGERED;
   }
   else{
     return NOT_TRIGGERED;
   }
+
+  // if (fabs(left_sensor - right_sensor) < FLAT_SURFACE_THRESHOLD){
+  //   return TRIGGERED;
+  // }
+  // else{
+  //   return NOT_TRIGGERED;
+  // }
 }
