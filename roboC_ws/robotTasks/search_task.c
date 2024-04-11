@@ -206,6 +206,41 @@ float search_detectL = 0.0;
 float search_detectR = 0.0;
 float search_detectM = 0.0;
 
+
+int move_forward(float cmd_linX, float distance){
+  static float move_forward_count = 0.0;
+  // Startup of the forward movement
+  if (move_forward_count >= 0.0){
+    // Initialize the count
+    move_forward_count = distance/cmd_linX/DT_MAIN;
+    return FAIL;
+  }
+  // Decrement the count
+  move_forward_count --;
+  if (move_forward_count <= 0.0){
+    return SUCCESS;
+  }
+  return FAIL;
+}
+
+/// @brief Checks if 360 degree rotation is completed
+/// @param  cmd_angZ angular velocity command
+/// @return the success or failure of the 360 degree rotation
+int move_360(float cmd_angZ){
+  static float move_360_count = 0.0;
+  // Startup of the 360 degree rotation
+  if (move_360_count >= 0.0){
+    // Initialize the count
+    move_360_count = 360.0/abs(cmd_angZ)/DT_MAIN;
+    return FAIL;
+  }
+  // Decrement the count
+  move_360_count --;
+  if (move_360_count <= 0.0){
+    return SUCCESS;
+  }
+  return FAIL;
+}
 /// @brief Alternative search task
 /// @param ball_detection ball detection status
 /// @return the task to be executed
@@ -260,41 +295,6 @@ int search_task_alt(float left_distance, float right_distance, float mid_distanc
   }
 
   return SEARCH;
-}
-
-int move_forward(float cmd_linX, float distance){
-  static float move_forward_count = 0.0;
-  // Startup of the forward movement
-  if (move_forward_count >= 0.0){
-    // Initialize the count
-    move_forward_count = distance/cmd_linX/DT_MAIN;
-    return FAIL;
-  }
-  // Decrement the count
-  move_forward_count --;
-  if (move_forward_count <= 0.0){
-    return SUCCESS;
-  }
-  return FAIL;
-}
-
-/// @brief Checks if 360 degree rotation is completed
-/// @param  cmd_angZ angular velocity command
-/// @return the success or failure of the 360 degree rotation
-int move_360(float cmd_angZ){
-  static float move_360_count = 0.0;
-  // Startup of the 360 degree rotation
-  if (move_360_count >= 0.0){
-    // Initialize the count
-    move_360_count = 360.0/abs(cmd_angZ)/DT_MAIN;
-    return FAIL;
-  }
-  // Decrement the count
-  move_360_count --;
-  if (move_360_count <= 0.0){
-    return SUCCESS;
-  }
-  return FAIL;
 }
 
 int get_search_detectL(){
