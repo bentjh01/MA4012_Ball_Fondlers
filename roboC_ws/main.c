@@ -219,7 +219,6 @@ task main()
 		clearTimer(T1);
 		// main Loop
 		if (edge_detected(robot_line_FL, robot_line_BL, robot_line_BR, robot_line_FR) == TRIGGERED){
-		// if (1==2){
 			if (task_status != EDGE){
 				prev_task_status = task_status;
 			}
@@ -252,7 +251,6 @@ task main()
 				task_status = edge_avoid_alt_task(robot_x, robot_y, robot_yaw, prev_task_status);
 				break;
 			case HOME:
-				// task_status = SEARCH;
 				robot_cmd_linX = get_home_linX();
 				robot_cmd_angZ = get_home_angZ();
 				robot_cmd_arm_position = get_home_servo();
@@ -265,7 +263,6 @@ task main()
 				ball_detect_L = get_search_detectL();
 				ball_detect_R = get_search_detectR();
 				ball_detect_M = get_search_detectM();
-				// task_status = GOTO;
 				break;
 			case GOTO:
 					robot_cmd_linX = get_goto_linX();
@@ -273,18 +270,12 @@ task main()
 					task_status = goto_task_alt(robot_x, robot_y, distance_sensor_left, distance_sensor_right, distance_sensor_mid, distance_sensor_top, ball_detect_L, ball_detect_R, ball_detect_M);
 				break;
 			case COLLECT:
-				// robot_cmd_linX = 0.0;
-				// robot_cmd_angZ = 0.0;
-
 				robot_cmd_linX = get_collect_linX();
 				robot_cmd_angZ = get_collect_angZ();
 				robot_cmd_arm_position = get_collect_servo();
 				task_status = collect_task_alt(distance_sensor_mid, robot_arm_position);
 				break;
 			case DELIVER:
-				// robot_cmd_linX = 0.0;
-				// robot_cmd_angZ = 0.0;
-
 				robot_cmd_linX = get_deliver_linX();
 				robot_cmd_angZ = get_deliver_angZ();
 				robot_cmd_arm_position = get_deliver_servo();
