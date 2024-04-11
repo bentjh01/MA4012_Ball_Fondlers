@@ -12,6 +12,7 @@ static float edge_goal_yaw = 0.0;
 static float edge_x = 0.0;
 static float edge_y = 0.0;
 static float edge_linX_sign = 1;
+static float EDGE_REVERSE_DISTANCE = 0.0;
 static int edge_line_case;
 
 /// @brief Detects if a line sensor is triggered
@@ -137,7 +138,13 @@ void avoid_case_check(float rb_x, float rb_y, float rb_yaw, int FL, int FR, int 
 	//Some special cases: in corner
 	else{
 		edge_goal_yaw = wrap_to_pi(rb_yaw+15.0);
-		return;
+		//return;
+	}
+	// Define the reverse distance
+	if (robot_x < 60){
+		EDGE_REVERSE_DISTANCE = EDGE_REVERSE_DISTANCE_BIG;
+	} else {
+		EDGE_REVERSE_DISTANCE = EDGE_REVERSE_DISTANCE_SMALL;
 	}
 	return;
 }
