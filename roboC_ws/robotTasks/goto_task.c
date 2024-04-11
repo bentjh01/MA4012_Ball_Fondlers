@@ -322,8 +322,12 @@ int goto_task_alt(float x, float y, float distance_sensorL, float distance_senso
     static float goto_limit;
     static float detected_robot_x;
     static float detected_robot_y;
+    static float goto_timeout;
+
+    goto_timeout--;
 
     if (goto_state == 0){
+        goto_timeout = 5.0/DT_MAIN;
         goto_detectL = detectL_dist;
         goto_detectR = detectR_dist;
         goto_detectM = detectM_dist;
@@ -356,6 +360,10 @@ int goto_task_alt(float x, float y, float distance_sensorL, float distance_senso
                 goto_detectL = test_L;
                 goto_detectR = test_R;
             }
+        }
+        if (goto_timeout < 0.0){
+            goto_state = 0;
+            return SEARCH;
         }
     }
 
@@ -411,8 +419,8 @@ int goto_task_alt(float x, float y, float distance_sensorL, float distance_senso
         goto_linX = calculate_linear_x(scaled_rpmL, scaled_rpmR);
         goto_angZ = calculate_angular_z(scaled_rpmL, scaled_rpmR);
 
-        // goto_linX = 0.0;
-        // goto_angZ = turning_direction * MAX_TURN * 0.1;
+        goto_linX = 0.0;
+        goto_angZ = turning_direction * MAX_TURN * 0.5;
     }
     return GOTO;
 }

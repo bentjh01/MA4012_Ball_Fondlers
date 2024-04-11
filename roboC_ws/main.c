@@ -235,11 +235,11 @@ task main()
 					}
 				}
 			}
-			else if (task_status == HOME && fabs(robot_yaw) < YAW_TOLERANCE){
-				if (get_edge_line_case() == 0110 || get_edge_line_case() == 0111 || get_edge_line_case() == 1110){
-					task_status = HOME;
-				};
-			}
+			// else if (task_status == HOME && fabs(robot_yaw) < YAW_TOLERANCE){
+			// 	if (get_edge_line_case() == 0110 || get_edge_line_case() == 0111 || get_edge_line_case() == 1110){
+			// 		task_status = HOME;
+			// 	};
+			// }
 			else{
 				task_status = EDGE;
 			}

@@ -290,7 +290,7 @@ int search_task_alt(float left_distance, float right_distance, float mid_distanc
   if (detect_back_wall(left_distance, right_distance, mid_distance) == TRIGGERED){
     return SEARCH;
   }
-  else if (search_detectL != 0 || search_detectR != 0 || search_detectM != 0){
+  else if (search_detectL > 0 || search_detectR > 0 || search_detectM > 0){
     // Stop the robot and reinitialise
     search_state = 0;
     search_linX = 0.0;

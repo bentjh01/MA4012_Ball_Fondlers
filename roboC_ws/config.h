@@ -15,7 +15,7 @@ ________________________________________________________________________________
 #define READY_TO_COLLECT_THRESHOLD  	4.0 //cm wrt to edge of ramp
 
 #define BALL_THRESHOLD_CHANGE 7.0 // cm
-#define LIMIT_DISTANCE_READINGS 40.0 //
+#define LIMIT_DISTANCE_READINGS 30.0 //
 #define OPP_DETECT_THRESHOLD 15.0 // cm
 #define FLAT_SURFACE_THRESHOLD 10.0 // cm
 
