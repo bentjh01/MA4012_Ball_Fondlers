@@ -283,9 +283,9 @@ int search_task_alt(float left_distance, float right_distance, float mid_distanc
   }
 
   /// DETECTION
-  search_detectL = detect_ball_left(left_distance);
-  search_detectR = detect_ball_right(right_distance);
-  search_detectM = detect_ball_mid(mid_distance, top_distance);
+  search_detectL = detect_ball_left(left_distance, LIMIT_DISTANCE_READINGS);
+  search_detectR = detect_ball_right(right_distance, LIMIT_DISTANCE_READINGS);
+  search_detectM = detect_ball_mid(mid_distance, top_distance, LIMIT_DISTANCE_READINGS);
 
   if (detect_back_wall(left_distance, right_distance, mid_distance) == TRIGGERED){
     return SEARCH;

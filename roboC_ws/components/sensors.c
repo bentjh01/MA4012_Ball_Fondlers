@@ -198,14 +198,15 @@ int detect_ball(float left_sensor_dist, float right_sensor_dist, float mid_senso
 /// @brief Checks if sensor detects a ball by a large reduction in distance reading
 /// @param left_sensor_dist
 /// @return 0 if no detection, Distance reading if detection
-float detect_ball_left(float left_sensor_dist){
+float detect_ball_left(float left_sensor_dist, float limit_dist){
   static float prev_left;
+  left_sensor_dist = min(left_sensor_dist, limit_dist);
   float dr = prev_left-left_sensor_dist;
   float result;
-  left_sensor_dist = min(left_sensor_dist, LIMIT_DISTANCE_READINGS);
   // falling edge i.e. high to low
-  if (dr >= BALL_THRESHOLD_CHANGE){
-    result = prev_left;
+  // if (dr >= limit_dist){
+  if (left_sensor_dist < limit_dist){
+    result = left_sensor_dist;
   }
   else{
     result = 0;
@@ -217,15 +218,16 @@ float detect_ball_left(float left_sensor_dist){
 /// @brief Checks if sensor detects a ball by a large reduction in distance reading
 /// @param right_sensor_dist
 /// @return 0 if no detection, Distance reading if detection
-float detect_ball_right(float right_sensor_dist){
+float detect_ball_right(float right_sensor_dist, float limit_dist){
   static float prev_right;
+  right_sensor_dist = min(right_sensor_dist, limit_dist);
   float dr = prev_right-right_sensor_dist;
   float result;
   prev_right = right_sensor_dist;
-  right_sensor_dist = min(right_sensor_dist, LIMIT_DISTANCE_READINGS);
   // falling edge i.e. high to low
-  if (dr >= BALL_THRESHOLD_CHANGE){
-    result = prev_right;
+  // if (dr >= limit_dist/2.0){
+  if (right_sensor_dist < limit_dist){
+    result = right_sensor_dist;
   }
   else{
     result = 0;
@@ -238,20 +240,21 @@ float detect_ball_right(float right_sensor_dist){
 /// @param mid_sensor_dist
 /// @param top_sensor_dist
 /// @return 0 if no detection, Distance reading if detection
-float detect_ball_mid(float mid_sensor_dist, float top_sensor_dist){
+float detect_ball_mid(float mid_sensor_dist, float top_sensor_dist, float limit_dist){
   static float prev_mid;
+  mid_sensor_dist = min(mid_sensor_dist, limit_dist);
+  top_sensor_dist = min(top_sensor_dist, limit_dist); // TODO Please check if this is correct
   float dr = prev_mid-mid_sensor_dist;
   float result;
-  mid_sensor_dist = min(mid_sensor_dist, LIMIT_DISTANCE_READINGS);
-  top_sensor_dist = min(top_sensor_dist, LIMIT_DISTANCE_READINGS); // TODO Please check if this is correct
 
   // if (fabs(mid_sensor_dist - top_sensor_dist) > OPP_DETECT_THRESHOLD){
   if (opponent_detection(top_sensor_dist)==1){
     result = 0;
   }
   // falling edge i.e. high to low
-  else if (dr >= BALL_THRESHOLD_CHANGE){
-    result = prev_mid;
+  // else if (dr >= BALL_THRESHOLD_CHANGE){
+  else if (mid_sensor_dist < limit_dist){
+    result = mid_sensor_dist;
   }
   else{
     result = 0;

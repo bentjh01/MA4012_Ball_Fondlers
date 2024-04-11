@@ -344,9 +344,17 @@ int goto_task_alt(float x, float y, float distance_sensorL, float distance_senso
             return SEARCH;
         }
         // check if ball is detected
-        goto_detectM = detect_ball_mid(distance_sensorM, distance_sensorT);
-        goto_detectL = detect_ball_left(distance_sensorL);
-        goto_detectR = detect_ball_right(distance_sensorR);
+        goto_detectM = detect_ball_mid(distance_sensorM, distance_sensorT, goto_limit);
+        float test_L = detect_ball_left(distance_sensorL, goto_limit);
+        float test_R =  detect_ball_right(distance_sensorR, goto_limit);
+        if (goto_detectL == 0.0 && test_L > 0.0){
+            goto_detectL = test_L;
+            goto_detectR = test_R;
+        }
+         else if (goto_detectR == 0.0 && test_R > 0.0){
+            goto_detectL = test_L;
+            goto_detectR = test_R;
+         }
     }
 
     /// Return to search if the robot has travelled too far

@@ -46,16 +46,17 @@ static float collect_angZ = 0.0;
 
 int collect_task_alt(float mid_sensor, float arm_position){
     mid_sensor = min(mid_sensor, LIMIT_DISTANCE_READINGS);
-    if (mid_sensor <= READY_TO_COLLECT_THRESHOLD){
+    if (mid_sensor <= BALL_IN_CHAMBER_DISTANCE && arm_position == SERVO_COLLECT_POSITION){
+        collect_linX = 0.0;
+        collect_angZ = 0.0;
+        collect_servo = 0.0;
+        return DELIVER;
+    }
+    else if (mid_sensor <= READY_TO_COLLECT_THRESHOLD){
         collect_linX = MAX_SPEED;
         collect_angZ = 0.0;
         collect_servo = SERVO_COLLECT_POSITION;
         return COLLECT;
-    }
-    else if (mid_sensor <= BALL_IN_CHAMBER_DISTANCE && arm_position == SERVO_COLLECT_POSITION){
-        collect_linX = 0.0;
-        collect_angZ = 0.0;
-        return DELIVER;
     }
     else{
         return SEARCH;
