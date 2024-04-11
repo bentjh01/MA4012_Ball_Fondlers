@@ -70,7 +70,6 @@ int search_task(float x, float y, float yaw, float left_sensor_dist, float right
       	search_angZ = 0.0;
       	return SEARCH;
   		}*/
-  		}*/
 
       //initialization and end startup
       search_startup_phase = 0;
