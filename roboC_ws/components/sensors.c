@@ -194,7 +194,7 @@ int detect_ball(float left_sensor_dist, float right_sensor_dist, float mid_senso
   }
 }
 
-/// @brief Checks if sensor detects a ball
+/// @brief Checks if sensor detects a ball by a large reduction in distance reading
 /// @param left_sensor_dist
 /// @return 0 if no detection, Distance reading if detection
 float detect_ball_left(float left_sensor_dist){
@@ -213,7 +213,7 @@ float detect_ball_left(float left_sensor_dist){
   return result;
 }
 
-/// @brief Checks if sensor detects a ball
+/// @brief Checks if sensor detects a ball by a large reduction in distance reading
 /// @param right_sensor_dist
 /// @return 0 if no detection, Distance reading if detection
 float detect_ball_right(float right_sensor_dist){
