@@ -29,12 +29,14 @@ static int back_to_search_counter = 0;
 static int back_to_home_counter = 0;
 static int activate_avoid_opponent = 0;
 static int activate_wall_protocol = 0;
+static int goto_wall_detected;
 
 int get_ball_location(float left_sensor_dist, float right_sensor_dist, float mid_sensor_dist, float top_sensor_dist, int opp_detected, float yaw){
     // Returns the location of the detected ball
     // return 0 otherwise
 		//THE ORDER OF CHECK MATTERS!
-		if(detect_back_wall(left_sensor_dist, right_sensor_dist, mid_sensor_dist) == TRIGGERED && fabs(yaw) > 175){
+		goto_wall_detected = detect_back_wall(left_sensor_dist, right_sensor_dist, mid_sensor_dist);
+		if(detect_back_wall(left_sensor_dist, right_sensor_dist, mid_sensor_dist) == TRIGGERED && fabs(yaw) > 170.0){
 			return WALL;
 		}
     else if (mid_sensor_dist <= BALL_THRESHOLD_MID && !opp_detected){
@@ -149,11 +151,11 @@ int goto_task(float x, float y, float yaw, float left_sensor_dist, float right_s
     if(activate_avoid_opponent){
     	return avoid_opponent();
     }
-    
+
     //WALL
     if(activate_wall_protocol){
     	go_to_target_yaw(0, yaw, 0);
-    	
+
     	if(fabs(yaw) < YAW_TOLERANCE){
     		return HOME;
     	}
@@ -218,7 +220,7 @@ int goto_task(float x, float y, float yaw, float left_sensor_dist, float right_s
     }
     else if(ball_location == WALL){
     	back_to_home_counter += 1;
-    	
+
     	if(back_to_home_counter > round(0.3/DT_MAIN)){
     		activate_wall_protocol = 1;
     	}

@@ -97,14 +97,14 @@ ________________________________________________________________________________
 
 // SEARCH TASK
 #define SEARCH_COUNT_THRESHOLD      75
-#define CHANGE_POSITION_DISTANCE    0.3
+#define CHANGE_POSITION_DISTANCE    0.5
 //#define DISTANCE_CHANGE_THRESHOLD		10.0
 
-// GOTO TAS4
+// GOTO TASK
 #define GOTO_SWEEP_TIME         3.0
-#define GOTO_ALIGN_BALL_GAIN    0.833
-#define GOTO_CURVE_LIN_SPEED    0.2
-#define GOTO_CURVE_ANG_SPEED    30.0
+#define GOTO_ALIGN_BALL_GAIN    0.6
+#define GOTO_CURVE_LIN_SPEED    0.3
+#define GOTO_CURVE_ANG_SPEED    15.0
 #define BACK_TO_SEARCH_COUNT		30
 
 // COLLECT TASK

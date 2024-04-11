@@ -94,6 +94,7 @@ float ball_yaw_memory;
 
 // counters
 int goto_ignore_edge = 0;
+int reset_counters = 0;
 /* _____________________________________________________________________________________________________________________
 
 SENSORS
@@ -126,8 +127,8 @@ void read_sensors(float dt){
 	robot_en_rpmL = filter_encoderL(getMotorEncoder(motor_L) * 60.0/dt /ENCODER_RESOLUTION);
 	robot_en_rpmR = filter_encoderR(getMotorEncoder(motor_R) * 60.0/dt /ENCODER_RESOLUTION);
 
-	
-	
+
+
 	resetMotorEncoder(motor_R);
 	resetMotorEncoder(motor_L);
 	return;
@@ -232,7 +233,7 @@ task main()
 			}
 			if (task_status == GOTO){
 				goto_ignore_edge += 1;
-				if(goto_ignore_edge < round(0.6/DT_MAIN)){
+				if(goto_ignore_edge < round(0.3/DT_MAIN)){
 					task_status == GOTO;
 				}
 				else{
@@ -261,10 +262,11 @@ task main()
 			case EDGE:
 				//reset ignore edge
 				goto_ignore_edge = 0;
-				
+
 				task_status = edge_avoid_task(robot_x, robot_y, robot_yaw, prev_task_status);
 				robot_cmd_linX = get_edge_avoid_linX();
 				robot_cmd_angZ = get_edge_avoid_angZ();
+				reset_counters = 1;
 				// task_status = HOME; // testing
 				break;
 			case HOME:
@@ -273,16 +275,18 @@ task main()
 				robot_cmd_linX = get_home_linX();
 				robot_cmd_angZ = get_home_angZ();
 				robot_cmd_arm_position = get_home_servo();
+				reset_counters = 0;
 				break;
 			case SEARCH:
 				// task_status = GOTO;
 				opp_detected = opponent_detection(distance_sensor_top);
-				// task_status = search_task(robot_x, robot_y, robot_yaw, distance_sensor_left, distance_sensor_right, distance_sensor_mid, distance_sensor_top, opp_detected, robot_en_rpmL, robot_en_rpmR);
-				task_status = search_task_alt(robot_yaw, distance_sensor_mid, distance_sensor_left, distance_sensor_right, distance_sensor_top);
+				task_status = search_task(robot_x, robot_y, robot_yaw, distance_sensor_left, distance_sensor_right, distance_sensor_mid, distance_sensor_top, opp_detected, robot_en_rpmL, robot_en_rpmR, reset_counters);
+				// task_status = search_task_alt(distance_sensor_mid, distance_sensor_left, distance_sensor_right, distance_sensor_top);
 				// ball_detected_side = get_search_detected_side();
 				robot_cmd_linX = get_search_linX();
 				robot_cmd_angZ = get_search_angZ();
 				detected_ball_yaw = get_ball_yaw();
+				reset_counters = 0;
 				break;
 			case GOTO:
 				// task_status = COLLECT;
@@ -290,6 +294,7 @@ task main()
 				task_status = goto_task(robot_x, robot_y, robot_yaw, distance_sensor_left, distance_sensor_right, distance_sensor_mid, distance_sensor_top, opp_detected, detected_ball_yaw);
 				robot_cmd_linX = get_goto_linX();
 				robot_cmd_angZ = get_goto_angZ();
+				reset_counters = 0;
 				break;
 			case COLLECT:
 				// task_status = DELIVER;
@@ -297,6 +302,7 @@ task main()
 				robot_cmd_linX = get_collect_linX();
 				robot_cmd_angZ = get_collect_angZ();
 				robot_cmd_arm_position = get_collect_servo();
+				reset_counters = 0;
 				break;
 			case DELIVER:
 				// task_status = HOME;
@@ -307,6 +313,7 @@ task main()
 				if (get_reset_x() == TRIGGERED){
 					robot_x = 0.0;
 				}
+				reset_counters = 0;
 				break;
 			}
 

@@ -19,10 +19,29 @@ static float change_position_traveled_distance;
 static int search_reduce = 0;
 static float ball_yaw;
 static float search_angular_difference;
+static int search_rotation_counter = 0;
+static int search_rotate_direction = 1;
 
 //NOTE!!!
 //MOVE OPP DETECTION TO
 //MAIN CODE GET SENSOR READING IN CM
+
+void time_based_search_scan_rotation(){
+  if(search_rotation_counter < round(3.0/DT_MAIN)){
+  	if(search_rotation_counter <= round(1.5/DT_MAIN)){
+  		search_linX = 0.0;
+    	search_angZ = 120.0*search_rotate_direction;
+  	}
+  	else{
+  		search_linX = 0.0;
+    	search_angZ = 120.0*(round(3.0/DT_MAIN)-search_rotation_counter)*search_rotate_direction;
+    	if(fabs(search_angZ) < 30.0){
+      	search_angZ = 30.0 * search_rotate_direction;
+    	}
+  	}
+  }
+  return;
+}
 
 void search_scan_rotation(float search_initial_yaw, float yaw){
   //start reducing speed after done with half of the 360 degree rotation (180 degree)
@@ -58,13 +77,20 @@ void search_scan_rotation(float search_initial_yaw, float yaw){
   return;
 }
 
-int search_task(float x, float y, float yaw, float left_sensor_dist, float right_sensor_dist, float mid_sensor_dist, float top_sensor_dist, int opp_detected, float search_current_rpmL, float search_current_rpmR){
-  //Scanning
+int search_task(float x, float y, float yaw, float left_sensor_dist, float right_sensor_dist, float mid_sensor_dist, float top_sensor_dist, int opp_detected, float search_current_rpmL, float search_current_rpmR, int reset_counters){
+  if(reset_counters){
+  	search_startup_phase = 1;
+		changing_search_position = 1;
+		search_counter = 0;
+		search_reduce = 0;
+		search_rotation_counter = 0;
+  }
+
+	//Scanning
   if(changing_search_position == 0){
     //Rotate to scan
     if(search_startup_phase){
     	//reset any movement
-    	/*if(fabs(search_current_rpmL) > 0.0001 || fabs(search_current_rpmR) >= 0.0001){
     	/*if(fabs(search_current_rpmL) > 0.0001 || fabs(search_current_rpmR) >= 0.0001){
   			search_linX = 0.0;
       	search_angZ = 0.0;
@@ -90,17 +116,28 @@ int search_task(float x, float y, float yaw, float left_sensor_dist, float right
     }
 
     //execute rotation
-    search_scan_rotation(search_initial_yaw, yaw);
+    //search_scan_rotation(search_initial_yaw, yaw);
+    time_based_search_scan_rotation();
     search_counter += 1; //increment counter
 
     //check if 360 deg rotation achieved
-    if(fabs(yaw-search_initial_yaw) < YAW_TOLERANCE && search_counter >= SEARCH_COUNT_THRESHOLD){
-      //stop movement
-      search_linX = 0.0;
+    //if(fabs(yaw-search_initial_yaw) < YAW_TOLERANCE && search_counter >= SEARCH_COUNT_THRESHOLD){
+    //  //stop movement
+    //  search_linX = 0.0;
+    //  search_angZ = 0.0;
+
+    //  search_startup_phase = 1;     //reset search_startup_phase
+    //  changing_search_position = 1; //initiate change search position
+    //  can add something here if want changing search direction also later
+    //}
+    //for time based
+    if(search_counter >= round(3.0/DT_MAIN)){
+    	search_linX = 0.0;
       search_angZ = 0.0;
 
       search_startup_phase = 1;     //reset search_startup_phase
       changing_search_position = 1; //initiate change search position
+      search_rotate_direction = search_rotate_direction*(-1);
     }
     return SEARCH;
   }
@@ -165,99 +202,98 @@ float get_ball_yaw(){
 	return ball_yaw;
 }
 
-float search_detectL = 0.0;
-float search_detectR = 0.0;
-float search_detectM = 0.0;
+// float search_detectL = 0.0;
+// float search_detectR = 0.0;
+// float search_detectM = 0.0;
 
-int move_forward(float cmd_linX, float distance){
-  static float move_forward_count = 0.0;
-  // Startup of the forward movement
-  if (move_forward_count >= 0.0){
-    // Initialize the count
-    move_forward_count = distance/cmd_linX/DT_MAIN;
-    return FAIL;
-  }
-  // Decrement the count
-  move_forward_count --;
-  if (move_forward_count <= 0.0){
-    return SUCCESS;
-  }
-  return FAIL;
-}
+// /// @brief Alternative search task
+// /// @param ball_detection ball detection status
+// /// @return the task to be executed
+// int search_task_alt(float left_distance, float right_distance, float mid_distance, float top_distance){
+//   // 0 for rotate, 1 for move forward
+//   static int search_state = 0;
 
-/// @brief Checks if 360 degree rotation is completed
-/// @param  cmd_angZ angular velocity command
-/// @return the success or failure of the 360 degree rotation
-int move_360(float cmd_angZ){
-  static float move_360_count = 0.0;
-  // Startup of the 360 degree rotation
-  if (move_360_count >= 0.0){
-    // Initialize the count
-    move_360_count = 360.0/abs(cmd_angZ)/DT_MAIN;
-    return FAIL;
-  }
-  // Decrement the count
-  move_360_count --;
-  if (move_360_count <= 0.0){
-    return SUCCESS;
-  }
-  return FAIL;
-}
+//   // Check if ball is detected
+//   search_detectL = detect_ball_left(left_distance);
+//   search_detectR = detect_ball_right(right_distance);
+//   search_detectM = detect_ball_mid(mid_distance, top_distance);
 
+//   if (detect_back_wall(left_distance, right_distance, mid_distance) == TRIGGERED){
+//     return SEARCH;
+//   }
+//   else if (search_detectL != 0 || search_detectR != 0 || search_detectM != 0){
+//     // Stop the robot and reinitialise
+//     search_state = 0;
+//     search_linX = 0.0;
+//     search_angZ = 0.0;
+//     return GOTO;
+//   }
 
-/// @brief Alternative search task
-/// @param ball_detection ball detection status
-/// @return the task to be executed
-int search_task_alt(float rb_yaw, float left_distance, float right_distance, float mid_distance, float top_distance){
-  // 0 for rotate, 1 for move forward
-  static int search_state = 0;
+//   // performs scan ie. rotate and move forward
+//   if (search_state == 0){
+//     if (move_360(MAX_TURN) == FAIL){
+//       search_linX = 0.0;
+//       search_angZ = MAX_TURN;
+//     }
+//     else{
+//       search_state = 1;
+//     }
+//   }
+//   else{
+//     if (move_forward(MAX_SPEED, CHANGE_POSITION_DISTANCE) == FAIL){
+//       search_linX = MAX_SPEED;
+//       search_angZ = 0.0;
+//     }
+//     else{
+//       search_state = 0;
+//     }
+//   }
+//   return SEARCH;
+// }
 
-  // Check if ball is detected
-  search_detectL = detect_ball_left(left_distance);
-  search_detectR = detect_ball_right(right_distance);
-  search_detectM = detect_ball_mid(mid_distance, top_distance);
+// int move_forward(float cmd_linX, float distance){
+//   static float move_forward_count = 0.0;
+//   // Startup of the forward movement
+//   if (move_forward_count >= 0.0){
+//     // Initialize the count
+//     move_forward_count = distance/cmd_linX/DT_MAIN;
+//     return FAIL;
+//   }
+//   // Decrement the count
+//   move_forward_count --;
+//   if (move_forward_count <= 0.0){
+//     return SUCCESS;
+//   }
+//   return FAIL;
+// }
 
-  if (detect_back_wall(left_distance, right_distance, mid_distance) == TRIGGERED){
-    return SEARCH;
-  }
-  else if (search_detectL != 0 || search_detectR != 0 || search_detectM != 0){
-    // Stop the robot and reinitialise
-    ball_yaw = rb_yaw;
-    search_state = 0;
-    search_linX = 0.0;
-    search_angZ = 0.0;
-    return GOTO;
-  }
+// /// @brief Checks if 360 degree rotation is completed
+// /// @param  cmd_angZ angular velocity command
+// /// @return the success or failure of the 360 degree rotation
+// int move_360(float cmd_angZ){
+//   static float move_360_count = 0.0;
+//   // Startup of the 360 degree rotation
+//   if (move_360_count >= 0.0){
+//     // Initialize the count
+//     move_360_count = 360.0/abs(cmd_angZ)/DT_MAIN;
+//     return FAIL;
+//   }
+//   // Decrement the count
+//   move_360_count --;
+//   if (move_360_count <= 0.0){
+//     return SUCCESS;
+//   }
+//   return FAIL;
+// }
 
-  // performs scan ie. rotate and move forward
-  if (search_state == 0){
-    if (move_360(MAX_TURN) == FAIL){
-      search_linX = 0.0;
-      search_angZ = MAX_TURN;
-    }
-    else{
-      search_state = 1;
-    }
-  }
-  else{
-    if (move_forward(MAX_SPEED, CHANGE_POSITION_DISTANCE) == FAIL){
-      search_linX = MAX_SPEED;
-      search_angZ = 0.0;
-    }
-    else{
-      search_state = 0;
-    }
-  }
-  return SEARCH;
-}
-int get_search_detectL(){
-  return search_detectL;
-}
+// int get_search_detectL(){
+//   return search_detectL;
+// }
 
-int get_search_detectR(){
-  return search_detectR;
-}
+// int get_search_detectR(){
+//   return search_detectR;
+// }
 
-int get_search_detectM(){
-  return search_detectM;
-}
+// int get_search_detectM(){
+//   return search_detectM;
+// }
