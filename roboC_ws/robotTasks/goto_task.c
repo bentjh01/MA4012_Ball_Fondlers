@@ -8,6 +8,9 @@
 3. if ball is in collection point, return to collect_task
 */
 
+static float goto_linX;
+static float goto_angZ;
+
 #define FRONT   1
 #define LEFT    2
 #define RIGHT   3
@@ -19,8 +22,6 @@ static float goto_initial_yaw;
 static float goto_target_yaw;
 static int goto_correction_mode = 0;
 static int goto_different_sign;
-static float goto_linX;
-static float goto_angZ;
 static int goto_startup_phase = 1;
 static float goto_angular_difference;
 static int activate_goto_sweep = 0;
@@ -296,103 +297,105 @@ float get_goto_angZ(){
     return goto_angZ;
 }
 
-// /// @brief Alternative GOTO task
-// /// @param distance_sensorL
-// /// @param distance_sensorR
-// /// @param distance_sensorM
-// /// @param distance_sensorT
-// /// @param detectL_dist
-// /// @param detectR_dist
-// /// @param detectM_dist
-// /// @return SEARCH if opponent detected, SEARCH if back wall detected, GOTO otherwise
-// int goto_task_alt(float distance_sensorL, float distance_sensorR, float distance_sensorM, float distance_sensorT, float detectL_dist, float detectR_dist, float detectM_dist){
-//     static int goto_state = 0;
-//     static float goto_detectL = 0.0;
-//     static float goto_detectR = 0.0;
-//     static float goto_detectM = 0.0;
-//     static float goto_limit = 0.0;
-//     // __________
-//     //
-//     // Updates the detection values
-//     // __________
+/// @brief Alternative GOTO task
+/// @param distance_sensorL
+/// @param distance_sensorR
+/// @param distance_sensorM
+/// @param distance_sensorT
+/// @param detectL_dist
+/// @param detectR_dist
+/// @param detectM_dist
+/// @return SEARCH if opponent detected, GOTO otherwise
+int goto_task_alt(float distance_sensorL, float distance_sensorR, float distance_sensorM, float distance_sensorT, float detectL_dist, float detectR_dist, float detectM_dist){
+    /// GOTO Task
+    /// 1. Limits the goto distance to the initial detected ball distance
+    /// 2. Uses the distance sensors to detect the ball within this limit 
+    /// 3. Moves the robot to the ball using the differential drive kinematics
+    /// 4. Returns to SEARCH if opponent detected or robot has travelled too far
+    /// 5. Returns to COLLECT if ball is detected within the collection threshold
+    static int goto_state;
+    static float goto_detectL;
+    static float goto_detectR;
+    static float goto_detectM;
+    static float goto_limit;
+    static float detected_robot_x;
+    static float detected_robot_y;
 
-//     if (goto_state == 0){
-//         goto_detectL = detectL_dist;
-//         goto_detectR = detectR_dist;
-//         goto_detectM = detectM_dist;
-//         goto_limit = max(max(goto_detectL, goto_detectR), goto_detectM);
-//         goto_state = 1;
-//     }
-//     else{
-//         // limit the distance readings, so that it only checks for the ball within the initial search radius
-//         distance_sensorL = min(distance_sensorL, goto_limit);
-//         distance_sensorR = min(distance_sensorR, goto_limit);
-//         distance_sensorM = min(distance_sensorM, goto_limit);
-//         distance_sensorT = min(distance_sensorT, goto_limit);
+    if (goto_state == 0){
+        goto_detectL = detectL_dist;
+        goto_detectR = detectR_dist;
+        goto_detectM = detectM_dist;
+        detected_robot_x = x;
+        detected_robot_y = y;
+        goto_limit = max(max(goto_detectL, goto_detectR), goto_detectM);
+        goto_state = 1;
+    }
+    else{
+        // limit the distance readings, so that it only checks for the ball within the initial search radius
+        distance_sensorL = min(distance_sensorL, goto_limit);
+        distance_sensorR = min(distance_sensorR, goto_limit);
+        distance_sensorM = min(distance_sensorM, goto_limit);
+        distance_sensorT = min(distance_sensorT, goto_limit);
 
-//         if (opponent_detection(distance_sensorT) == 1){
-//             goto_state = 0;
-//             return SEARCH;
-//         }
-//         if (detect_back_wall(distance_sensorL, distance_sensorR, distance_sensorM) == TRIGGERED){
-//             goto_state = 0;
-//             return SEARCH;
-//         }
-//         // check if ball is detected
-//         goto_detectM = detect_ball_mid(distance_sensorM, distance_sensorT);
-//         // updates only when low to high
-//         if (detect_ball_left(distance_sensorL) > goto_detectL || detect_ball_right(distance_sensorR) > goto_detectR){
-//             if (opponent_detection(distance_sensorT) == 0){
-//                 goto_detectL = detect_ball_left(distance_sensorL);
-//                 goto_detectR = detect_ball_right(distance_sensorR);
-//             }
-//         }
-//     }
+        if (opponent_detection(distance_sensorT) == 1){
+            goto_state = 0;
+            return SEARCH;
+        }
+        // check if ball is detected
+        goto_detectM = detect_ball_mid(distance_sensorM, distance_sensorT);
+        goto_detectL = detect_ball_left(distance_sensorL);
+        goto_detectR = detect_ball_right(distance_sensorR);
+    }
 
-//     // __________
-//     //
-//     // Moves the robot to whatever direction the ball is detected
-//     // __________
+    if (calculate_distance())
 
-//     if (goto_detectM <= READY_TO_COLLECT_THRESHOLD){
-//         goto_linX = 0.0;
-//         goto_angZ = 0.0;
-//         goto_state = 0;
-//         return COLLECT;
-//     }
-//     else if (goto_detectM > 0.0){
-//         // ball detected in middle, go straight
-//         goto_linX = MAX_SPEED;
-//         goto_angZ = 0.0;
-//     }
-//     else {
-//         // ball detected on the sides, turn towards the ball
-//         float turning_angle = 0.0;
-//         float turning_radius = 0.0;
-//         float turning_arc = 0.0;
-//         float turning_segment = 0.0;
-//         float turning_direction = 1.0;
-//         if (goto_detectL > 0.0){
-//             // ball on left, turn left
-//             turning_direction = 1.0;
-//             turning_segment = sqrt(pow(goto_detectL, 2) + pow(ROBOT_WIDTH/2.0, 2));
-//             turning_angle = 2 * (90.0 - atanDegrees(2 * goto_detectL / ROBOT_WIDTH));
-//         }
-//         else if (goto_detectR > 0.0){
-//             // ball on right, turn right
-//             turning_segment = sqrt(pow(goto_detectR, 2) + pow(ROBOT_WIDTH/2.0, 2));
-//             turning_angle = 2 * (90.0 - atanDegrees(2 * goto_detectR / ROBOT_WIDTH));
-//         }
-//         turning_radius = turning_segment / (2 * sinDegrees(turning_angle / 2));
-//         turning_arc = turning_radius * turning_angle;
+    // __________
+    //
+    // Moves the robot to whatever direction the ball is detected
+    // __________
 
-//         float rpmL = calculate_rpmL(turning_arc, turning_direction * turning_angle);
-//         float rpmR = calculate_rpmR(turning_arc, turning_direction * turning_angle);
-//         float scaled_rpmL = scale_rpmL(rpmL, rpmR);
-//         float scaled_rpmR = scale_rpmR(rpmL, rpmR);
+    if (goto_detectM <= READY_TO_COLLECT_THRESHOLD){
+        goto_linX = 0.0;
+        goto_angZ = 0.0;
+        goto_state = 0;
+        return COLLECT;
+    }
+    else if (goto_detectM > 0.0){
+        // ball detected in middle, go straight
+        goto_linX = MAX_SPEED;
+        goto_angZ = 0.0;
+    }
+    else {
+        // ball detected on the sides, turn towards the ball
+        // float turning_angle = 0.0;
+        // float turning_radius = 0.0;
+        // float turning_arc = 0.0;
+        // float turning_segment = 0.0;
+        float turning_direction = 1.0;
+        if (goto_detectL > 0.0){
+            // ball on left, turn left
+            turning_direction = 1.0;
+            // turning_segment = sqrt(pow(goto_detectL, 2) + pow(ROBOT_WIDTH/2.0, 2));
+            // turning_angle = 2 * (90.0 - atanDegrees(2 * goto_detectL / ROBOT_WIDTH));
+        }
+        else if (goto_detectR > 0.0){
+            // ball on right, turn right
+            turning_direction = -1.0;
+            // turning_segment = sqrt(pow(goto_detectR, 2) + pow(ROBOT_WIDTH/2.0, 2));
+            // turning_angle = 2 * (90.0 - atanDegrees(2 * goto_detectR / ROBOT_WIDTH));
+        }
+        // turning_radius = turning_segment / (2 * sinDegrees(turning_angle / 2));
+        // turning_arc = turning_radius * turning_angle;
 
-//         goto_linX = calculate_linear_x(scaled_rpmL, scaled_rpmR);
-//         goto_angZ = calculate_angular_z(scaled_rpmL, scaled_rpmR);
-//     }
-//     return GOTO;
-// }
+        // float rpmL = calculate_rpmL(turning_arc, turning_direction * turning_angle);
+        // float rpmR = calculate_rpmR(turning_arc, turning_direction * turning_angle);
+        // float scaled_rpmL = scale_rpmL(rpmL, rpmR);
+        // float scaled_rpmR = scale_rpmR(rpmL, rpmR);
+
+        // goto_linX = calculate_linear_x(scaled_rpmL, scaled_rpmR);
+        // goto_angZ = calculate_angular_z(scaled_rpmL, scaled_rpmR);
+        goto_linX = 0.0;
+        goto_angZ = turning_direction * MAX_TURN;
+    }
+    return GOTO;
+}
