@@ -301,10 +301,12 @@ task main()
 				else if(goto_ignore_edge == 2){
 					if(ball_in_chamber_status == TRIGGERED){
 						task_status = DELIVER;
+						goto_ignore_edge = 0;
 					}
 					else{
 						robot_cmd_arm_position = 0; //open gate
 						task_status = SEARCH;
+						goto_ignore_edge = 0;
 					}
 				}
 				else{
