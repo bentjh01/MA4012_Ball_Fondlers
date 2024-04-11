@@ -61,8 +61,8 @@ ________________________________________________________________________________
 
 #define FILTER_GAIN_LONG_L 	    0.5 //(output = prev_input) 0 < FILTER_GAIN < 1 (output = new_input)
 #define FILTER_GAIN_LONG_R 	    0.50 //(output = prev_input) 0 < FILTER_GAIN < 1 (output = new_input)
-#define FILTER_GAIN_LONG_MID 	0.5 //(output = prev_input) 0 < FILTER_GAIN < 1 (output = new_input)
-#define FILTER_GAIN_SHORT_TOP 	1.0 //(output = prev_input) 0 < FILTER_GAIN < 1 (output = new_input)
+#define FILTER_GAIN_LONG_MID 	0.6 //(output = prev_input) 0 < FILTER_GAIN < 1 (output = new_input)
+#define FILTER_GAIN_SHORT_TOP 	0.6 //(output = prev_input) 0 < FILTER_GAIN < 1 (output = new_input)
 
 // LINE SENSOR
 // #define LINE_FL_THRESHOLD       1252.0 // Midpoint of black point and yellow point

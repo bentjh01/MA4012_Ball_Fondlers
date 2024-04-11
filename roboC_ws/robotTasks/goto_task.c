@@ -339,22 +339,24 @@ int goto_task_alt(float x, float y, float distance_sensorL, float distance_senso
         distance_sensorM = min(distance_sensorM, goto_limit);
         distance_sensorT = min(distance_sensorT, goto_limit);
 
-        // if (opponent_detection(distance_sensorT) == 1){
-        //     goto_state = 0;
-        //     return SEARCH;
-        // }
-        // check if ball is detected
-        goto_detectM = detect_ball_mid(distance_sensorM, distance_sensorT, goto_limit);
-        float test_L = detect_ball_left(distance_sensorL, goto_limit);
-        float test_R =  detect_ball_right(distance_sensorR, goto_limit);
-        if (goto_detectL == 0.0 && test_L > 0.0){
-            goto_detectL = test_L;
-            goto_detectR = test_R;
+        if (detect_back_wall(distance_sensorL, distance_sensorR, distance_sensorM) == NOT_TRIGGERED){
+            if (opponent_detection(distance_sensorT) == 1){
+                goto_state = 0;
+                return SEARCH;
+            }
+            // check if ball is detected
+            goto_detectM = detect_ball_mid(distance_sensorM, distance_sensorT, goto_limit);
+            float test_L = detect_ball_left(distance_sensorL, goto_limit);
+            float test_R =  detect_ball_right(distance_sensorR, goto_limit);
+            if (goto_detectL == 0.0 && test_L > 0.0){
+                goto_detectL = test_L;
+                goto_detectR = test_R;
+            }
+            else if (goto_detectR == 0.0 && test_R > 0.0){
+                goto_detectL = test_L;
+                goto_detectR = test_R;
+            }
         }
-         else if (goto_detectR == 0.0 && test_R > 0.0){
-            goto_detectL = test_L;
-            goto_detectR = test_R;
-         }
     }
 
     /// Return to search if the robot has travelled too far
@@ -409,8 +411,8 @@ int goto_task_alt(float x, float y, float distance_sensorL, float distance_senso
         goto_linX = calculate_linear_x(scaled_rpmL, scaled_rpmR);
         goto_angZ = calculate_angular_z(scaled_rpmL, scaled_rpmR);
 
-        goto_linX = 0.0;
-        goto_angZ = turning_direction * MAX_TURN * 0.1;
+        // goto_linX = 0.0;
+        // goto_angZ = turning_direction * MAX_TURN * 0.1;
     }
     return GOTO;
 }
