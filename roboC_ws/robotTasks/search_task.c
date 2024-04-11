@@ -1,4 +1,6 @@
 #include "../config.h"
+#include "components/components.h"
+
 // @ShaDowFrost2417
 /*
 1. Search for the ball e.g. by turning around
@@ -17,152 +19,156 @@ static float change_position_traveled_distance;
 static int search_reduce = 0;
 static float ball_yaw;
 static float search_angular_difference;
+static int search_rotation_counter = 0;
+static int search_rotate_direction = 1;
 
 //NOTE!!!
 //MOVE OPP DETECTION TO
 //MAIN CODE GET SENSOR READING IN CM
 
-// int search_opponent_detected(float short_sensor_dist){
-//   // may need to move this to components into sensors.c
-//   if(short_sensor_dist <= OPP_CLOSENESS_THRESHOLD){
-//     //Theres an opp robot close in front
-//     return OPP_DETECTED;
-//   }
-//   else{
-//     return 0;
-//   }
-// }
-
-int search_ball_detected(float left_sensor_dist, float right_sensor_dist, float mid_sensor_dist, int opp_detected){
-  // Returns 1 if a ball is detected, 0 otherwise
-  // return 0 when there is no detection
-  //ignore opp robot
-  if (left_sensor_dist <= BALL_THRESHOLD_LNR || right_sensor_dist <= BALL_THRESHOLD_LNR){
-    return 1;
+void time_based_search_scan_rotation(){
+  if(search_rotation_counter < round(3.0/DT_MAIN)){
+  	if(search_rotation_counter <= round(1.5/DT_MAIN)){
+  		search_linX = 0.0;
+    	search_angZ = 120.0*search_rotate_direction;
+  	}
+  	else{
+  		search_linX = 0.0;
+    	search_angZ = 120.0*(round(3.0/DT_MAIN)-search_rotation_counter)*search_rotate_direction;
+    	if(fabs(search_angZ) < 30.0){
+      	search_angZ = 30.0 * search_rotate_direction;
+    	}
+  	}
   }
-  else if(mid_sensor_dist <= BALL_THRESHOLD_MID && !opp_detected){
-    return 1;
-  }
-  else{
-    return 0;
-  }
+  return;
 }
 
+void search_scan_rotation(float search_initial_yaw, float yaw){
+  //start reducing speed after done with half of the 360 degree rotation (180 degree)
+  if((fabs(search_initial_yaw)+fabs(yaw)) >= 175.0 && (fabs(search_initial_yaw)+fabs(yaw)) <= 185.00){
+    search_reduce = 1;
+  }
 
-int search_task(float x, float y, float yaw, float left_sensor_dist, float right_sensor_dist, float mid_sensor_dist, int opp_detected, float search_current_rpmL, float search_current_rpmR){
-  //Scanning
+  if(search_reduce == 0){
+    //before 180 degree, rotate ccw constant speed
+    search_linX = 0.0;
+    search_angZ = 120.0;
+  }
+  else{
+    search_angular_difference = search_initial_yaw-yaw;
+
+    //Calculate angular difference (in vector) for +/- pi range
+    if(search_angular_difference <= -180) {
+      search_angular_difference = search_angular_difference+360;
+    }
+    else if (search_angular_difference > 180){
+      //technically this should never occur since we always want to rotate ccw. But it is here just in case.
+      search_angular_difference = search_angular_difference-360;
+    }
+
+    search_linX = 0.0;
+    search_angZ = fabs(search_angular_difference)*0.667;
+
+    //limit lowest speed to 30 degrees/s
+    if(search_angZ < 30.0){
+      search_angZ = 30.0;
+    }
+  }
+  return;
+}
+
+int search_task(float x, float y, float yaw, float left_sensor_dist, float right_sensor_dist, float mid_sensor_dist, float top_sensor_dist, int opp_detected, float search_current_rpmL, float search_current_rpmR, int reset_counters){
+  if(reset_counters){
+  	search_startup_phase = 1;
+		changing_search_position = 1;
+		search_counter = 0;
+		search_reduce = 0;
+		search_rotation_counter = 0;
+  }
+
+	//Scanning
   if(changing_search_position == 0){
     //Rotate to scan
     if(search_startup_phase){
     	//reset any movement
-    	if(fabs(search_current_rpmL) > 0.0001 || fabs(search_current_rpmR) >= 0.0001){
+    	/*if(fabs(search_current_rpmL) > 0.0001 || fabs(search_current_rpmR) >= 0.0001){
   			search_linX = 0.0;
       	search_angZ = 0.0;
       	return SEARCH;
-  		}
+  		}*/
 
-      search_startup_phase = 0;         //set search_startup_phase
-      search_reduce = 0;		//reset search_proportional_offset
-
-      //rotate ccw, try find detection
-      //search_linX = 0.0;
-      //search_angZ = 120.0;
-
-      search_initial_yaw = yaw; //initialize yaw, correcting for momentum error 45 deg
-
-      if(search_initial_yaw < -180.0){
-      	search_initial_yaw = search_initial_yaw + 360;
-      }
-
-      search_counter = 0;              //reset counter
-    }
-
-    if((fabs(search_initial_yaw)+fabs(yaw)) >= 175.0 && (fabs(search_initial_yaw)+fabs(yaw)) <= 185.00){
-    	search_reduce = 1;
-    }
-
-    if(search_reduce == 0){
-    	//rotate ccw, try find detection
-      search_linX = 0.0;
-      search_angZ = 60.0;
-    }
-    else{
-      search_angular_difference = search_initial_yaw-yaw
-
-      if(search_angular_difference <= -180) {
-        search_angular_difference = search_angular_difference+360;
-      }
-      else if (search_angular_difference > 180){
-        //technically this should never occur since we always want to rotate ccw. But it is here just in case.
-        search_angular_difference = search_angular_difference-360;
-      }
-
-      search_linX = 0.0;
-      search_angZ = fabs(search_angular_difference)/180.0*60.0;
-
-      //if(search_angZ < 60.0){
-      	//search_angZ = 60.0;
-      //}
+      //initialization and end startup
+      search_startup_phase = 0;
+      search_reduce = 0;
+      search_initial_yaw = yaw;
+      search_counter = 0;
     }
 
     //check for ball
-    if (search_ball_detected(left_sensor_dist,right_sensor_dist, mid_sensor_dist, opp_detected) == 1){
+    if (detect_ball(left_sensor_dist,right_sensor_dist, mid_sensor_dist, top_sensor_dist, opp_detected) == 1){
       //stop movement
       search_linX = 0.0;
       search_angZ = 0.0;
       ball_yaw = yaw;
 
-      search_startup_phase = 1;                               //reset search_startup_phase
+      search_startup_phase = 1; //reset search_startup_phase
       return GOTO;
-    	//return SEARCH;
     }
 
+    //execute rotation
+    //search_scan_rotation(search_initial_yaw, yaw);
+    time_based_search_scan_rotation();
     search_counter += 1; //increment counter
 
     //check if 360 deg rotation achieved
-    if(fabs(yaw-search_initial_yaw) < YAW_TOLERANCE && search_counter >= SEARCH_COUNT_THRESHOLD){
-      //stop movement
-      search_linX = 0.0;
+    //if(fabs(yaw-search_initial_yaw) < YAW_TOLERANCE && search_counter >= SEARCH_COUNT_THRESHOLD){
+    //  //stop movement
+    //  search_linX = 0.0;
+    //  search_angZ = 0.0;
+
+    //  search_startup_phase = 1;     //reset search_startup_phase
+    //  changing_search_position = 1; //initiate change search position
+    //  can add something here if want changing search direction also later
+    //}
+    //for time based
+    if(search_counter >= round(3.0/DT_MAIN)){
+    	search_linX = 0.0;
       search_angZ = 0.0;
 
-      search_startup_phase = 1;                               //reset search_startup_phase
-      changing_search_position = 1;                           //initiate change search position
+      search_startup_phase = 1;     //reset search_startup_phase
+      changing_search_position = 1; //initiate change search position
+      search_rotate_direction = search_rotate_direction*(-1);
     }
-
     return SEARCH;
   }
-  //Changing search position
-  else{
+  else{ //Changing search position == 1
     if(search_startup_phase){
-    	if(fabs(search_current_rpmL) > 0.0001 || fabs(search_current_rpmR) >= 0.0001){
+      //reset any movement
+    	/*if(fabs(search_current_rpmL) > 0.0001 || fabs(search_current_rpmR) >= 0.0001){
   			search_linX = 0.0;
       	search_angZ = 0.0;
-      	return SEARCH
-  		}
+      	return SEARCH;
+  		}*/
 
-      search_startup_phase = 0;                               //set search_startup_phase
-      //move forward
-      search_linX = 0.20;
+      //initialization and end startup
+      search_startup_phase = 0;
+      search_linX = 0.30;
       search_angZ = 0.0;
-
-      //initialize position
       search_initial_x = x;
       search_initial_y = y;
     }
 
-    change_position_traveled_distance = sqrt(pow(x-search_initial_x, 2) + pow(y-search_initial_y, 2);
+    change_position_traveled_distance = sqrt(pow(x-search_initial_x, 2) + pow(y-search_initial_y, 2));
 
-    //check for ball and opp
-    if (search_ball_detected(left_sensor_dist,right_sensor_dist, mid_sensor_dist, opp_detected) == 1){
+    //check for ball
+    if (detect_ball(left_sensor_dist,right_sensor_dist, mid_sensor_dist, top_sensor_dist, opp_detected) == 1){
       //stop movement
       ball_yaw = yaw;
       search_linX = 0.0;
       search_angZ = 0.0;
 
-      search_startup_phase = 1;
-
-      //reset search_startup_phase
-      changing_search_position = 0;                           //terminate change_search_position
+      search_startup_phase = 1;     //reset search_startup_phase
+      changing_search_position = 0; //terminate change_search_position
       return GOTO;
     }
 
@@ -195,3 +201,99 @@ float get_search_angZ(){
 float get_ball_yaw(){
 	return ball_yaw;
 }
+
+// float search_detectL = 0.0;
+// float search_detectR = 0.0;
+// float search_detectM = 0.0;
+
+// /// @brief Alternative search task
+// /// @param ball_detection ball detection status
+// /// @return the task to be executed
+// int search_task_alt(float left_distance, float right_distance, float mid_distance, float top_distance){
+//   // 0 for rotate, 1 for move forward
+//   static int search_state = 0;
+
+//   // Check if ball is detected
+//   search_detectL = detect_ball_left(left_distance);
+//   search_detectR = detect_ball_right(right_distance);
+//   search_detectM = detect_ball_mid(mid_distance, top_distance);
+
+//   if (detect_back_wall(left_distance, right_distance, mid_distance) == TRIGGERED){
+//     return SEARCH;
+//   }
+//   else if (search_detectL != 0 || search_detectR != 0 || search_detectM != 0){
+//     // Stop the robot and reinitialise
+//     search_state = 0;
+//     search_linX = 0.0;
+//     search_angZ = 0.0;
+//     return GOTO;
+//   }
+
+//   // performs scan ie. rotate and move forward
+//   if (search_state == 0){
+//     if (move_360(MAX_TURN) == FAIL){
+//       search_linX = 0.0;
+//       search_angZ = MAX_TURN;
+//     }
+//     else{
+//       search_state = 1;
+//     }
+//   }
+//   else{
+//     if (move_forward(MAX_SPEED, CHANGE_POSITION_DISTANCE) == FAIL){
+//       search_linX = MAX_SPEED;
+//       search_angZ = 0.0;
+//     }
+//     else{
+//       search_state = 0;
+//     }
+//   }
+//   return SEARCH;
+// }
+
+// int move_forward(float cmd_linX, float distance){
+//   static float move_forward_count = 0.0;
+//   // Startup of the forward movement
+//   if (move_forward_count >= 0.0){
+//     // Initialize the count
+//     move_forward_count = distance/cmd_linX/DT_MAIN;
+//     return FAIL;
+//   }
+//   // Decrement the count
+//   move_forward_count --;
+//   if (move_forward_count <= 0.0){
+//     return SUCCESS;
+//   }
+//   return FAIL;
+// }
+
+// /// @brief Checks if 360 degree rotation is completed
+// /// @param  cmd_angZ angular velocity command
+// /// @return the success or failure of the 360 degree rotation
+// int move_360(float cmd_angZ){
+//   static float move_360_count = 0.0;
+//   // Startup of the 360 degree rotation
+//   if (move_360_count >= 0.0){
+//     // Initialize the count
+//     move_360_count = 360.0/abs(cmd_angZ)/DT_MAIN;
+//     return FAIL;
+//   }
+//   // Decrement the count
+//   move_360_count --;
+//   if (move_360_count <= 0.0){
+//     return SUCCESS;
+//   }
+//   return FAIL;
+// }
+
+// int get_search_detectL(){
+//   return search_detectL;
+// }
+
+// int get_search_detectR(){
+//   return search_detectR;
+// }
+
+// int get_search_detectM(){
+//   return search_detectM;
+// }
