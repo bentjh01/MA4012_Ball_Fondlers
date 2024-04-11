@@ -50,12 +50,12 @@ ________________________________________________________________________________
 #define FILTER_ENCODER 0.5
 
 // DRIVE
-#define MOTOR_L_KP 1.0
+#define MOTOR_L_KP 0.9
 #define MOTOR_L_KI 0.005
 #define MOTOR_L_KD 0.00
 #define MOTOR_L_INTEGRAL_MAX 127
 
-#define MOTOR_R_KP 1.0
+#define MOTOR_R_KP 0.9
 #define MOTOR_R_KI 0.005
 #define MOTOR_R_KD 0.00
 #define MOTOR_R_INTEGRAL_MAX 127
@@ -89,17 +89,17 @@ ________________________________________________________________________________
 
 // EDGE TASK
 #define EDGE_REVERSE_DISTANCE 0.05 // [m] TODO
-#define EDGE_YAW_KP 0.6
+#define EDGE_YAW_KP 0.5
 
 // HOME TASK
-#define HOME_AWAY_DISTANCE 0.4//(ARENA_X * 1.0 / 2.0)
+#define HOME_AWAY_DISTANCE (ARENA_X * 1.0 / 2.0)
 
 // SEARCH TASK
 #define SEARCH_COUNT_THRESHOLD      75
 #define CHANGE_POSITION_DISTANCE    0.3
 //#define DISTANCE_CHANGE_THRESHOLD		10.0
 
-// GOTO TASK
+// GOTO TAS4
 #define GOTO_SWEEP_TIME         3.0
 #define GOTO_ALIGN_BALL_GAIN    0.833
 #define GOTO_CURVE_LIN_SPEED    0.2
@@ -149,7 +149,7 @@ ________________________________________________________________________________
 #define WHEEL_DIAMETER      0.06926 //m
 #define ROBOT_TRACK         0.213 //m
 #define ENCODER_RESOLUTION  360.0 // [ticks/revolution]
-#define MAX_WHEEL_RPM       100.0 * 0.8// [rpm]
+#define MAX_WHEEL_RPM       100.0// [rpm]
 #define MAX_SPEED           MAX_WHEEL_RPM/RADIAN_T0_RPM*WHEEL_DIAMETER/2 // [m/s]
 #define MAX_TURN            MAX_WHEEL_RPM/RADIAN_T0_RPM*WHEEL_DIAMETER/ROBOT_TRACK/DEGREE_TO_RADIAN // [deg/s]
 
@@ -168,12 +168,11 @@ ________________________________________________________________________________
 #define WEST            90.0
 #define SOUTH_WEST      135.0
 #define NORTH_EAST      -45.0
-#define EAST            -90.0
+#define EAST            -90.00
 #define SOUTH_EAST      -135.0
 #define SOUTH           -180.0
 
 //Chen test
 #define SCALE_RPM 0.98
-#define OFFSET_RPM 0
 
 #endif // CONFIG_H
