@@ -261,6 +261,7 @@ float detect_ball_mid(float mid_sensor_dist, float top_sensor_dist, float limit_
   }
 
   prev_mid = mid_sensor_dist;
+  result = 0.0; //Testing
   return result;
 }
 
