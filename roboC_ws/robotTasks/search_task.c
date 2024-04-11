@@ -64,11 +64,11 @@ int search_task(float x, float y, float yaw, float left_sensor_dist, float right
     //Rotate to scan
     if(search_startup_phase){
     	//reset any movement
-    	if(fabs(search_current_rpmL) > 0.0001 || fabs(search_current_rpmR) >= 0.0001){
+    	/*if(fabs(search_current_rpmL) > 0.0001 || fabs(search_current_rpmR) >= 0.0001){
   			search_linX = 0.0;
       	search_angZ = 0.0;
       	return SEARCH;
-  		}
+  		}*/
 
       //initialization and end startup
       search_startup_phase = 0;
@@ -106,11 +106,11 @@ int search_task(float x, float y, float yaw, float left_sensor_dist, float right
   else{ //Changing search position == 1
     if(search_startup_phase){
       //reset any movement
-    	if(fabs(search_current_rpmL) > 0.0001 || fabs(search_current_rpmR) >= 0.0001){
+    	/*if(fabs(search_current_rpmL) > 0.0001 || fabs(search_current_rpmR) >= 0.0001){
   			search_linX = 0.0;
       	search_angZ = 0.0;
       	return SEARCH;
-  		}
+  		}*/
 
       //initialization and end startup
       search_startup_phase = 0;

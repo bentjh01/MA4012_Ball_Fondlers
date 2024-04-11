@@ -122,6 +122,9 @@ void read_sensors(float dt){
     robot_en_rpmL = filter_encoderL(getMotorEncoder(motor_L) * 60.0/dt /ENCODER_RESOLUTION);
 	robot_en_rpmR = filter_encoderR(getMotorEncoder(motor_R) * 60.0/dt /ENCODER_RESOLUTION);
 
+    // robot_en_rpmL = getMotorEncoder(motor_L) * 60.0/dt /ENCODER_RESOLUTION;
+	// robot_en_rpmR = filter_encoderR(getMotorEncoder(motor_R) * 60.0/dt /ENCODER_RESOLUTION);
+
 	resetMotorEncoder(motor_R);
 	resetMotorEncoder(motor_L);
 	return;
@@ -142,7 +145,7 @@ void update_robot_odom(float dt){
     robot_y = update_odometry_y(robot_y, robot_yaw, robot_linX, robot_en_rpmL, robot_en_rpmR, dt);
     robot_yaw = update_odometry_yaw(robot_yaw, robot_angZ, robot_en_rpmL, robot_en_rpmR, magnetometer_yaw, dt);
     // robot_yaw = magnetometer_yaw;
-    robot_linX = update_odometry_linX(robot_linX, robot_en_rpmL, robot_en_rpmR, dt);
+    robot_linX = update_odometry_linX(robot_cmd_linX, robot_en_rpmL, robot_en_rpmR, dt);
     robot_angZ = update_odometry_angZ(robot_cmd_angZ, robot_en_rpmL, robot_en_rpmR, dt);
     return;
 }
@@ -150,7 +153,7 @@ void update_robot_odom(float dt){
 void robot_execute(float dt){
 	robot_cmd_rpmL = calculate_rpmL(robot_cmd_linX, robot_cmd_angZ);
 	robot_cmd_rpmR = calculate_rpmR(robot_cmd_linX, robot_cmd_angZ);
-	robot_cmd_rpmR = robot_cmd_rpmR * SCALE_RPM - OFFSET_RPM;
+	robot_cmd_rpmR = robot_cmd_rpmR * SCALE_RPM;
 	robot_cmd_rpmL = limit_rpmL(robot_cmd_rpmL, robot_cmd_rpmR);
 	robot_cmd_rpmR = limit_rpmR(robot_cmd_rpmL, robot_cmd_rpmR);
 	robot_move_closed(robot_cmd_rpmL, robot_cmd_rpmR, robot_en_rpmL, robot_en_rpmR);
@@ -220,23 +223,23 @@ task main()
 		clearTimer(T1);
 		// main Loop
 		if (edge_detected(robot_line_FL, robot_line_BL, robot_line_BR, robot_line_FR) == TRIGGERED){
-		// if (1 == 2){ // testing
+		// if (1 == 2){
+			if (task_status != EDGE){
+				prev_task_status = task_status;
+			}
+
 			if(task_status == DELIVER && fabs(robot_yaw) < YAW_TOLERANCE){
 				int line_case = get_edge_line_case();
 				if (line_case == 1001){
 					task_status = DELIVER;
 				}
 				else if (line_case == 1101 || line_case == 1011){
-					if (robot_x <= 0.05){
+					// if (robot_x <= 0.05){
+					if (fabs(robot_yaw) <= YAW_TOLERANCE){
 						task_status = DELIVER;
 					}
 				}
 			}
-
-			if (task_status != EDGE){
-				prev_task_status = task_status;
-			}
-
 			else{
 				task_status = EDGE;
 			}
@@ -251,14 +254,14 @@ task main()
 				// task_status = HOME; // testing
 				break;
 			case HOME:
-				// task_status = SEARCH; // testing
+				// task_status = SEARCH;
 				task_status = home_task(robot_x, robot_y, robot_yaw, robot_arm_position);
 				robot_cmd_linX = get_home_linX();
 				robot_cmd_angZ = get_home_angZ();
 				robot_cmd_arm_position = get_home_servo();
 				break;
 			case SEARCH:
-				//task_status = GOTO; // testing
+				// task_status = GOTO;
 				opp_detected = opponent_detection(distance_sensor_top);
 				task_status = search_task(robot_x, robot_y, robot_yaw, distance_sensor_left, distance_sensor_right, distance_sensor_mid, distance_sensor_top, opp_detected, robot_en_rpmL, robot_en_rpmR);
 				// task_status = search_task_alt(distance_sensor_mid, distance_sensor_left, distance_sensor_right, distance_sensor_top);
@@ -268,21 +271,21 @@ task main()
 				detected_ball_yaw = get_ball_yaw();
 				break;
 			case GOTO:
-				// task_status = COLLECT; // testing
+				// task_status = COLLECT;
 				opp_detected = opponent_detection(distance_sensor_top);
 				task_status = goto_task(robot_x, robot_y, robot_yaw, distance_sensor_left, distance_sensor_right, distance_sensor_mid, distance_sensor_top, opp_detected, detected_ball_yaw);
 				robot_cmd_linX = get_goto_linX();
 				robot_cmd_angZ = get_goto_angZ();
 				break;
 			case COLLECT:
-				//task_status = COLLECT; // testing
+				// task_status = DELIVER;
 				task_status = collect_task(robot_arm_position, distance_sensor_mid, distance_sensor_top, opp_detected, ball_in_chamber_status);
 				robot_cmd_linX = get_collect_linX();
 				robot_cmd_angZ = get_collect_angZ();
 				robot_cmd_arm_position = get_collect_servo();
 				break;
 			case DELIVER:
-				//task_status = DELIVER;
+				// task_status = HOME;
 				task_status = deliver_task(robot_yaw, robot_arm_position, ball_in_chamber_status, limit_switch_D, robot_line_BR, robot_line_BL);
 				robot_cmd_linX = get_deliver_linX();
 				robot_cmd_angZ = get_deliver_angZ();
