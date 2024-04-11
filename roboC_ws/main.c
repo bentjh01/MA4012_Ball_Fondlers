@@ -233,7 +233,7 @@ task main()
 			}
 			if (task_status == GOTO){
 				goto_ignore_edge += 1;
-				if(goto_ignore_edge < round(0.3/DT_MAIN)){
+				if(goto_ignore_edge < round(0.2/DT_MAIN)){
 					task_status == GOTO;
 				}
 				else{
@@ -266,7 +266,7 @@ task main()
 				task_status = edge_avoid_task(robot_x, robot_y, robot_yaw, prev_task_status);
 				robot_cmd_linX = get_edge_avoid_linX();
 				robot_cmd_angZ = get_edge_avoid_angZ();
-				reset_counters = 1;
+				reset_counters = 0;
 				// task_status = HOME; // testing
 				break;
 			case HOME:
