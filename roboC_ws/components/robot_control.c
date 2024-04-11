@@ -4,7 +4,7 @@
 /// @param linear_displacement 
 /// @param linear_speed 
 /// @return either SUCCESS if motion is completed or FAIL if motion is not completed
-int robot_move_forward(float linear_displacement, float linear_speed){
+int count_move_forward(float linear_displacement, float linear_speed){
   static float move_forward_count = 0.0;
   // Startup of the forward movement
   if (move_forward_count >= 0.0){
@@ -24,7 +24,7 @@ int robot_move_forward(float linear_displacement, float linear_speed){
 /// @param angular_displacement 
 /// @param angular_speed 
 /// @return either SUCCESS if motion is completed or FAIL if motion is not completed
-int robot_move_robot(float angular_displacement, float angular_speed){
+int count_move_rotate(float angular_displacement, float angular_speed){
   static float move_rotate_count = 0.0;
   // Startup of the 360 degree rotation
   if (move_rotate_count >= 0.0){
