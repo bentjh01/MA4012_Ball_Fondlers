@@ -77,8 +77,8 @@ void search_scan_rotation(float search_initial_yaw, float yaw){
   return;
 }
 
-int search_task(float x, float y, float yaw, float left_sensor_dist, float right_sensor_dist, float mid_sensor_dist, float top_sensor_dist, int opp_detected, float search_current_rpmL, float search_current_rpmR, int reset_counters){
-  if(reset_counters){
+int search_task(float x, float y, float yaw, float left_sensor_dist, float right_sensor_dist, float mid_sensor_dist, float top_sensor_dist, int opp_detected, float search_current_rpmL, float search_current_rpmR, int search_after_edge){
+  if(search_after_edge){
   	search_startup_phase = 1;
 		changing_search_position = 1;
 		search_counter = 0;
