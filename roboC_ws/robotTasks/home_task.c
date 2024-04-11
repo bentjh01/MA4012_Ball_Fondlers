@@ -5,15 +5,19 @@ static float home_angZ = 0.0;
 static float home_servo = 0.0;
 
 int home_task(float x, float y, float yaw, float arm_position){
+    static float home_count = 0.0;
     home_servo = 0.0;
-    home_linX = 0.3;
+    home_linX = MAX_SPEED;
     // home_angZ = -1.5 * yaw;
     home_angZ = 0.0;
 
-    if (arm_position > SERVO_TOLERANCE || x < HOME_AWAY_DISTANCE){
+    // if (arm_position != 0.0 || home_count < HOME_AWAY_DISTANCE/MAX_SPEED/DT_MAIN){
+    if (arm_position != 0.0 || x < HOME_AWAY_DISTANCE){
+        home_count ++;
         return HOME;
     }
     else{
+        home_count = 0.0;
         home_linX = 0.0;
         home_angZ = 0.0;
         home_servo = 0.0;

@@ -6,7 +6,7 @@ float deliver_set_servo = SERVO_COLLECT_POSITION;
 int reset_x = NOT_TRIGGERED;
 
 int deliver_task(float yaw, float servo_position, int ball_in_chamber, int back_limit_switch, int lineBL, int lineBR) {
-    static int delivery_startup = TRIGGERED;
+    static int delivery_startup;
 
     float deliver_arm_position_err = SERVO_DELIVER_POSITION - servo_position;
 
@@ -15,7 +15,7 @@ int deliver_task(float yaw, float servo_position, int ball_in_chamber, int back_
         // Face the back wall
         deliver_set_angZ = -yaw * DELIVER_YAW_KP;
         deliver_set_linX = 0.0;
-            if (abs(yaw) > YAW_TOLERANCE){
+            if (abs(yaw) < YAW_TOLERANCE){
                 delivery_startup = NOT_TRIGGERED;
             }
     }

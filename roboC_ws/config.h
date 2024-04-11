@@ -88,7 +88,8 @@ TUNABLE TASK PARAMETERS
 ______________________________________________________________________________________________________________________*/
 
 // EDGE TASK
-#define EDGE_REVERSE_DISTANCE 0.05 // [m] TODO
+#define EDGE_REVERSE_DISTANCE_SMALL 0.05 // [m] TODO
+#define EDGE_REVERSE_DISTANCE_BIG 0.15
 #define EDGE_YAW_KP 0.6
 
 // HOME TASK
