@@ -321,7 +321,8 @@ task main()
 				break;
 			case COLLECT:
 				// task_status = DELIVER;
-				task_status = collect_task(robot_arm_position, distance_sensor_mid, distance_sensor_top, opp_detected, ball_in_chamber_status);
+				// task_status = collect_task(robot_arm_position, distance_sensor_mid, distance_sensor_top, opp_detected, ball_in_chamber_status);
+				task_status = collect_task_alt(distance_sensor_mid, robot_arm_position);
 				robot_cmd_linX = get_collect_linX();
 				robot_cmd_angZ = get_collect_angZ();
 				robot_cmd_arm_position = get_collect_servo();
