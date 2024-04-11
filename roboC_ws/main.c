@@ -94,7 +94,7 @@ float ball_yaw_memory;
 
 // counters
 int goto_ignore_edge = 0;
-int reset_counters = 0;
+//int reset_counters = 0;
 /* _____________________________________________________________________________________________________________________
 
 SENSORS
@@ -231,14 +231,15 @@ task main()
 			if (task_status != EDGE){
 				prev_task_status = task_status;
 			}
-			if (task_status == GOTO){
-				goto_ignore_edge += 1;
-				if(goto_ignore_edge < round(0.2/DT_MAIN)){
-					task_status == GOTO;
-				}
-				else{
-					task_status == EDGE;
-				}
+			if (task_status == GOTO && goto_ignore_edge == 0){
+				goto_ignore_edge = 1;
+				//goto_ignore_edge += 1;
+				//if(goto_ignore_edge < round(0.2/DT_MAIN)){
+				//	task_status == GOTO;
+				//}
+				//else{
+				//	task_status == EDGE;
+				//}
 			}
 			else if(task_status == DELIVER && fabs(robot_yaw) < YAW_TOLERANCE){
 				int line_case = get_edge_line_case();
@@ -260,13 +261,17 @@ task main()
 			}
 			switch (task_status){
 			case EDGE:
-				//reset ignore edge
-				goto_ignore_edge = 0;
+				if(goto_ignore_edge == 1){
+					goto_ignore_edge == 2;
+				}
+				else{
+					goto_ignore_edge = 0;
+				}
 
 				task_status = edge_avoid_task(robot_x, robot_y, robot_yaw, prev_task_status);
 				robot_cmd_linX = get_edge_avoid_linX();
 				robot_cmd_angZ = get_edge_avoid_angZ();
-				reset_counters = 0;
+				//reset_counters = 0;
 				// task_status = HOME; // testing
 				break;
 			case HOME:
@@ -275,7 +280,7 @@ task main()
 				robot_cmd_linX = get_home_linX();
 				robot_cmd_angZ = get_home_angZ();
 				robot_cmd_arm_position = get_home_servo();
-				reset_counters = 0;
+				//reset_counters = 0;
 				break;
 			case SEARCH:
 				// task_status = GOTO;
@@ -286,15 +291,30 @@ task main()
 				robot_cmd_linX = get_search_linX();
 				robot_cmd_angZ = get_search_angZ();
 				detected_ball_yaw = get_ball_yaw();
-				reset_counters = 0;
+				//reset_counters = 0;
 				break;
 			case GOTO:
-				// task_status = COLLECT;
-				opp_detected = opponent_detection(distance_sensor_top);
-				task_status = goto_task(robot_x, robot_y, robot_yaw, distance_sensor_left, distance_sensor_right, distance_sensor_mid, distance_sensor_top, opp_detected, detected_ball_yaw);
-				robot_cmd_linX = get_goto_linX();
-				robot_cmd_angZ = get_goto_angZ();
-				reset_counters = 0;
+				if(goto_ignore_edge == 1){
+					robot_cmd_arm_position = SERVO_COLLECT_POSITION;
+					task_status = EDGE;
+				}
+				else if(goto_ignore_edge == 2){
+					if(ball_in_chamber_status == TRIGGERED){
+						task_status = DELIVER;
+					}
+					else{
+						robot_cmd_arm_position = 0; //open gate
+						task_status = SEARCH;
+					}
+				}
+				else{
+					// task_status = COLLECT;
+					opp_detected = opponent_detection(distance_sensor_top);
+					task_status = goto_task(robot_x, robot_y, robot_yaw, distance_sensor_left, distance_sensor_right, distance_sensor_mid, distance_sensor_top, opp_detected, detected_ball_yaw);
+					robot_cmd_linX = get_goto_linX();
+					robot_cmd_angZ = get_goto_angZ();
+					//reset_counters = 0;
+				}
 				break;
 			case COLLECT:
 				// task_status = DELIVER;
@@ -302,7 +322,7 @@ task main()
 				robot_cmd_linX = get_collect_linX();
 				robot_cmd_angZ = get_collect_angZ();
 				robot_cmd_arm_position = get_collect_servo();
-				reset_counters = 0;
+				//reset_counters = 0;
 				break;
 			case DELIVER:
 				// task_status = HOME;
@@ -313,7 +333,7 @@ task main()
 				if (get_reset_x() == TRIGGERED){
 					robot_x = 0.0;
 				}
-				reset_counters = 0;
+				//reset_counters = 0;
 				break;
 			}
 
