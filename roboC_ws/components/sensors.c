@@ -195,12 +195,12 @@ int detect_ball(float left_sensor_dist, float right_sensor_dist, float mid_senso
 /// @brief Checks if sensor detects a ball
 /// @param left_sensor_dist
 /// @return 0 if no detection, Distance reading if detection
-/*float detect_ball_left(float left_sensor_dist){
+float detect_ball_left(float left_sensor_dist){
   static float prev_left;
   float dr = prev_left-left_sensor_dist;
   float result;
   left_sensor_dist = min(left_sensor_dist, LIMIT_DISTANCE_READINGS);
-  // falling edge
+  // falling edge i.e. high to low
   if (dr >= BALL_THRESHOLD_CHANGE){
     result = prev_left;
   }
@@ -220,7 +220,7 @@ float detect_ball_right(float right_sensor_dist){
   float result;
   prev_right = right_sensor_dist;
   right_sensor_dist = min(right_sensor_dist, LIMIT_DISTANCE_READINGS);
-  // falling edge
+  // falling edge i.e. high to low
   if (dr >= BALL_THRESHOLD_CHANGE){
     result = prev_right;
   }
@@ -246,7 +246,7 @@ float detect_ball_mid(float mid_sensor_dist, float top_sensor_dist){
   if (opponent_detection(top_sensor_dist)==1){
     result = 0;
   }
-  // Falling edge
+  // falling edge i.e. high to low
   else if (dr >= BALL_THRESHOLD_CHANGE){
     result = prev_mid;
   }
@@ -275,11 +275,4 @@ int detect_back_wall(float left_sensor, float right_sensor, float mid_sensor){
   else{
     return NOT_TRIGGERED;
   }
-
-  // if (fabs(left_sensor - right_sensor) < FLAT_SURFACE_THRESHOLD){
-  //   return TRIGGERED;
-  // }
-  // else{
-  //   return NOT_TRIGGERED;
-  // }
-}*/
+}

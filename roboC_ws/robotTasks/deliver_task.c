@@ -47,9 +47,9 @@ int deliver_task(float yaw, float servo_position, int ball_in_chamber, int back_
         deliver_set_linX=0.0;
         return HOME;
     }
-    else if (ball_in_chamber == NOT_TRIGGERED){
-        return SEARCH;
-    }
+    // else if (ball_in_chamber == NOT_TRIGGERED){
+    //     return SEARCH;
+    // }
     else {
         return DELIVER;
     }
