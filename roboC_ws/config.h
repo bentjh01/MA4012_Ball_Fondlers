@@ -72,8 +72,8 @@ ________________________________________________________________________________
 
 #define LINE_FL_THRESHOLD       620.0 // Midpoint of black point and yellow point
 #define LINE_BL_THRESHOLD       615.0 // Midpoint of black point and yellow point
-#define LINE_BR_THRESHOLD       163.0 // Midpoint of black point and yellow point
-#define LINE_FR_THRESHOLD       440.0// Midpoint of black point and yellow point
+#define LINE_BR_THRESHOLD       182.0 // Midpoint of black point and yellow point
+#define LINE_FR_THRESHOLD       342.0// Midpoint of black point and yellow point
 
 #define FILTER_GAIN_LINE_FL 	0.60 //(output = prev_input) 0 < FILTER_GAIN < 1 (output = new_input)
 #define FILTER_GAIN_LINE_BL 	0.60 // (output = prev_input) 0 < FILTER_GAIN < 1 (output = new_input)

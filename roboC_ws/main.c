@@ -244,7 +244,7 @@ task main()
 				//	task_status == EDGE;
 				//}
 			// }
-			else if(task_status == DELIVER && fabs(robot_yaw) < YAW_TOLERANCE){
+			if(task_status == DELIVER && fabs(robot_yaw) < YAW_TOLERANCE){
 				int line_case = get_edge_line_case();
 				if (line_case == 1001){
 					task_status = DELIVER;
@@ -255,11 +255,12 @@ task main()
 						task_status = DELIVER;
 					}
 				}
-				else{
-					task_status = EDGE;
-				}
 			}
-			avoid_case_check(robot_x, robot_y, robot_yaw, robot_line_FL, robot_line_FR, robot_line_BL, robot_line_BR);
+			else{
+				task_status = EDGE;
+			}
+			// avoid_case_check(robot_x, robot_y, robot_yaw, robot_line_FL, robot_line_FR, robot_line_BL, robot_line_BR);
+			avoid_case_check_alt(robot_x, robot_y, robot_yaw, robot_line_FL, robot_line_FR, robot_line_BL, robot_line_BR);
 			// wall_case_check(robot_yaw, robot_line_FL, robot_line_FR, robot_line_BL, robot_line_BR); @Unizz20
 			}
 			switch (task_status){
@@ -271,7 +272,8 @@ task main()
 				// 	goto_ignore_edge = 0;
 				// }
 
-				task_status = edge_avoid_task(robot_x, robot_y, robot_yaw, prev_task_status);
+				// task_status = edge_avoid_task(robot_x, robot_y, robot_yaw, prev_task_status);
+				task_status = edge_avoid_alt_task(robot_x, robot_y, robot_yaw, prev_task_status);
 				robot_cmd_linX = get_edge_avoid_linX();
 				robot_cmd_angZ = get_edge_avoid_angZ();
 				//reset_counters = 0;
@@ -279,10 +281,11 @@ task main()
 				break;
 			case HOME:
 				// task_status = SEARCH;
-				task_status = home_task(robot_x, robot_y, robot_yaw, robot_arm_position);
-				robot_cmd_linX = get_home_linX();
-				robot_cmd_angZ = get_home_angZ();
-				robot_cmd_arm_position = get_home_servo();
+				// task_status = home_task(robot_x, robot_y, robot_yaw, robot_arm_position);
+				// robot_cmd_linX = get_home_linX();
+				robot_cmd_linX = MAX_SPEED;
+				// robot_cmd_angZ = get_home_angZ();
+				// robot_cmd_arm_position = get_home_servo();
 				//reset_counters = 0;
 				break;
 			case SEARCH:

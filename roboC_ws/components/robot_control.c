@@ -25,16 +25,17 @@ int count_move_forward(float linear_displacement, float linear_speed){
 /// @param angular_speed 
 /// @return either SUCCESS if motion is completed or FAIL if motion is not completed
 int count_move_rotate(float angular_displacement, float angular_speed){
-  static float move_rotate_count = 0.0;
+  static int count_move_rotate_init = 1;
+  static float move_rotate_count = 0;
   // Startup of the 360 degree rotation
-  if (move_rotate_count >= 0.0){
-    // Initialize the count
+  if (count_move_rotate_init == 1){
     move_rotate_count = angular_displacement/fabs(angular_speed)/DT_MAIN;
-    return FAIL;
+    count_move_rotate_init = 0.0;
   }
   // Decrement the count
   move_rotate_count --;
   if (move_rotate_count <= 0.0){
+    count_move_rotate_init = 1;
     return SUCCESS;
   }
   return FAIL;
