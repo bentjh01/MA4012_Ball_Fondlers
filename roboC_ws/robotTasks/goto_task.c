@@ -329,7 +329,7 @@ int goto_task_alt(float x, float y, float distance_sensorL, float distance_senso
         goto_detectM = detectM_dist;
         detected_robot_x = x;
         detected_robot_y = y;
-        goto_limit = max(max(goto_detectL, goto_detectR), goto_detectM);
+        goto_limit = 1.5 * max(max(goto_detectL, goto_detectR), goto_detectM);
         goto_state = 1;
     }
     else{
@@ -339,10 +339,10 @@ int goto_task_alt(float x, float y, float distance_sensorL, float distance_senso
         distance_sensorM = min(distance_sensorM, goto_limit);
         distance_sensorT = min(distance_sensorT, goto_limit);
 
-        if (opponent_detection(distance_sensorT) == 1){
-            goto_state = 0;
-            return SEARCH;
-        }
+        // if (opponent_detection(distance_sensorT) == 1){
+        //     goto_state = 0;
+        //     return SEARCH;
+        // }
         // check if ball is detected
         goto_detectM = detect_ball_mid(distance_sensorM, distance_sensorT, goto_limit);
         float test_L = detect_ball_left(distance_sensorL, goto_limit);
@@ -358,17 +358,17 @@ int goto_task_alt(float x, float y, float distance_sensorL, float distance_senso
     }
 
     /// Return to search if the robot has travelled too far
-    if (calculate_distance(detected_robot_x, detected_robot_y, x, y) > goto_limit * 1.5){
-        goto_state = 0;
-        return SEARCH;
-    }
+    // if (calculate_distance(detected_robot_x, detected_robot_y, x, y) > goto_limit * 1.5){
+    //     goto_state = 0;
+    //     return SEARCH;
+    // }
 
     // __________
     //
     // Moves the robot to whatever direction the ball is detected
     // __________
 
-    if (goto_detectM <= READY_TO_COLLECT_THRESHOLD){
+    if (goto_detectM <= READY_TO_COLLECT_THRESHOLD && goto_detectM != 0.0){
         goto_linX = 0.0;
         goto_angZ = 0.0;
         goto_state = 0;
@@ -381,35 +381,36 @@ int goto_task_alt(float x, float y, float distance_sensorL, float distance_senso
     }
     else {
         // ball detected on the sides, turn towards the ball
-        // float turning_angle = 0.0;
-        // float turning_radius = 0.0;
-        // float turning_arc = 0.0;
-        // float turning_segment = 0.0;
+        float turning_angle = 0.0;
+        float turning_radius = 0.0;
+        float turning_arc = 0.0;
+        float turning_segment = 0.0;
         float turning_direction = 1.0;
         if (goto_detectL > 0.0){
             // ball on left, turn left
             turning_direction = 1.0;
-            // turning_segment = sqrt(pow(goto_detectL, 2) + pow(ROBOT_WIDTH/2.0, 2));
-            // turning_angle = 2 * (90.0 - atanDegrees(2 * goto_detectL / ROBOT_WIDTH));
+            turning_segment = sqrt(pow(goto_detectL, 2) + pow(ROBOT_WIDTH/2.0, 2));
+            turning_angle = 2 * (90.0 - atan2(goto_detectL, ROBOT_WIDTH/2.0)/DEGREE_TO_RADIAN);
         }
         else if (goto_detectR > 0.0){
             // ball on right, turn right
             turning_direction = -1.0;
-            // turning_segment = sqrt(pow(goto_detectR, 2) + pow(ROBOT_WIDTH/2.0, 2));
-            // turning_angle = 2 * (90.0 - atanDegrees(2 * goto_detectR / ROBOT_WIDTH));
+            turning_segment = sqrt(pow(goto_detectR, 2) + pow(ROBOT_WIDTH/2.0, 2));
+            turning_angle = 2 * (90.0 - atan2(goto_detectR, ROBOT_WIDTH/2.0) / DEGREE_TO_RADIAN);
         }
-        // turning_radius = turning_segment / (2 * sinDegrees(turning_angle / 2));
-        // turning_arc = turning_radius * turning_angle;
+        turning_radius = turning_segment / (2 * sinDegrees(turning_angle / 2));
+        turning_arc = turning_radius * turning_angle;
 
-        // float rpmL = calculate_rpmL(turning_arc, turning_direction * turning_angle);
-        // float rpmR = calculate_rpmR(turning_arc, turning_direction * turning_angle);
-        // float scaled_rpmL = scale_rpmL(rpmL, rpmR);
-        // float scaled_rpmR = scale_rpmR(rpmL, rpmR);
+        float rpmL = calculate_rpmL(turning_arc, turning_direction * turning_angle);
+        float rpmR = calculate_rpmR(turning_arc, turning_direction * turning_angle);
+        float scaled_rpmL = scale_rpmL(rpmL, rpmR);
+        float scaled_rpmR = scale_rpmR(rpmL, rpmR);
 
-        // goto_linX = calculate_linear_x(scaled_rpmL, scaled_rpmR);
-        // goto_angZ = calculate_angular_z(scaled_rpmL, scaled_rpmR);
+        goto_linX = calculate_linear_x(scaled_rpmL, scaled_rpmR);
+        goto_angZ = calculate_angular_z(scaled_rpmL, scaled_rpmR);
+
         goto_linX = 0.0;
-        goto_angZ = turning_direction * MAX_TURN;
+        goto_angZ = turning_direction * MAX_TURN * 0.1;
     }
     return GOTO;
 }

@@ -52,15 +52,15 @@ int collect_task_alt(float mid_sensor, float arm_position){
         collect_servo = 0.0;
         return DELIVER;
     }
+    else if (mid_sensor > BALL_IN_CHAMBER_DISTANCE && arm_position == SERVO_COLLECT_POSITION){
+        return SEARCH;
+    }
     else if (mid_sensor <= READY_TO_COLLECT_THRESHOLD){
         collect_linX = MAX_SPEED;
         collect_angZ = 0.0;
         collect_servo = SERVO_COLLECT_POSITION;
-        return COLLECT;
     }
-    else{
-        return SEARCH;
-    }
+    return COLLECT;
 }
 
 float get_collect_servo(){

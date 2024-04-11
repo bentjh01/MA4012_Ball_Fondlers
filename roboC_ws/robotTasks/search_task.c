@@ -262,9 +262,9 @@ int search_task_alt(float left_distance, float right_distance, float mid_distanc
   // static int search_state;
 
   if (search_state == 0){
-    if (move_360(MAX_TURN) == FAIL){
+    if (move_360(MAX_TURN * 0.5) == FAIL){
       search_linX = 0.0;
-      search_angZ = MAX_TURN;
+      search_angZ = MAX_TURN * 0.5;
     }
     else{
       // switch to move forward cycle

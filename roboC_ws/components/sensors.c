@@ -248,7 +248,7 @@ float detect_ball_mid(float mid_sensor_dist, float top_sensor_dist, float limit_
   float result;
 
   // if (fabs(mid_sensor_dist - top_sensor_dist) > OPP_DETECT_THRESHOLD){
-  if (opponent_detection(top_sensor_dist)==1){
+  if (top_sensor_dist < limit_dist){
     result = 0;
   }
   // falling edge i.e. high to low
