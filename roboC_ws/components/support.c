@@ -84,3 +84,10 @@ float min(float x1, float x2){
 	}
 	return x2;
 }
+
+float max(float x1, float x2){
+	if (x1 >= x2){
+		return x1;
+	}
+	return x2;
+}
