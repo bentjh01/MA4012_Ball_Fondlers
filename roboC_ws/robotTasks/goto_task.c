@@ -298,6 +298,8 @@ float get_goto_angZ(){
 }
 
 /// @brief Alternative GOTO task
+/// @param x
+/// @param y
 /// @param distance_sensorL
 /// @param distance_sensorR
 /// @param distance_sensorM
@@ -306,7 +308,7 @@ float get_goto_angZ(){
 /// @param detectR_dist
 /// @param detectM_dist
 /// @return SEARCH if opponent detected, GOTO otherwise
-int goto_task_alt(float distance_sensorL, float distance_sensorR, float distance_sensorM, float distance_sensorT, float detectL_dist, float detectR_dist, float detectM_dist){
+int goto_task_alt(float x, float y, float distance_sensorL, float distance_sensorR, float distance_sensorM, float distance_sensorT, float detectL_dist, float detectR_dist, float detectM_dist){
     /// GOTO Task
     /// 1. Limits the goto distance to the initial detected ball distance
     /// 2. Uses the distance sensors to detect the ball within this limit 
@@ -347,7 +349,11 @@ int goto_task_alt(float distance_sensorL, float distance_sensorR, float distance
         goto_detectR = detect_ball_right(distance_sensorR);
     }
 
-    if (calculate_distance())
+    /// Return to search if the robot has travelled too far
+    if (calculate_distance(detected_robot_x, detected_robot_y, x, y) > goto_limit * 1.5){
+        goto_state = 0;
+        return SEARCH;
+    }
 
     // __________
     //
