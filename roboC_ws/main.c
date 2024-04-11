@@ -263,8 +263,8 @@ task main()
 			case SEARCH:
 				// task_status = GOTO;
 				opp_detected = opponent_detection(distance_sensor_top);
-				task_status = search_task(robot_x, robot_y, robot_yaw, distance_sensor_left, distance_sensor_right, distance_sensor_mid, distance_sensor_top, opp_detected, robot_en_rpmL, robot_en_rpmR);
-				// task_status = search_task_alt(distance_sensor_mid, distance_sensor_left, distance_sensor_right, distance_sensor_top);
+				// task_status = search_task(robot_x, robot_y, robot_yaw, distance_sensor_left, distance_sensor_right, distance_sensor_mid, distance_sensor_top, opp_detected, robot_en_rpmL, robot_en_rpmR);
+				task_status = search_task_alt(robot_yaw, distance_sensor_mid, distance_sensor_left, distance_sensor_right, distance_sensor_top);
 				// ball_detected_side = get_search_detected_side();
 				robot_cmd_linX = get_search_linX();
 				robot_cmd_angZ = get_search_angZ();

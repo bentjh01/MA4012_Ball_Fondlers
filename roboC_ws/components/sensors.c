@@ -197,7 +197,7 @@ int detect_ball(float left_sensor_dist, float right_sensor_dist, float mid_senso
 /// @brief Checks if sensor detects a ball
 /// @param left_sensor_dist
 /// @return 0 if no detection, Distance reading if detection
-/*float detect_ball_left(float left_sensor_dist){
+float detect_ball_left(float left_sensor_dist){
   static float prev_left;
   float dr = prev_left-left_sensor_dist;
   float result;
@@ -284,4 +284,4 @@ int detect_back_wall(float left_sensor, float right_sensor, float mid_sensor){
   // else{
   //   return NOT_TRIGGERED;
   // }
-}*/
+}

@@ -26,7 +26,7 @@ int deliver_task(float yaw, float servo_position, int ball_in_chamber, int back_
         deliver_set_linX = -MAX_SPEED;
     }
 
-    // Correcting the error when trasition -s180
+    // Correcting the error when trasition -180
     if (deliver_arm_position_err <= -180.0){
         deliver_arm_position_err += 360.0;
     }

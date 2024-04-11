@@ -141,7 +141,7 @@ void avoid_case_check(float rb_x, float rb_y, float rb_yaw, int FL, int FR, int 
 		//return;
 	}
 	// Define the reverse distance
-	if (robot_x < 60){
+	if (rb_x < 60){
 		EDGE_REVERSE_DISTANCE = EDGE_REVERSE_DISTANCE_BIG;
 	} else {
 		EDGE_REVERSE_DISTANCE = EDGE_REVERSE_DISTANCE_SMALL;
