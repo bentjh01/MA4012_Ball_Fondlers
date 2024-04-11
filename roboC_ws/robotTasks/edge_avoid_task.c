@@ -195,3 +195,7 @@ float get_edge_avoid_linX(){
 float get_edge_avoid_angZ(){
 	return edge_angZ;
 }
+
+int get_edge_line_case(){
+	return edge_line_case;
+}

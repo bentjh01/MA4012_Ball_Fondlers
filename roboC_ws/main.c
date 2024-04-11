@@ -227,7 +227,7 @@ task main()
 			if (task_status != EDGE){
 				prev_task_status = task_status;
 			}
-			
+
 			if(task_status == DELIVER && fabs(robot_yaw) < YAW_TOLERANCE){
 				int line_case = get_edge_line_case();
 				if (line_case == 1001){
@@ -241,7 +241,8 @@ task main()
 				}
 			}
 			else{
-			task_status = EDGE;
+				task_status = EDGE;
+			}
 			avoid_case_check(robot_x, robot_y, robot_yaw, robot_line_FL, robot_line_FR, robot_line_BL, robot_line_BR);
 			// wall_case_check(robot_yaw, robot_line_FL, robot_line_FR, robot_line_BL, robot_line_BR); @Unizz20
 		}

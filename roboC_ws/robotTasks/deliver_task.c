@@ -13,7 +13,8 @@ int deliver_task(float yaw, float servo_position, int ball_in_chamber, int back_
     // Start the delivery task
     if (delivery_startup == TRIGGERED){
         // Face the back wall
-        deliver_set_angZ = -yaw * DELIVER_YAW_KP;
+        // deliver_set_angZ = -yaw * DELIVER_YAW_KP;
+        deliver_set_angZ = -sgn(yaw) * MAX_TURN;
         deliver_set_linX = 0.0;
             if (abs(yaw) < YAW_TOLERANCE){
                 delivery_startup = NOT_TRIGGERED;
