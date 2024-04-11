@@ -208,16 +208,17 @@ float search_detectM = 0.0;
 
 
 int move_forward(float cmd_linX, float distance){
+  static int move_forward_init = 1;
   static float move_forward_count = 0.0;
   // Startup of the forward movement
-  if (move_forward_count >= 0.0){
-    // Initialize the count
+  if (move_forward_init == 1){
     move_forward_count = distance/cmd_linX/DT_MAIN;
-    return FAIL;
+    move_forward_init = 0;
   }
-  // Decrement the count
   move_forward_count --;
+  // Decrement the count
   if (move_forward_count <= 0.0){
+    move_forward_init = 1;
     return SUCCESS;
   }
   return FAIL;
@@ -227,16 +228,17 @@ int move_forward(float cmd_linX, float distance){
 /// @param  cmd_angZ angular velocity command
 /// @return the success or failure of the 360 degree rotation
 int move_360(float cmd_angZ){
+  static int move360_init = 1;
   static float move_360_count = 0.0;
-  // Startup of the 360 degree rotation
-  if (move_360_count >= 0.0){
-    // Initialize the count
+  // Initialise count
+  if (move360_init == 1){
     move_360_count = 360.0/abs(cmd_angZ)/DT_MAIN;
-    return FAIL;
+    move360_init = 0;
   }
   // Decrement the count
   move_360_count --;
   if (move_360_count <= 0.0){
+    move360_init = 1;
     return SUCCESS;
   }
   return FAIL;
@@ -244,6 +246,7 @@ int move_360(float cmd_angZ){
 /// @brief Alternative search task
 /// @param ball_detection ball detection status
 /// @return the task to be executed
+static int search_state = 0;
 int search_task_alt(float left_distance, float right_distance, float mid_distance, float top_distance){
   /// Search Task
   /// Motion
@@ -256,7 +259,8 @@ int search_task_alt(float left_distance, float right_distance, float mid_distanc
 
   /// SEARCH MOTION
   // 0 for rotate, 1 for move forward
-  static int search_state = 0;
+  // static int search_state;
+
   if (search_state == 0){
     if (move_360(MAX_TURN) == FAIL){
       search_linX = 0.0;
