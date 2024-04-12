@@ -157,11 +157,11 @@ static float goto_angZ;
 //     if(activate_wall_protocol){
 //     	go_to_target_yaw(0, yaw, 0);
 
-//     	if(fabs(yaw) < YAW_TOLERANCE){
-//     		return HOME;
-//     	}
-//     	return GOTO;
-//     }
+    	if(fabs(yaw) < YAW_TOLERANCE){
+    		return SEARCH;
+    	}
+    	return GOTO;
+    }
 
 //     ball_location = get_ball_location(left_sensor_dist, right_sensor_dist, mid_sensor_dist, top_sensor_dist, opp_detected, yaw);     //get latest ball location
 

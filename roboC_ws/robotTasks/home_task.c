@@ -3,6 +3,11 @@
 static float home_linX = 0.0;
 static float home_angZ = 0.0;
 static float home_servo = 0.0;
+static int home_startup_phase = 1;
+static float home_initial_x = 0;
+
+// Break from HOME when ball is detected. 
+// Ignore back sensors for home task
 
 int home_task(float x, float y, float yaw, float arm_position, float distanceL, float distanceR, float distanceM, float distanceT){
     home_servo = 0.0;

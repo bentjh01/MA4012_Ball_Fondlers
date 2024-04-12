@@ -61,8 +61,19 @@ ________________________________________________________________________________
 
 #define FILTER_GAIN_LONG_L 	    0.5 //(output = prev_input) 0 < FILTER_GAIN < 1 (output = new_input)
 #define FILTER_GAIN_LONG_R 	    0.50 //(output = prev_input) 0 < FILTER_GAIN < 1 (output = new_input)
-#define FILTER_GAIN_LONG_MID 	0.6 //(output = prev_input) 0 < FILTER_GAIN < 1 (output = new_input)
-#define FILTER_GAIN_SHORT_TOP 	0.6 //(output = prev_input) 0 < FILTER_GAIN < 1 (output = new_input)
+#define FILTER_GAIN_LONG_MID 	0.5 //(output = prev_input) 0 < FILTER_GAIN < 1 (output = new_input)
+#define FILTER_GAIN_SHORT_TOP 	1.0 //(output = prev_input) 0 < FILTER_GAIN < 1 (output = new_input)
+#define BALL_IN_CHAMBER_DISTANCE -0.5 // [cm]
+#define BALL_THRESHOLD_LNR          	35.0 //cm wrt to edge of ramp
+#define BALL_THRESHOLD_MID          	28.0 //cm wrt to edge of ramp
+#define OPP_CLOSENESS_THRESHOLD     	35.0 //cm wrt to edge of ramp
+#define OPP_DIFFERENTIATION_THRESHOLD	8.0 //cm
+#define READY_TO_COLLECT_THRESHOLD  	4.0 //cm wrt to edge of ramp
+
+#define BALL_THRESHOLD_CHANGE 20.0 // cm
+#define LIMIT_DISTANCE_READINGS 40.0 //
+#define OPP_DETECT_THRESHOLD 15.0 // cm
+#define FLAT_SURFACE_THRESHOLD 10.0 // cm
 
 // LINE SENSOR
 #define LINE_FL_THRESHOLD       1329 // Midpoint of black point and yellow point
@@ -106,7 +117,7 @@ ________________________________________________________________________________
 // SERVO
 #define SERVO_TOLERANCE 7.0 // [deg] TODO
 #define SERVO_POSITION_GAIN 7.50 // [deg] TODO
-#define SERVO_KP 0.8
+#define SERVO_KP 0.85
 #define SWITCH_A_POSITION 0.0 //[deg] TODO
 #define SWITCH_B_POSITION 90.0 //[deg] TODO
 #define SWITCH_C_POSITION 180.0 //[deg] TODO

@@ -3,24 +3,19 @@
 float deliver_set_linX = 0.0;
 float deliver_set_angZ = 0.0;
 float deliver_set_servo = SERVO_COLLECT_POSITION;
-int reset_robot = NOT_TRIGGERED;
+int reset_x = NOT_TRIGGERED;
+
+// Delay to release ball
 
 int deliver_task(float yaw, float servo_position, int ball_in_chamber, int back_limit_switch, int lineBL, int lineBR) {
-    /// Deliver Task
-    /// 1. Inplace rotate to face the back wall at MAX_TURN
-    /// 2. Move towards the back wall at MAX_SPEED
-    /// 3. Adjust the angular velocity to correct the heading
-    /// 4. Wait for the back limit switch to be triggered
-    /// 5. Move the arm to the delivery position
-    /// 6. Return to the HOME state
-
-    static int delivery_startup;
-
-    // Start the delivery task
+    // static int 
+    static int delivery_wait;
+// 
     // float deliver_arm_position_err = SERVO_DELIVER_POSITION - servo_position;
 
+    // // Start the delivery task
     // if (delivery_startup == TRIGGERED){
-    //     // Inplace rotate to face the back wall initially
+    //     // Face the back wall
     //     // deliver_set_angZ = -yaw * DELIVER_YAW_KP;
     //     deliver_set_angZ = -sgn(yaw) * MAX_TURN;
     //     deliver_set_linX = 0.0;
@@ -34,13 +29,21 @@ int deliver_task(float yaw, float servo_position, int ball_in_chamber, int back_
     //     deliver_set_linX = -MAX_SPEED;
     // }
 
+    // // Correcting the error when trasition -180
+    // if (deliver_arm_position_err <= -180.0){
+    //     deliver_arm_position_err += 360.0;
+    // }
+    // else if (deliver_arm_position_err > 180.0){
+    //     deliver_arm_position_err -= 360.0;
+    // }
+
     if (fabs(yaw) > YAW_TOLERANCE){
         deliver_set_angZ = -yaw * DELIVER_YAW_KP;
         deliver_set_linX = 0.0;
     }
     else{
-        deliver_set_angZ = 0.0;
         deliver_set_linX = -MAX_SPEED;
+        deliver_set_angZ = 0.0;
     }
 
     // Move the arm to the delivery position
@@ -51,16 +54,21 @@ int deliver_task(float yaw, float servo_position, int ball_in_chamber, int back_
     
     // CHECK SUCCESS CRITERIA
     if (servo_position == SERVO_DELIVER_POSITION) {
-        // reinitialize the task and return to the HOME state
-        reset_robot = NOT_TRIGGERED;
-        deliver_set_servo = SERVO_COLLECT_POSITION;
-        deliver_set_angZ = 0.0;
-        deliver_set_linX=0.0;
-        return HOME;
+        delivery_wait --;
+        // if (delivery_wait <= 0){
+            reset_x = TRIGGERED;
+            deliver_set_servo = SERVO_COLLECT_POSITION;
+            deliver_set_angZ = 0.0;
+            deliver_set_linX=0.0;
+            return HOME;
+        // }
     }
-    else {
+    // else if (ball_in_chamber == NOT_TRIGGERED){
+    //     return SEARCH;
+    // }
+    // else {
         return DELIVER;
-    }
+    // }
 }
 
 float get_reset_robot(){

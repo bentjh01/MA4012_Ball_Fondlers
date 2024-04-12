@@ -219,7 +219,7 @@ task main()
 		clearTimer(T1);
 		// main Loop
 		if (edge_detected(robot_line_FL, robot_line_BL, robot_line_BR, robot_line_FR) == TRIGGERED){
-		// if (1==2){
+		// if (1 == 2){
 			if (task_status != EDGE){
 				prev_task_status = task_status;
 			}
@@ -235,18 +235,20 @@ task main()
 					}
 				}
 			}
-			// else if (task_status == HOME && fabs(robot_yaw) < YAW_TOLERANCE){
-			// 	if (get_edge_line_case() == 0110 || get_edge_line_case() == 0111 || get_edge_line_case() == 1110){
-			// 		task_status = HOME;
-			// 	};
-			// }
 			else{
 				task_status = EDGE;
 			}
 			avoid_case_check_alt(robot_x, robot_y, robot_yaw, robot_line_FL, robot_line_FR, robot_line_BL, robot_line_BR);
+			// avoid_case_check(robot_x, robot_y, robot_yaw, robot_line_FL, robot_line_FR, robot_line_BL, robot_line_BR);
+			// wall_case_check(robot_yaw, robot_line_FL, robot_line_FR, robot_line_BL, robot_line_BR); @Unizz20
 			}
 			switch (task_status){
 			case EDGE:
+				//reset ignore edge
+				goto_ignore_edge = 0;
+
+				task_status = edge_avoid_alt_task(robot_x, robot_y, robot_yaw, prev_task_status);
+				// task_status = edge_avoid_task(robot_x, robot_y, robot_yaw, prev_task_status);
 				robot_cmd_linX = get_edge_avoid_linX();
 				robot_cmd_angZ = get_edge_avoid_angZ();
 				task_status = edge_avoid_alt_task(robot_x, robot_y, robot_yaw, prev_task_status);
