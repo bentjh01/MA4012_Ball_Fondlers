@@ -299,7 +299,6 @@ task main()
 				reset_counters = 0;
 				break;
 			case COLLECT:
-				// task_status = DELIVER;
 				task_status = collect_task(robot_arm_position, distance_sensor_mid, distance_sensor_top, opp_detected, ball_in_chamber_status);
 				robot_cmd_linX = get_collect_linX();
 				robot_cmd_angZ = get_collect_angZ();
@@ -307,7 +306,6 @@ task main()
 				reset_counters = 0;
 				break;
 			case DELIVER:
-				// task_status = HOME;
 				task_status = deliver_task(robot_yaw, robot_arm_position, ball_in_chamber_status, limit_switch_D, robot_line_BR, robot_line_BL);
 				robot_cmd_linX = get_deliver_linX();
 				robot_cmd_angZ = get_deliver_angZ();
