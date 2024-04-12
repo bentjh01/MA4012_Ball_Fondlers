@@ -71,6 +71,7 @@ float robot_arm_move(float set_position, float arm_position){
 	if (fabs(err_arm) > SERVO_TOLERANCE){
 		// set_servo_power = sgn(err_arm) * MAX_POWER * SERVO_GAIN;
 		set_servo_power = err_arm * SERVO_KP;
+        // set_servo_power = err_arm/90.0 * MAX_POWER;
     set_servo_power = limit_byte(set_servo_power);
 	}
     motor[servo] = -set_servo_power;

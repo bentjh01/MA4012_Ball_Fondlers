@@ -5,9 +5,12 @@ float deliver_set_angZ = 0.0;
 float deliver_set_servo = SERVO_COLLECT_POSITION;
 int reset_x = NOT_TRIGGERED;
 
-int deliver_task(float yaw, float servo_position, int ball_in_chamber, int back_limit_switch, int lineBL, int lineBR) {
-    static int delivery_startup;
+// Delay to release ball
 
+int deliver_task(float yaw, float servo_position, int ball_in_chamber, int back_limit_switch, int lineBL, int lineBR) {
+    // static int 
+    static int delivery_wait;
+// 
     // float deliver_arm_position_err = SERVO_DELIVER_POSITION - servo_position;
 
     // // Start the delivery task
@@ -51,18 +54,21 @@ int deliver_task(float yaw, float servo_position, int ball_in_chamber, int back_
     
     // CHECK SUCCESS CRITERIA
     if (servo_position == SERVO_DELIVER_POSITION) {
-        reset_x = TRIGGERED;
-        deliver_set_servo = SERVO_COLLECT_POSITION;
-        deliver_set_angZ = 0.0;
-        deliver_set_linX=0.0;
-        return HOME;
+        delivery_wait --;
+        // if (delivery_wait <= 0){
+            reset_x = TRIGGERED;
+            deliver_set_servo = SERVO_COLLECT_POSITION;
+            deliver_set_angZ = 0.0;
+            deliver_set_linX=0.0;
+            return HOME;
+        // }
     }
     // else if (ball_in_chamber == NOT_TRIGGERED){
     //     return SEARCH;
     // }
-    else {
+    // else {
         return DELIVER;
-    }
+    // }
 }
 
 float get_reset_x(){

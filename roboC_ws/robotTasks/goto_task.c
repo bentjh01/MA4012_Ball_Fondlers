@@ -157,7 +157,7 @@ int goto_task(float x, float y, float yaw, float left_sensor_dist, float right_s
     	go_to_target_yaw(0, yaw, 0);
 
     	if(fabs(yaw) < YAW_TOLERANCE){
-    		return HOME;
+    		return SEARCH;
     	}
     	return GOTO;
     }
