@@ -65,15 +65,15 @@ ________________________________________________________________________________
 #define FILTER_GAIN_SHORT_TOP 	0.6 //(output = prev_input) 0 < FILTER_GAIN < 1 (output = new_input)
 
 // LINE SENSOR
-// #define LINE_FL_THRESHOLD       1252.0 // Midpoint of black point and yellow point
-// #define LINE_BL_THRESHOLD       1147.0 // Midpoint of black point and yellow point
-// #define LINE_BR_THRESHOLD       1114.75 // Midpoint of black point and yellow point
-// #define LINE_FR_THRESHOLD       1320.0// Midpoint of black point and yellow point
+#define LINE_FL_THRESHOLD       1252.0 // Midpoint of black point and yellow point
+#define LINE_BL_THRESHOLD       1147.0 // Midpoint of black point and yellow point
+#define LINE_BR_THRESHOLD       1114.75 // Midpoint of black point and yellow point
+#define LINE_FR_THRESHOLD       1320.0// Midpoint of black point and yellow point
 
-#define LINE_FL_THRESHOLD       2340.0 // Midpoint of black point and yellow point
-#define LINE_BL_THRESHOLD       927.0 // Midpoint of black point and yellow point
-#define LINE_BR_THRESHOLD       154.0 // Midpoint of black point and yellow point
-#define LINE_FR_THRESHOLD       980.0// Midpoint of black point and yellow point
+// #define LINE_FL_THRESHOLD       2340.0 // Midpoint of black point and yellow point
+// #define LINE_BL_THRESHOLD       927.0 // Midpoint of black point and yellow point
+// #define LINE_BR_THRESHOLD       154.0 // Midpoint of black point and yellow point
+// #define LINE_FR_THRESHOLD       980.0// Midpoint of black point and yellow point
 
 #define FILTER_GAIN_LINE_FL 	0.60 //(output = prev_input) 0 < FILTER_GAIN < 1 (output = new_input)
 #define FILTER_GAIN_LINE_BL 	0.60 // (output = prev_input) 0 < FILTER_GAIN < 1 (output = new_input)
