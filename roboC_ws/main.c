@@ -273,7 +273,8 @@ task main()
 				break;
 			case HOME:
 				// task_status = SEARCH;
-				task_status = home_task(robot_x, robot_y, robot_yaw, robot_arm_position);
+				opp_detected = opponent_detection(distance_sensor_top);
+				task_status = home_task(robot_x, robot_y, robot_yaw, robot_arm_position, distance_sensor_mid, distance_sensor_top, opp_detected, distance_sensor_left, distance_sensor_right);
 				robot_cmd_linX = get_home_linX();
 				robot_cmd_angZ = get_home_angZ();
 				robot_cmd_arm_position = get_home_servo();
