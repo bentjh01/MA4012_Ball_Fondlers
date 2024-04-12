@@ -7,7 +7,7 @@ TUNABLE TASK PARAMETERS
 ______________________________________________________________________________________________________________________*/
 
 
-#define BALL_IN_CHAMBER_DISTANCE 0.8 // [cm]
+#define BALL_IN_CHAMBER_DISTANCE -0.5 // [cm]
 #define BALL_THRESHOLD_LNR          	35.0 //cm wrt to edge of ramp
 #define BALL_THRESHOLD_MID          	35.0 //cm wrt to edge of ramp
 #define OPP_CLOSENESS_THRESHOLD     	35.0 //cm wrt to edge of ramp

@@ -280,11 +280,11 @@ task main()
 				robot_cmd_linX = get_deliver_linX();
 				robot_cmd_angZ = get_deliver_angZ();
 				robot_cmd_arm_position = get_deliver_servo();
+				task_status = deliver_task(robot_yaw, robot_arm_position, ball_in_chamber_status, limit_switch_D, robot_line_BR, robot_line_BL);
 				if (get_reset_robot() == TRIGGERED){
 					robot_x = 0.0;
 					robot_yaw = 0.0;
 				}
-				task_status = deliver_task(robot_yaw, robot_arm_position, ball_in_chamber_status, limit_switch_D, robot_line_BR, robot_line_BL);
 				break;
 			}
 

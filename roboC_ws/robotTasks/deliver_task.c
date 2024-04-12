@@ -17,20 +17,29 @@ int deliver_task(float yaw, float servo_position, int ball_in_chamber, int back_
     static int delivery_startup;
 
     // Start the delivery task
-    float deliver_arm_position_err = SERVO_DELIVER_POSITION - servo_position;
+    // float deliver_arm_position_err = SERVO_DELIVER_POSITION - servo_position;
 
-    if (delivery_startup == TRIGGERED){
-        // Inplace rotate to face the back wall initially
-        // deliver_set_angZ = -yaw * DELIVER_YAW_KP;
-        deliver_set_angZ = -sgn(yaw) * MAX_TURN;
-        deliver_set_linX = 0.0;
-            if (abs(yaw) < YAW_TOLERANCE){
-                delivery_startup = NOT_TRIGGERED;
-            }
-    }
-    else {
-        // Move towards the back wall while making small corrections
+    // if (delivery_startup == TRIGGERED){
+    //     // Inplace rotate to face the back wall initially
+    //     // deliver_set_angZ = -yaw * DELIVER_YAW_KP;
+    //     deliver_set_angZ = -sgn(yaw) * MAX_TURN;
+    //     deliver_set_linX = 0.0;
+    //         if (abs(yaw) < YAW_TOLERANCE){
+    //             delivery_startup = NOT_TRIGGERED;
+    //         }
+    // }
+    // else {
+    //     // Move towards the back wall while making small corrections
+    //     deliver_set_angZ = -yaw * DELIVER_YAW_KP;
+    //     deliver_set_linX = -MAX_SPEED;
+    // }
+
+    if (fabs(yaw) > YAW_TOLERANCE){
         deliver_set_angZ = -yaw * DELIVER_YAW_KP;
+        deliver_set_linX = 0.0;
+    }
+    else{
+        deliver_set_angZ = 0.0;
         deliver_set_linX = -MAX_SPEED;
     }
 
