@@ -83,6 +83,11 @@ int prev_task_status = HOME;
 
 // ball status
 int ball_in_chamber_status;
+int ball_on_left;
+int ball_on_right;
+int ball_on_mid;
+int opp_detected;
+int wall_detected;
 // float detected_ball_yaw;
 
 // counters
@@ -113,23 +118,25 @@ void read_sensors(float dt){
 
 
 	distance_sensor_mid = calculate_long_distance(filter_distance_mid(SensorValue[long_distance_M_pin])) - MID_SENSOR_OFFSET;
-	// distance_sensor_mid = min(distance_sensor_mid, LIMIT_DISTANCE_READINGS);
 	distance_sensor_top = calculate_short_distance(filter_distance_top(SensorValue[short_distance_T_pin])) - TOP_SENSOR_OFFSET;
-	// distance_sensor_top = min(distance_sensor_top, LIMIT_DISTANCE_READINGS);
 	distance_sensor_left = calculate_long_distance(filter_distance_L(SensorValue[long_distance_L_pin])) - LEFT_SENSOR_OFFSET;
-	// distance_sensor_left = min(distance_sensor_left, LIMIT_DISTANCE_READINGS);
 	distance_sensor_right = calculate_long_distance(filter_distance_R(SensorValue[long_distance_R_pin])) - RIGHT_SENSOR_OFFSET;
-	// distance_sensor_right = min(distance_sensor_right, LIMIT_DISTANCE_READINGS);
-
-	ball_in_chamber_status = check_ball_in_chamber(distance_sensor_mid);
 
 	robot_en_rpmL = filter_encoderL(getMotorEncoder(motor_L) * 60.0/dt /ENCODER_RESOLUTION);
 	robot_en_rpmR = filter_encoderR(getMotorEncoder(motor_R) * 60.0/dt /ENCODER_RESOLUTION);
 
-
-
 	resetMotorEncoder(motor_R);
 	resetMotorEncoder(motor_L);
+	return;
+}
+
+void sensor_processing(){
+	ball_in_chamber_status = check_ball_in_chamber(distance_sensor_mid);
+	ball_on_left = detect_ball(distance_sensor_left, BALL_THRESHOLD_LNR);
+	ball_on_right = detect_ball(distance_sensor_right, BALL_THRESHOLD_LNR);
+	ball_on_mid = detect_ball(distance_sensor_mid, BALL_THRESHOLD_LNR);
+	wall_detected = detect_back_wall(distance_sensor_left, distance_sensor_right, distance_sensor_mid);
+	opp_detected = detect_opp(distance_sensor_left, distance_sensor_right, distance_sensor_mid);
 	return;
 }
 
@@ -201,6 +208,7 @@ task robot_read(){
 	while(1){
 		clearTimer(T2);
 		read_sensors(DT_READ);
+		sensor_processing();
 		update_robot_odom(DT_READ);
 		robot_execute(DT_READ);
 		while (time1[T2] < DT_READ * 1000){}

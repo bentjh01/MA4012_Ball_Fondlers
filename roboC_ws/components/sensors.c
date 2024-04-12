@@ -174,66 +174,39 @@ int opponent_detection(float short_sensor_dist){
   }
 }
 
-int detect_ball(float left_sensor_dist, float right_sensor_dist, float mid_sensor_dist, float top_sensor_dist, int opp_detected){
-  // Returns 1 if a something that is not an opponent is detected, 0 otherwise
-  // return 0 when there is no detection
-	//THE ORDER OF CHECK MATTERS!
-  if (mid_sensor_dist <= BALL_THRESHOLD_MID && !opp_detected){
+// int detect_ball(float left_sensor_dist, float right_sensor_dist, float mid_sensor_dist, float top_sensor_dist, int opp_detected){
+//   // Returns 1 if a something that is not an opponent is detected, 0 otherwise
+//   // return 0 when there is no detection
+// 	//THE ORDER OF CHECK MATTERS!
+//   if (mid_sensor_dist <= BALL_THRESHOLD_MID && !opp_detected){
+//     return 1;
+//   }
+//   else if(mid_sensor_dist <= BALL_THRESHOLD_MID && opp_detected && fabs(mid_sensor_dist-top_sensor_dist) > OPP_DIFFERENTIATION_THRESHOLD){
+//     return 1;
+//   }
+//   else if(mid_sensor_dist <= BALL_THRESHOLD_MID && opp_detected && fabs(mid_sensor_dist-top_sensor_dist) <= OPP_DIFFERENTIATION_THRESHOLD){
+//     return 0;
+//   }
+//   else if(left_sensor_dist <= BALL_THRESHOLD_LNR || right_sensor_dist <= BALL_THRESHOLD_LNR){
+//   	return 1;
+//   }
+//   else{
+//     return 0;
+//   }
+// }
+
+/// @brief Checks if sensor detects a ball if the distance is less than its limit
+/// @param sensor_dist
+/// @param limit_dist
+/// @return 0 if no detection, 1 if detection
+int detect_ball(float sensor_dist, float limit_dist){
+  sensor_dist = min(sensor_dist, limit_dist);
+  if (sensor_dist < limit_dist){
     return 1;
   }
-  else if(mid_sensor_dist <= BALL_THRESHOLD_MID && opp_detected && fabs(mid_sensor_dist-top_sensor_dist) > OPP_DIFFERENTIATION_THRESHOLD){
-    return 1;
-  }
-  else if(mid_sensor_dist <= BALL_THRESHOLD_MID && opp_detected && fabs(mid_sensor_dist-top_sensor_dist) <= OPP_DIFFERENTIATION_THRESHOLD){
-    return 0;
-  }
-  else if(left_sensor_dist <= BALL_THRESHOLD_LNR || right_sensor_dist <= BALL_THRESHOLD_LNR){
-  	return 1;
-  }
   else{
     return 0;
   }
-}
-
-/// @brief Checks if sensor detects a ball by a large reduction in distance reading
-/// @param left_sensor_dist
-/// @return 0 if no detection, Distance reading if detection
-float detect_ball_left(float left_sensor_dist, float limit_dist){
-  static float prev_left;
-  left_sensor_dist = min(left_sensor_dist, limit_dist);
-  float dr = prev_left-left_sensor_dist;
-  float result;
-  // falling edge i.e. high to low
-  // if (dr >= limit_dist){
-  if (left_sensor_dist < limit_dist){
-    result = left_sensor_dist;
-  }
-  else{
-    result = 0;
-  }
-  prev_left = left_sensor_dist;
-  return result;
-}
-
-/// @brief Checks if sensor detects a ball by a large reduction in distance reading
-/// @param right_sensor_dist
-/// @return 0 if no detection, Distance reading if detection
-float detect_ball_right(float right_sensor_dist, float limit_dist){
-  static float prev_right;
-  right_sensor_dist = min(right_sensor_dist, limit_dist);
-  float dr = prev_right-right_sensor_dist;
-  float result;
-  prev_right = right_sensor_dist;
-  // falling edge i.e. high to low
-  // if (dr >= limit_dist/2.0){
-  if (right_sensor_dist < limit_dist){
-    result = right_sensor_dist;
-  }
-  else{
-    result = 0;
-  }
-  prev_right = right_sensor_dist;
-  return result;
 }
 
 /// @brief Checks if sensor detects a ball or to ignore the detection if it is the opponent robot
@@ -270,26 +243,16 @@ float detect_ball_mid(float mid_sensor_dist, float top_sensor_dist, float limit_
 /// @param right_sensor
 /// @param mid_sensor
 /// @return TRIGGERED if back wall is detected, NOT_TRIGGERED otherwise
-int detect_back_wall(float left_sensor, float right_sensor, float mid_sensor){
-  left_sensor = min(left_sensor, LIMIT_DISTANCE_READINGS);
-  right_sensor = min(right_sensor, LIMIT_DISTANCE_READINGS);
-  mid_sensor = min(mid_sensor, LIMIT_DISTANCE_READINGS);
+int detect_back_wall(float left_sensor, float right_sensor, float mid_sensor, float limit_dist){
+  left_sensor = min(left_sensor, limit_dist);
+  right_sensor = min(right_sensor, limit_dist);
+  mid_sensor = min(mid_sensor, limit_dist);
 
   float expected_mid_distance = (left_sensor + right_sensor)/2.0;
   if (fabs(mid_sensor - expected_mid_distance) < FLAT_SURFACE_THRESHOLD){
-  	if (expected_mid_distance >= LIMIT_DISTANCE_READINGS){
-  		return NOT_TRIGGERED;
-  	}
     return TRIGGERED;
   }
   else{
     return NOT_TRIGGERED;
   }
-
-  // if (fabs(left_sensor - right_sensor) < FLAT_SURFACE_THRESHOLD){
-  //   return TRIGGERED;
-  // }
-  // else{
-  //   return NOT_TRIGGERED;
-  // }
 }
