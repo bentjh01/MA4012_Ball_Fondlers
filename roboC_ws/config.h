@@ -14,9 +14,9 @@ ________________________________________________________________________________
 #define FILTER_GAIN_LONG_R 	    0.50 //(output = prev_input) 0 < FILTER_GAIN < 1 (output = new_input)
 #define FILTER_GAIN_LONG_MID 	0.5 //(output = prev_input) 0 < FILTER_GAIN < 1 (output = new_input)
 #define FILTER_GAIN_SHORT_TOP 	1.0 //(output = prev_input) 0 < FILTER_GAIN < 1 (output = new_input)
-#define BALL_IN_CHAMBER_DISTANCE 0.8 // [cm]
+#define BALL_IN_CHAMBER_DISTANCE -0.5 // [cm]
 #define BALL_THRESHOLD_LNR          	35.0 //cm wrt to edge of ramp
-#define BALL_THRESHOLD_MID          	35.0 //cm wrt to edge of ramp
+#define BALL_THRESHOLD_MID          	28.0 //cm wrt to edge of ramp
 #define OPP_CLOSENESS_THRESHOLD     	35.0 //cm wrt to edge of ramp
 #define OPP_DIFFERENTIATION_THRESHOLD	8.0 //cm
 #define READY_TO_COLLECT_THRESHOLD  	4.0 //cm wrt to edge of ramp

@@ -231,16 +231,16 @@ task main()
 			if (task_status != EDGE){
 				prev_task_status = task_status;
 			}
-			if (task_status == GOTO){
-				goto_ignore_edge += 1;
-				if(goto_ignore_edge < round(0.2/DT_MAIN)){
-					task_status == GOTO;
-				}
-				else{
-					task_status == EDGE;
-				}
-			}
-			else if(task_status == DELIVER && fabs(robot_yaw) < YAW_TOLERANCE){
+			// if (task_status == GOTO){  // goto priority over edge
+			// 	goto_ignore_edge += 1;
+			// 	if(goto_ignore_edge < round(0.2/DT_MAIN)){
+			// 		task_status == GOTO;
+			// 	}
+			// 	else{
+			// 		task_status == EDGE;
+			// 	}
+			// }
+			if(task_status == DELIVER && fabs(robot_yaw) < YAW_TOLERANCE){
 				int line_case = get_edge_line_case();
 				if (line_case == 1001){
 					task_status = DELIVER;
