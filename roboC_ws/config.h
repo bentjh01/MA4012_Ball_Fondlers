@@ -135,7 +135,39 @@ ________________________________________________________________________________
 
 #define MOTOR_ACCL_LIM 100.0 // [rpm]
 
+/*______________________________________________________________________________________________________________________
 
+TUNABLE TASK PARAMETERS
+______________________________________________________________________________________________________________________*/
+
+// EDGE TASK
+#define EDGE_REVERSE_DISTANCE_SMALL 0.05 // [m] TODO
+#define EDGE_REVERSE_DISTANCE_BIG 0.15
+#define EDGE_YAW_KP 0.6
+
+// HOME TASK
+#define HOME_AWAY_DISTANCE (ARENA_X * 1.0 / 2.0)
+
+// SEARCH TASK
+#define SEARCH_COUNT_THRESHOLD      75
+#define CHANGE_POSITION_DISTANCE    0.5
+//#define DISTANCE_CHANGE_THRESHOLD		10.0
+
+// GOTO TASK
+#define GOTO_SWEEP_TIME         3.0
+#define GOTO_ALIGN_BALL_GAIN    0.6
+#define GOTO_CURVE_LIN_SPEED    0.3
+#define GOTO_CURVE_ANG_SPEED    15.0
+#define BACK_TO_SEARCH_COUNT		30
+
+// COLLECT TASK
+#define COLLECT_WAIT 5
+#define SERVO_COLLECT_POSITION 90.0
+
+// DELIVERY TASK
+#define DELIVER_YAW_KP 0.6
+#define SERVO_DELIVER_POSITION 180.0 //TODO
+#define DELIVERY_WAIT   5 //TODO
 
 /*______________________________________________________________________________________________________________________
 

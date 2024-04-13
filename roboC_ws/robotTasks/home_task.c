@@ -3,38 +3,37 @@
 static float home_linX = 0.0;
 static float home_angZ = 0.0;
 static float home_servo = 0.0;
-static int home_startup_phase = 1;
-static float home_initial_x = 0;
 
-// Break from HOME when ball is detected. 
-// Ignore back sensors for home task
-
-int home_task(float x, float y, float yaw, float arm_position, float distanceL, float distanceR, float distanceM, float distanceT){
+int home_task(float x, float y, float yaw, float arm_position, float sensor_mid, float sensor_top, int opp_detected, float sensor_left, float sensor_right){
+    static int home_startup_phase = 1;
+    static int home_initial_x = 0.0;
+    static float home_count = 0.0;
     home_servo = 0.0;
     home_linX = MAX_SPEED;
-    home_angZ = -1.5 * yaw;
-
-    float detect_L = detect_ball_left(distanceL, LIMIT_DISTANCE_READINGS);
-    float detect_R = detect_ball_right(distanceR, LIMIT_DISTANCE_READINGS);
-    float detect_M = detect_ball_mid(distanceM, distanceT, LIMIT_DISTANCE_READINGS);
-
-    // if (detect_back_wall(distanceL, distanceR, distanceM) == NOT_TRIGGERED){
-    //     if (detect_L > 0.0 || detect_R > 0.0 || detect_M > 0.0){
-    //         home_linX = 0.0;
-    //         home_angZ = 0.0;
-    //         home_servo = 0.0;
-    //         return SEARCH;
-    //     }
-    // }
-
-    if (arm_position != 0.0 || x < HOME_AWAY_DISTANCE){
-        return HOME;
-    }
-    else{
+    home_angZ = -yaw;
+    home_angZ = 0.0;
+    
+    if(home_startup_phase){
+        home_count = 0.0;
         home_linX = 0.0;
         home_angZ = 0.0;
         home_servo = 0.0;
+        
+    	home_initial_x = x;
+    	home_startup_phase = 0;
+    }
+
+    if (detect_ball(sensor_left, sensor_right, sensor_mid, sensor_top, opp_detected)==1){
+        home_startup_phase = 1;
         return SEARCH;
+    }
+    else if (arm_position == 0.0 && x - home_initial_x >= HOME_AWAY_DISTANCE){
+        home_startup_phase = 1;
+        return SEARCH;
+    }
+    else{
+        home_count ++;
+       return HOME;
     }
 }
 
