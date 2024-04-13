@@ -108,13 +108,13 @@ ________________________________________________________________________________
 #define BACK_TO_SEARCH_COUNT		30
 
 // COLLECT TASK
-#define COLLECT_WAIT 100
+#define COLLECT_WAIT 5
 #define SERVO_COLLECT_POSITION 90.0
 
 // DELIVERY TASK
 #define DELIVER_YAW_KP 0.6
 #define SERVO_DELIVER_POSITION 180.0 //TODO
-#define DELIVERY_WAIT   100 //TODO
+#define DELIVERY_WAIT   5 //TODO
 
 /*______________________________________________________________________________________________________________________
 
