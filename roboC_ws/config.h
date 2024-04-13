@@ -147,6 +147,7 @@ ________________________________________________________________________________
 
 // HOME TASK
 #define HOME_AWAY_DISTANCE (ARENA_X * 1.0 / 2.0)
+#define HOME_TIMEOUT 100 
 
 // SEARCH TASK
 #define SEARCH_COUNT_THRESHOLD      75
@@ -168,6 +169,9 @@ ________________________________________________________________________________
 #define DELIVER_YAW_KP 0.6
 #define SERVO_DELIVER_POSITION 180.0 //TODO
 #define DELIVERY_WAIT   5 //TODO
+
+// OPPONENT AVOID TASK
+#define OPP_AVOID_TIMER 50
 
 /*______________________________________________________________________________________________________________________
 
@@ -198,6 +202,7 @@ ________________________________________________________________________________
 #define GOTO                4
 #define COLLECT             5
 #define DELIVER             6
+#define AVOID_OPPONENT      7
 
 // ROBOT PARAMETERS
 #define ROBOT_WIDTH         0.3//m

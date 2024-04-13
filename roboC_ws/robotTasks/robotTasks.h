@@ -8,5 +8,6 @@
 #include "deliver_task.c"
 #include "home_task.c"
 #include "goto_task.c"
+#include "opponent_avoid.c"
 
 #endif // ROBOT_TASKS_H

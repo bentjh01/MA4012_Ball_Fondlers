@@ -83,11 +83,6 @@ int prev_task_status = HOME;
 
 // ball status
 int ball_in_chamber_status;
-int ball_on_left;
-int ball_on_right;
-int ball_on_mid;
-int opp_detected;
-int wall_detected;
 // float detected_ball_yaw;
 
 // counters
@@ -217,9 +212,11 @@ task robot_read(){
 
 task main()
 {
-	float ball_detect_L = 0.0;
-	float ball_detect_R = 0.0;
-	float ball_detect_M = 0.0;
+	int prev_task_status;
+	int ball_detect_L = 0.0;
+	int ball_detect_R = 0.0;
+	int opp_det
+
 
 	startTask(robot_read);
 	wait_to_go();
@@ -250,11 +247,34 @@ task main()
 			// avoid_case_check(robot_x, robot_y, robot_yaw, robot_line_FL, robot_line_FR, robot_line_BL, robot_line_BR);
 			// wall_case_check(robot_yaw, robot_line_FL, robot_line_FR, robot_line_BL, robot_line_BR); @Unizz20
 			}
+
+			/// DETECT OPPONENT
+			opp_detected = opponent_detection(distance_sensor_top, OPP_DETECT_THRESHOLD);
+			if (opp_detected == 1){
+				if (task_status != EDGE){
+					prev_task_status = task_status;
+				}
+				/// Exceptions to Avoid Opponent
+				if (task_status == GOTO){
+					task_status = GOTO;
+				}
+				else{
+					task_status = AVOID_OPPONENT;
+				}
+			}
+
+			/// DETECT BALL ON LEFT AND RIGHT
+			ball_detect_L = detect_thing(distance_sensor_left, LIMIT_DISTANCE_READINGS);
+			ball_detect_R = detect_thing(distance_sensor_right, LIMIT_DISTANCE_READINGS);
+			if (ball_detect_L == TRIGGERED || ball_detect_R == TRIGGERED){
+				if (detect_back_wall(distance_sensor_left, distance_sensor_right, distance_sensor_mid, LIMIT_DISTANCE_READINGS) == NOT_TRIGGERED){
+					task_status = GOTO;
+				}
+			}
+			
+			/// ROBOT TASKS
 			switch (task_status){
 			case EDGE:
-				//reset ignore edge
-				goto_ignore_edge = 0;
-
 				task_status = edge_avoid_alt_task(robot_x, robot_y, robot_yaw, prev_task_status);
 				// task_status = edge_avoid_task(robot_x, robot_y, robot_yaw, prev_task_status);
 				robot_cmd_linX = get_edge_avoid_linX();
@@ -262,8 +282,6 @@ task main()
 				task_status = edge_avoid_alt_task(robot_x, robot_y, robot_yaw, prev_task_status);
 				break;
 			case HOME:
-				// task_status = SEARCH;
-				opp_detected = opponent_detection(distance_sensor_top);
 				task_status = home_task(robot_x, robot_y, robot_yaw, robot_arm_position, distance_sensor_mid, distance_sensor_top, opp_detected, distance_sensor_left, distance_sensor_right);
 				robot_cmd_linX = get_home_linX();
 				robot_cmd_angZ = get_home_angZ();
@@ -274,14 +292,11 @@ task main()
 				robot_cmd_linX = get_search_linX();
 				robot_cmd_angZ = get_search_angZ();
 				task_status = search_task_alt(distance_sensor_left, distance_sensor_right, distance_sensor_mid, distance_sensor_top);
-				ball_detect_L = get_search_detectL();
-				ball_detect_R = get_search_detectR();
-				ball_detect_M = get_search_detectM();
 				break;
 			case GOTO:
-					robot_cmd_linX = get_goto_linX();
-					robot_cmd_angZ = get_goto_angZ();
-					task_status = goto_task_alt(robot_x, robot_y, distance_sensor_left, distance_sensor_right, distance_sensor_mid, distance_sensor_top, ball_detect_L, ball_detect_R, ball_detect_M);
+				robot_cmd_linX = get_goto_linX();
+				robot_cmd_angZ = get_goto_angZ();
+				task_status = goto_task_alt(robot_x, robot_y, distance_sensor_left, distance_sensor_right, distance_sensor_mid, distance_sensor_top, ball_detect_L, ball_detect_R);
 				break;
 			case COLLECT:
 				task_status = collect_task(robot_arm_position, distance_sensor_mid, distance_sensor_top, opp_detected, ball_in_chamber_status);
@@ -300,6 +315,11 @@ task main()
 					robot_x = 0.0;
 					robot_yaw = 0.0;
 				}
+				break;
+			case AVOID_OPPONENT:
+				task_status = avoid_opoonent_task(prev_task_status);
+				robot_cmd_linX = get_opp_linX();
+				robot_cmd_angZ = get_opp_angZ();
 				break;
 			}
 
