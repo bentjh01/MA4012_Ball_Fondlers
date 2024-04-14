@@ -254,20 +254,18 @@ task main()
 				// task_status = edge_avoid_task(robot_x, robot_y, robot_yaw, prev_task_status);
 				robot_cmd_linX = get_edge_avoid_linX();
 				robot_cmd_angZ = get_edge_avoid_angZ();
-				task_status = edge_avoid_alt_task(robot_x, robot_y, robot_yaw, prev_task_status);
 				break;
 			case HOME:
 				task_status = home_task(robot_x, robot_y, robot_yaw, robot_arm_position, distance_sensor_mid, distance_sensor_top, distance_sensor_left, distance_sensor_right);
 				robot_cmd_linX = get_home_linX();
 				robot_cmd_angZ = get_home_angZ();
 				robot_cmd_arm_position = 0.0;
-				task_status = home_task(robot_x, robot_y, robot_yaw, robot_arm_position, distance_sensor_left, distance_sensor_right, distance_sensor_mid, distance_sensor_top);
 				break;
 			case SEARCH:
+				task_status = search_task_alt();
 				robot_cmd_linX = get_search_linX();
 				robot_cmd_angZ = get_search_angZ();
 				robot_cmd_arm_position = 0.0;
-				task_status = search_task_alt();
 				break;
 			case GOTO:
 				task_status = goto_task_alt(robot_yaw, distance_sensor_left, distance_sensor_right, distance_sensor_mid, case_detected);

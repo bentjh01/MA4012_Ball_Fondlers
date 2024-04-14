@@ -30,8 +30,8 @@ int collect_task(float servo_position, float distance_sensor_mid, float distance
         collect_linX = 0.0;
         collect_angZ = 0.0;
         collect_servo = SERVO_COLLECT_POSITION;
-        // collect_wait --;
-        // if (collect_wait <= 0){
+        collect_wait --;
+        if (collect_wait <= 0){
             // check if ball is caught
             if (ball_in_chamber == TRIGGERED){
                 collect_startup = TRIGGERED;
@@ -45,7 +45,7 @@ int collect_task(float servo_position, float distance_sensor_mid, float distance
                 collect_angZ = 0.0;
                 return GOTO;
             }
-        // }
+        }
     }
     return COLLECT;
 }
