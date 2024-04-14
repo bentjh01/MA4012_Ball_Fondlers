@@ -84,6 +84,7 @@ float update_odometry_yaw(float yaw, float angZ, float rpmL, float rpmR, float m
         output_yaw = state_yaw + ENCODER_FILTER * encoder_yaw_innovation;
     }
 
+    output_yaw = state_yaw + ENCODER_FILTER * encoder_yaw_innovation;
     // output_yaw = state_yaw + (ENCODER_FILTER * encoder_yaw_innovation + MAGNETO_FILTER * magnetometer_yaw_innovation)/(ENCODER_FILTER + MAGNETO_FILTER);
 
     output_yaw = wrap_to_pi(output_yaw);

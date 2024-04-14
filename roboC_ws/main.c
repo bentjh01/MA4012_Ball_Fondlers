@@ -226,8 +226,8 @@ task main()
 	while(1){
 		clearTimer(T1);
 		// main Loop
-		if (edge_detected(robot_line_FL, robot_line_BL, robot_line_BR, robot_line_FR) == TRIGGERED){
-		//if (1 == 2){
+		// if (edge_detected(robot_line_FL, robot_line_BL, robot_line_BR, robot_line_FR) == TRIGGERED){
+		if (1 == 2){
 			if (task_status != EDGE){
 				prev_task_status = task_status;
 				if(prev_task_status == SEARCH){
@@ -255,11 +255,12 @@ task main()
 						task_status = DELIVER;
 					}
 				}
-				else{
-					task_status = EDGE;
-				}
 			}
-			avoid_case_check(robot_x, robot_y, robot_yaw, robot_line_FL, robot_line_FR, robot_line_BL, robot_line_BR);
+			else{
+				task_status = EDGE;
+			}
+			avoid_case_check_alt(robot_x, robot_y, robot_yaw, robot_line_FL, robot_line_FR, robot_line_BL, robot_line_BR);
+			// avoid_case_check(robot_x, robot_y, robot_yaw, robot_line_FL, robot_line_FR, robot_line_BL, robot_line_BR);
 			// wall_case_check(robot_yaw, robot_line_FL, robot_line_FR, robot_line_BL, robot_line_BR); @Unizz20
 			}
 			switch (task_status){
@@ -271,14 +272,16 @@ task main()
 					goto_ignore_edge = 0;
 				}
 
-				task_status = edge_avoid_task(robot_x, robot_y, robot_yaw, prev_task_status);
+				task_status = edge_avoid_alt_task(robot_x, robot_y, robot_yaw, prev_task_status);
+				// task_status = edge_avoid_task(robot_x, robot_y, robot_yaw, prev_task_status);
 				robot_cmd_linX = get_edge_avoid_linX();
 				robot_cmd_angZ = get_edge_avoid_angZ();
 				// task_status = HOME; // testing
 				break;
 			case HOME:
 				// task_status = SEARCH;
-				task_status = home_task(robot_x, robot_y, robot_yaw, robot_arm_position);
+				opp_detected = opponent_detection(distance_sensor_top);
+				task_status = home_task(robot_x, robot_y, robot_yaw, robot_arm_position, distance_sensor_mid, distance_sensor_top, opp_detected, distance_sensor_left, distance_sensor_right);
 				robot_cmd_linX = get_home_linX();
 				robot_cmd_angZ = get_home_angZ();
 				robot_cmd_arm_position = get_home_servo();

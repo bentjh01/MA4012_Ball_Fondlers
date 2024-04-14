@@ -14,9 +14,9 @@ ________________________________________________________________________________
 #define FILTER_GAIN_LONG_R 	    0.50 //(output = prev_input) 0 < FILTER_GAIN < 1 (output = new_input)
 #define FILTER_GAIN_LONG_MID 	0.5 //(output = prev_input) 0 < FILTER_GAIN < 1 (output = new_input)
 #define FILTER_GAIN_SHORT_TOP 	1.0 //(output = prev_input) 0 < FILTER_GAIN < 1 (output = new_input)
-#define BALL_IN_CHAMBER_DISTANCE 0.8 // [cm]
+#define BALL_IN_CHAMBER_DISTANCE -0.5 // [cm]
 #define BALL_THRESHOLD_LNR          	35.0 //cm wrt to edge of ramp
-#define BALL_THRESHOLD_MID          	35.0 //cm wrt to edge of ramp
+#define BALL_THRESHOLD_MID          	28.0 //cm wrt to edge of ramp
 #define OPP_CLOSENESS_THRESHOLD     	35.0 //cm wrt to edge of ramp
 #define OPP_DIFFERENTIATION_THRESHOLD	8.0 //cm
 #define READY_TO_COLLECT_THRESHOLD  	4.0 //cm wrt to edge of ramp
@@ -63,7 +63,7 @@ ________________________________________________________________________________
 // SERVO
 #define SERVO_TOLERANCE 7.0 // [deg] TODO
 #define SERVO_POSITION_GAIN 7.50 // [deg] TODO
-#define SERVO_KP 0.8
+#define SERVO_KP 0.85
 #define SWITCH_A_POSITION 0.0 //[deg] TODO
 #define SWITCH_B_POSITION 90.0 //[deg] TODO
 #define SWITCH_C_POSITION 180.0 //[deg] TODO
@@ -108,12 +108,13 @@ ________________________________________________________________________________
 #define BACK_TO_SEARCH_COUNT		30
 
 // COLLECT TASK
+#define COLLECT_WAIT 5
 #define SERVO_COLLECT_POSITION 90.0
 
 // DELIVERY TASK
 #define DELIVER_YAW_KP 0.6
 #define SERVO_DELIVER_POSITION 180.0 //TODO
-#define DELIVERY_SERVO_COUNTER   20 //TODO
+#define DELIVERY_WAIT   5 //TODO
 
 /*______________________________________________________________________________________________________________________
 
