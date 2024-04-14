@@ -1,51 +1,51 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-/*______________________________________________________________________________________________________________________
+// /*______________________________________________________________________________________________________________________
 
-TUNABLE TASK PARAMETERS
-______________________________________________________________________________________________________________________*/
-
-
-#define BALL_IN_CHAMBER_DISTANCE -0.5 // [cm]
-#define BALL_THRESHOLD_LNR          	35.0 //cm wrt to edge of ramp
-#define BALL_THRESHOLD_MID          	35.0 //cm wrt to edge of ramp
-#define OPP_CLOSENESS_THRESHOLD     	35.0 //cm wrt to edge of ramp
-#define OPP_DIFFERENTIATION_THRESHOLD	8.0 //cm
-#define READY_TO_COLLECT_THRESHOLD  	4.0 //cm wrt to edge of ramp
-
-#define LIMIT_DISTANCE_READINGS 30.0 //
-#define OPP_DETECT_THRESHOLD 15.0 // cm
-#define FLAT_SURFACE_THRESHOLD 10.0 // cm
+// TUNABLE TASK PARAMETERS
+// ______________________________________________________________________________________________________________________*/
 
 
-// EDGE TASK
-#define EDGE_REVERSE_DISTANCE_SMALL 0.05 // [m] TODO
-#define EDGE_REVERSE_DISTANCE_BIG 0.15
-#define EDGE_YAW_KP 0.6
+// #define BALL_IN_CHAMBER_DISTANCE -0.5 // [cm]
+// #define BALL_THRESHOLD_LNR          	35.0 //cm wrt to edge of ramp
+// #define BALL_THRESHOLD_MID          	35.0 //cm wrt to edge of ramp
+// #define OPP_CLOSENESS_THRESHOLD     	35.0 //cm wrt to edge of ramp
+// #define OPP_DIFFERENTIATION_THRESHOLD	8.0 //cm
+// #define READY_TO_COLLECT_THRESHOLD  	4.0 //cm wrt to edge of ramp
 
-// HOME TASK
-#define HOME_AWAY_DISTANCE (ARENA_X * 1.0 / 2.0)
+// #define LIMIT_DISTANCE_READINGS 30.0 //
+// #define OPP_DETECT_THRESHOLD 15.0 // cm
+// #define FLAT_SURFACE_THRESHOLD 10.0 // cm
 
-// SEARCH TASK
-#define SEARCH_COUNT_THRESHOLD      75
-#define CHANGE_POSITION_DISTANCE    0.5
-//#define DISTANCE_CHANGE_THRESHOLD		10.0
 
-// GOTO TASK
-#define GOTO_SWEEP_TIME         3.0
-#define GOTO_ALIGN_BALL_GAIN    0.6
-#define GOTO_CURVE_LIN_SPEED    0.3
-#define GOTO_CURVE_ANG_SPEED    15.0
-#define BACK_TO_SEARCH_COUNT		30
+// // EDGE TASK
+// #define EDGE_REVERSE_DISTANCE_SMALL 0.05 // [m] TODO
+// #define EDGE_REVERSE_DISTANCE_BIG 0.15
+// #define EDGE_YAW_KP 0.6
 
-// COLLECT TASK
-#define SERVO_COLLECT_POSITION 90.0
+// // HOME TASK
+// #define HOME_AWAY_DISTANCE (ARENA_X * 1.0 / 2.0)
 
-// DELIVERY TASK
-#define DELIVER_YAW_KP 0.6
-#define SERVO_DELIVER_POSITION 180.0 //TODO
-#define DELIVERY_SERVO_COUNTER   20 //TODO
+// // SEARCH TASK
+// #define SEARCH_COUNT_THRESHOLD      75
+// #define CHANGE_POSITION_DISTANCE    0.5
+// //#define DISTANCE_CHANGE_THRESHOLD		10.0
+
+// // GOTO TASK
+// #define GOTO_SWEEP_TIME         3.0
+// #define GOTO_ALIGN_BALL_GAIN    0.6
+// #define GOTO_CURVE_LIN_SPEED    0.3
+// #define GOTO_CURVE_ANG_SPEED    15.0
+// #define BACK_TO_SEARCH_COUNT		30
+
+// // COLLECT TASK
+// #define SERVO_COLLECT_POSITION 90.0
+
+// // DELIVERY TASK
+// #define DELIVER_YAW_KP 0.6
+// #define SERVO_DELIVER_POSITION 180.0 //TODO
+// #define DELIVERY_SERVO_COUNTER   20 //TODO
 
 
 /*______________________________________________________________________________________________________________________
@@ -160,6 +160,7 @@ ________________________________________________________________________________
 #define GOTO_CURVE_LIN_SPEED    0.3
 #define GOTO_CURVE_ANG_SPEED    15.0
 #define BACK_TO_SEARCH_COUNT		30
+#define GOTO_TIMEOUT   100
 
 // COLLECT TASK
 #define COLLECT_WAIT 5

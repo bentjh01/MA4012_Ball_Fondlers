@@ -35,17 +35,17 @@ int edge_detected(int FL, int BL, int BR, int FR){
 	}
 }
 
-/// @brief Determines the goal yaw based on the robot's current yaw and the sensor that is triggered
-/// @param rb_x robot's x position
-/// @param rb_yaw robot's yaw
-/// @param FL Front Left sensor
-/// @param FR Front Right sensor
-/// @param BL Back Left sensor
-/// @param BR Back Right sensor
-void avoid_case_check(float rb_x, float rb_y, float rb_yaw, int FL, int FR, int BL, int BR){
-	float alpha;
-	edge_x = rb_x;
-	edge_y = rb_y;
+// /// @brief Determines the goal yaw based on the robot's current yaw and the sensor that is triggered
+// /// @param rb_x robot's x position
+// /// @param rb_yaw robot's yaw
+// /// @param FL Front Left sensor
+// /// @param FR Front Right sensor
+// /// @param BL Back Left sensor
+// /// @param BR Back Right sensor
+// void avoid_case_check(float rb_x, float rb_y, float rb_yaw, int FL, int FR, int BL, int BR){
+// 	float alpha;
+// 	edge_x = rb_x;
+// 	edge_y = rb_y;
 
 // 	// FL or FR is detected, BL and BR are not detected
 // 	if ((FL == TRIGGERED || FR == TRIGGERED) && (BL == NOT_TRIGGERED && BR == NOT_TRIGGERED)){
@@ -158,22 +158,22 @@ void avoid_case_check(float rb_x, float rb_y, float rb_yaw, int FL, int FR, int 
 // /// @param rb_yaw robot's current yaw
 // /// @return the previous task if successful, EDGE otherwise
 
-int edge_avoid_task(float rb_x, float rb_y, float rb_yaw, int prev_task){
+// int edge_avoid_task(float rb_x, float rb_y, float rb_yaw, int prev_task){
 	
-	if (count_move_forward(EDGE_REVERSE_DISTANCE, MAX_SPEED) == FAIL){
-		edge_linX = edge_linX_sign * MAX_SPEED;
-		edge_angZ = 0.0;
-	}
-	else{
-		if (count_move_rotate(rotate_ang, MAX_TURN) == FAIL){
-			edge_linX = 0.0;
-			edge_angZ = sgn(rotate_ang) * MAX_TURN;
-		}
-		else {
-			return prev_task;
-		}
-	}
-	return EDGE;
+// 	if (count_move_forward(EDGE_REVERSE_DISTANCE, MAX_SPEED) == FAIL){
+// 		edge_linX = edge_linX_sign * MAX_SPEED;
+// 		edge_angZ = 0.0;
+// 	}
+// 	else{
+// 		if (count_move_rotate(rotate_ang, MAX_TURN) == FAIL){
+// 			edge_linX = 0.0;
+// 			edge_angZ = sgn(rotate_ang) * MAX_TURN;
+// 		}
+// 		else {
+// 			return prev_task;
+// 		}
+// 	}
+// 	return EDGE;
 
 	// float distance_from_edge = calculate_distance(rb_x, rb_y, edge_x, edge_y);
 	// float yaw_error = edge_goal_yaw - rb_yaw;
@@ -207,8 +207,8 @@ int edge_avoid_task(float rb_x, float rb_y, float rb_yaw, int prev_task){
 	// 	edge_angZ = 30.0 * sgn(yaw_error);
 	// 	//return EDGE;
 	// }
-	return EDGE;
-}
+	// return EDGE;
+// }
 
 /// @brief Fetches the commanded linear velocity
 /// @return linear velocity [m/s]

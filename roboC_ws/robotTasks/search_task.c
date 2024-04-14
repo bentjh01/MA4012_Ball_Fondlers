@@ -244,31 +244,28 @@ int move_360(float cmd_angZ){
   return FAIL;
 }
 /// @brief Alternative search task
-/// @param ball_detection ball detection status
 /// @return the task to be executed
 static int search_state = 0;
-int search_task_alt(float left_distance, float right_distance, float mid_distance, float top_distance){
+int search_task_alt(){
   /// Search Task
   /// Motion
   /// 1. Rotate 360 degrees
   /// 2. Move forward a CHANGE_POSITION_DISTANCE
-  /// Detection
-  /// 1. If wall is detected, return to SEARCH
-  /// 2. If ball is detected, return to GOTO
-
 
   /// SEARCH MOTION
   // 0 for rotate, 1 for move forward
-  // static int search_state;
+  static int search_state;
+  static float rotate_direction = 1.0;
 
   if (search_state == 0){
-    if (move_360(MAX_TURN * 0.5) == FAIL){
+    if (move_360(MAX_TURN * 0.5 * rotate_direction) == FAIL){
       search_linX = 0.0;
       search_angZ = MAX_TURN * 0.5;
     }
     else{
       // switch to move forward cycle
       search_state = 1;
+      rotate_direction = -1.0;
     }
   }
   else{
@@ -281,34 +278,5 @@ int search_task_alt(float left_distance, float right_distance, float mid_distanc
       search_state = 0;
     }
   }
-
-  /// DETECTION
-  search_detectL = detect_ball_left(left_distance, LIMIT_DISTANCE_READINGS);
-  search_detectR = detect_ball_right(right_distance, LIMIT_DISTANCE_READINGS);
-  search_detectM = detect_ball_mid(mid_distance, top_distance, LIMIT_DISTANCE_READINGS);
-
-  if (detect_back_wall(left_distance, right_distance, mid_distance) == TRIGGERED){
-    return SEARCH;
-  }
-  else if (search_detectL > 0 || search_detectR > 0 || search_detectM > 0){
-    // Stop the robot and reinitialise
-    search_state = 0;
-    search_linX = 0.0;
-    search_angZ = 0.0;
-    return GOTO;
-  }
-
   return SEARCH;
-}
-
-int get_search_detectL(){
-  return search_detectL;
-}
-
-int get_search_detectR(){
-  return search_detectR;
-}
-
-int get_search_detectM(){
-  return search_detectM;
 }

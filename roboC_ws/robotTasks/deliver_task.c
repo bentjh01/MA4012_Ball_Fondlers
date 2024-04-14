@@ -3,7 +3,7 @@
 float deliver_set_linX = 0.0;
 float deliver_set_angZ = 0.0;
 float deliver_set_servo = SERVO_COLLECT_POSITION;
-int reset_x = NOT_TRIGGERED;
+int reset_robot = NOT_TRIGGERED;
 
 int deliver_task(float yaw, float servo_position, int ball_in_chamber, int back_limit_switch, int lineBL, int lineBR) {
     static int delivery_startup = TRIGGERED;
@@ -35,7 +35,7 @@ int deliver_task(float yaw, float servo_position, int ball_in_chamber, int back_
         delivery_wait --;
         if (delivery_wait <= 0){
             delivery_startup = TRIGGERED;
-            reset_x = NOT_TRIGGERED;
+            reset_robot = NOT_TRIGGERED;
             deliver_set_servo = SERVO_COLLECT_POSITION;
             deliver_set_angZ = 0.0;
             deliver_set_linX=0.0;

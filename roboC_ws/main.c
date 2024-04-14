@@ -125,16 +125,6 @@ void read_sensors(float dt){
 	return;
 }
 
-void sensor_processing(){
-	ball_in_chamber_status = check_ball_in_chamber(distance_sensor_mid);
-	ball_on_left = detect_ball(distance_sensor_left, BALL_THRESHOLD_LNR);
-	ball_on_right = detect_ball(distance_sensor_right, BALL_THRESHOLD_LNR);
-	ball_on_mid = detect_ball(distance_sensor_mid, BALL_THRESHOLD_LNR);
-	wall_detected = detect_back_wall(distance_sensor_left, distance_sensor_right, distance_sensor_mid);
-	opp_detected = detect_opp(distance_sensor_left, distance_sensor_right, distance_sensor_mid);
-	return;
-}
-
 void update_robot_odom(float dt){
     robot_x = update_odometry_x(robot_x, robot_yaw, robot_linX, robot_en_rpmL, robot_en_rpmR, dt);
     robot_y = update_odometry_y(robot_y, robot_yaw, robot_linX, robot_en_rpmL, robot_en_rpmR, dt);
@@ -203,7 +193,6 @@ task robot_read(){
 	while(1){
 		clearTimer(T2);
 		read_sensors(DT_READ);
-		sensor_processing();
 		update_robot_odom(DT_READ);
 		robot_execute(DT_READ);
 		while (time1[T2] < DT_READ * 1000){}
@@ -215,8 +204,7 @@ task main()
 	int prev_task_status;
 	int ball_detect_L = 0.0;
 	int ball_detect_R = 0.0;
-	int opp_det
-
+	int opp_detected;
 
 	startTask(robot_read);
 	wait_to_go();
@@ -258,6 +246,9 @@ task main()
 				if (task_status == GOTO){
 					task_status = GOTO;
 				}
+				else if (task_status == DELIVER){
+					task_status = DELIVER;
+				}
 				else{
 					task_status = AVOID_OPPONENT;
 				}
@@ -282,7 +273,7 @@ task main()
 				task_status = edge_avoid_alt_task(robot_x, robot_y, robot_yaw, prev_task_status);
 				break;
 			case HOME:
-				task_status = home_task(robot_x, robot_y, robot_yaw, robot_arm_position, distance_sensor_mid, distance_sensor_top, opp_detected, distance_sensor_left, distance_sensor_right);
+				task_status = home_task(robot_x, robot_y, robot_yaw, robot_arm_position, distance_sensor_mid, distance_sensor_top, distance_sensor_left, distance_sensor_right);
 				robot_cmd_linX = get_home_linX();
 				robot_cmd_angZ = get_home_angZ();
 				robot_cmd_arm_position = get_home_servo();
@@ -291,33 +282,33 @@ task main()
 			case SEARCH:
 				robot_cmd_linX = get_search_linX();
 				robot_cmd_angZ = get_search_angZ();
-				task_status = search_task_alt(distance_sensor_left, distance_sensor_right, distance_sensor_mid, distance_sensor_top);
+				task_status = search_task_alt();
 				break;
 			case GOTO:
+				task_status = goto_task_alt(distance_sensor_left, distance_sensor_right, distance_sensor_mid);
 				robot_cmd_linX = get_goto_linX();
 				robot_cmd_angZ = get_goto_angZ();
-				task_status = goto_task_alt(robot_x, robot_y, distance_sensor_left, distance_sensor_right, distance_sensor_mid, distance_sensor_top, ball_detect_L, ball_detect_R);
 				break;
 			case COLLECT:
 				task_status = collect_task(robot_arm_position, distance_sensor_mid, distance_sensor_top, opp_detected, ball_in_chamber_status);
 				robot_cmd_linX = get_collect_linX();
 				robot_cmd_angZ = get_collect_angZ();
 				robot_cmd_arm_position = get_collect_servo();
-				task_status = collect_task_alt(distance_sensor_mid, robot_arm_position);
+				// task_status = collect_task_alt(distance_sensor_mid, robot_arm_position);
 				break;
 			case DELIVER:
 				task_status = deliver_task(robot_yaw, robot_arm_position, ball_in_chamber_status, limit_switch_D, robot_line_BR, robot_line_BL);
 				robot_cmd_linX = get_deliver_linX();
 				robot_cmd_angZ = get_deliver_angZ();
 				robot_cmd_arm_position = get_deliver_servo();
-				task_status = deliver_task(robot_yaw, robot_arm_position, ball_in_chamber_status, limit_switch_D, robot_line_BR, robot_line_BL);
+				// task_status = deliver_task(robot_yaw, robot_arm_position, ball_in_chamber_status, limit_switch_D, robot_line_BR, robot_line_BL);
 				if (get_reset_robot() == TRIGGERED){
 					robot_x = 0.0;
 					robot_yaw = 0.0;
 				}
 				break;
 			case AVOID_OPPONENT:
-				task_status = avoid_opoonent_task(prev_task_status);
+				task_status = opponent_avoid_task(prev_task_status, distance_sensor_left, distance_sensor_right);
 				robot_cmd_linX = get_opp_linX();
 				robot_cmd_angZ = get_opp_angZ();
 				break;

@@ -16,21 +16,21 @@ int collect_task(float servo_position, float distance_sensor_mid, float distance
 
     float collect_arm_position_err = SERVO_COLLECT_POSITION - servo_position;
 
-//     //check if ball is ready to collect
-//     if(distance_sensor_mid <= READY_TO_COLLECT_THRESHOLD){
-//         collect_linX = 0.1;
-//     	collect_angZ = 0.0;
-//     	collect_servo = SERVO_COLLECT_POSITION;
-//     }
-//     else if(detect_ball(99.9 ,99.9 , distance_sensor_mid, distance_sensor_top, opp_detected) == 1 && distance_sensor_mid <= BALL_THRESHOLD_MID){
-//     	collect_linX = 0.2;
-//     	collect_angZ = 0.0;
-//     	return COLLECT;
-//     }
-//     else{
-//     	return SEARCH;
-//     	//return COLLECT;
-//     }
+    //check if ball is ready to collect
+    if(distance_sensor_mid <= READY_TO_COLLECT_THRESHOLD){
+        collect_linX = 0.1;
+    	collect_angZ = 0.0;
+    	collect_servo = SERVO_COLLECT_POSITION;
+    }
+    else if(detect_ball(99.9 ,99.9 , distance_sensor_mid, distance_sensor_top, opp_detected) == 1 && distance_sensor_mid <= BALL_THRESHOLD_MID){
+    	collect_linX = 0.2;
+    	collect_angZ = 0.0;
+    	return COLLECT;
+    }
+    else{
+    	return SEARCH;
+    	//return COLLECT;
+    }
 
     if (servo_position == SERVO_COLLECT_POSITION){
         collect_wait --;
