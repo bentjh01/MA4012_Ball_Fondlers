@@ -85,7 +85,7 @@ int goto_task_alt(float distanceL, float distanceR, float distanceM){
             // ball on right, turn right
             turning_direction = -1.0;
         }
-        goto_linX = MAX_SPEED * goto_limit/200.0;
+        goto_linX = MAX_SPEED * goto_limit/100.0;
         goto_angZ = turning_direction * MAX_TURN * 0.4;
     }
     return GOTO;
