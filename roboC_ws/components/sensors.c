@@ -220,50 +220,27 @@ int detect_thing(float sensor_dist, float limit_dist){
   }
 }
 
-/// @brief Checks if sensor detects a ball or to ignore the detection if it is the opponent robot
-/// @param mid_sensor_dist
-/// @param top_sensor_dist
-/// @return 0 if no detection, Distance reading if detection
-float detect_ball_mid(float mid_sensor_dist, float top_sensor_dist, float limit_dist){
-  static float prev_mid;
-  mid_sensor_dist = min(mid_sensor_dist, limit_dist);
-  top_sensor_dist = min(top_sensor_dist, limit_dist); // TODO Please check if this is correct
-  float dr = prev_mid-mid_sensor_dist;
-  float result;
-
-  // if (fabs(mid_sensor_dist - top_sensor_dist) > OPP_DETECT_THRESHOLD){
-  if (top_sensor_dist < limit_dist){
-    result = 0;
-  }
-  // falling edge i.e. high to low
-  // else if (dr >= BALL_THRESHOLD_CHANGE){
-  else if (mid_sensor_dist < limit_dist){
-    result = mid_sensor_dist;
-  }
-  else{
-    result = 0;
-  }
-
-  prev_mid = mid_sensor_dist;
-  // result = 0.0; //Testing
-  return result;
-}
-
 /// @brief Checks if the back wall is detected or if a flat surface is detected by comparing the mean of the left and right sensors with the middle sensor.
 /// @param left_sensor
 /// @param right_sensor
 /// @param mid_sensor
 /// @return TRIGGERED if back wall is detected, NOT_TRIGGERED otherwise
 int detect_back_wall(float left_sensor, float right_sensor, float mid_sensor, float limit_dist){
-  left_sensor = min(left_sensor, limit_dist);
-  right_sensor = min(right_sensor, limit_dist);
-  mid_sensor = min(mid_sensor, limit_dist);
-
-  float expected_mid_distance = (left_sensor + right_sensor)/2.0;
-  if (fabs(mid_sensor - expected_mid_distance) < FLAT_SURFACE_THRESHOLD){
-    if (expected_mid_distance < limit_dist * 0.8){
-      return TRIGGERED;
-    }
+ if (detect_thing(left_sensor, limit_dist) == TRIGGERED && detect_thing(right_sensor, limit_dist) == TRIGGERED){
+    return TRIGGERED;
   }
-  return NOT_TRIGGERED;
+  else{
+    return NOT_TRIGGERED;
+  }
+  // left_sensor = min(left_sensor, limit_dist);
+  // right_sensor = min(right_sensor, limit_dist);
+  // mid_sensor = min(mid_sensor, limit_dist);
+
+  // float expected_mid_distance = (left_sensor + right_sensor)/2.0;
+  // if (fabs(mid_sensor - expected_mid_distance) < FLAT_SURFACE_THRESHOLD){
+  //   if (expected_mid_distance < limit_dist * 0.8){
+  //     return TRIGGERED;
+  //   }
+  // }
+  // return NOT_TRIGGERED;
 }
