@@ -177,7 +177,10 @@ int detect_ball(float left_sensor_dist, float right_sensor_dist, float mid_senso
   // Returns 1 if a something that is not an opponent is detected, 0 otherwise
   // return 0 when there is no detection
 	//THE ORDER OF CHECK MATTERS!
-  if (mid_sensor_dist <= BALL_THRESHOLD_MID && !opp_detected){
+  if(detect_back_wall(left_sensor_dist, right_sensor_dist, mid_sensor_dist) == TRIGGERED && fabs(yaw) > 170.0){
+    return 0;
+  }
+  else if (mid_sensor_dist <= BALL_THRESHOLD_MID && !opp_detected){
     return 1;
   }
   else if(mid_sensor_dist <= BALL_THRESHOLD_MID && opp_detected && fabs(mid_sensor_dist-top_sensor_dist) > OPP_DIFFERENTIATION_THRESHOLD){

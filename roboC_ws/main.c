@@ -226,8 +226,8 @@ task main()
 	while(1){
 		clearTimer(T1);
 		// main Loop
-		// if (edge_detected(robot_line_FL, robot_line_BL, robot_line_BR, robot_line_FR) == TRIGGERED){
-		if (1 == 2){
+		if (edge_detected(robot_line_FL, robot_line_BL, robot_line_BR, robot_line_FR) == TRIGGERED){
+		//if (1 == 2){
 			if (task_status != EDGE){
 				prev_task_status = task_status;
 				if(prev_task_status == SEARCH){
@@ -263,84 +263,84 @@ task main()
 			// avoid_case_check(robot_x, robot_y, robot_yaw, robot_line_FL, robot_line_FR, robot_line_BL, robot_line_BR);
 			// wall_case_check(robot_yaw, robot_line_FL, robot_line_FR, robot_line_BL, robot_line_BR); @Unizz20
 			}
-			switch (task_status){
-			case EDGE:
-				if(goto_ignore_edge == 1){
-					goto_ignore_edge == 2;
-				}
-				else{
+		switch (task_status){
+		case EDGE:
+			if(goto_ignore_edge == 1){
+				goto_ignore_edge = 2;
+			}
+			else{
+				goto_ignore_edge = 0;
+			}
+
+			task_status = edge_avoid_alt_task(robot_x, robot_y, robot_yaw, prev_task_status);
+			// task_status = edge_avoid_task(robot_x, robot_y, robot_yaw, prev_task_status);
+			robot_cmd_linX = get_edge_avoid_linX();
+			robot_cmd_angZ = get_edge_avoid_angZ();
+			// task_status = HOME; // testing
+			break;
+		case HOME:
+			// task_status = SEARCH;
+			opp_detected = opponent_detection(distance_sensor_top);
+			task_status = home_task(robot_x, robot_y, robot_yaw, robot_arm_position, distance_sensor_mid, distance_sensor_top, opp_detected, distance_sensor_left, distance_sensor_right);
+			robot_cmd_linX = get_home_linX();
+			robot_cmd_angZ = get_home_angZ();
+			robot_cmd_arm_position = get_home_servo();
+			break;
+		case SEARCH:
+			// task_status = GOTO;
+			opp_detected = opponent_detection(distance_sensor_top);
+			task_status = search_task(robot_x, robot_y, robot_yaw, distance_sensor_left, distance_sensor_right, distance_sensor_mid, distance_sensor_top, opp_detected, robot_en_rpmL, robot_en_rpmR, search_after_edge);
+			// task_status = search_task_alt(distance_sensor_mid, distance_sensor_left, distance_sensor_right, distance_sensor_top);
+			// ball_detected_side = get_search_detected_side();
+			robot_cmd_linX = get_search_linX();
+			robot_cmd_angZ = get_search_angZ();
+			detected_ball_yaw = get_ball_yaw();
+
+			if(search_after_edge){
+				search_after_edge = 0;
+			}
+			break;
+		case GOTO:
+			if(goto_ignore_edge == 1){
+				robot_cmd_arm_position = SERVO_COLLECT_POSITION;
+				task_status = EDGE;
+			}
+			else if(goto_ignore_edge == 2){
+				if(ball_in_chamber_status == TRIGGERED){
+					task_status = DELIVER;
 					goto_ignore_edge = 0;
 				}
-
-				task_status = edge_avoid_alt_task(robot_x, robot_y, robot_yaw, prev_task_status);
-				// task_status = edge_avoid_task(robot_x, robot_y, robot_yaw, prev_task_status);
-				robot_cmd_linX = get_edge_avoid_linX();
-				robot_cmd_angZ = get_edge_avoid_angZ();
-				// task_status = HOME; // testing
-				break;
-			case HOME:
-				// task_status = SEARCH;
-				opp_detected = opponent_detection(distance_sensor_top);
-				task_status = home_task(robot_x, robot_y, robot_yaw, robot_arm_position, distance_sensor_mid, distance_sensor_top, opp_detected, distance_sensor_left, distance_sensor_right);
-				robot_cmd_linX = get_home_linX();
-				robot_cmd_angZ = get_home_angZ();
-				robot_cmd_arm_position = get_home_servo();
-				break;
-			case SEARCH:
-				// task_status = GOTO;
-				opp_detected = opponent_detection(distance_sensor_top);
-				task_status = search_task(robot_x, robot_y, robot_yaw, distance_sensor_left, distance_sensor_right, distance_sensor_mid, distance_sensor_top, opp_detected, robot_en_rpmL, robot_en_rpmR, search_after_edge);
-				// task_status = search_task_alt(distance_sensor_mid, distance_sensor_left, distance_sensor_right, distance_sensor_top);
-				// ball_detected_side = get_search_detected_side();
-				robot_cmd_linX = get_search_linX();
-				robot_cmd_angZ = get_search_angZ();
-				detected_ball_yaw = get_ball_yaw();
-
-				if(search_after_edge){
-					search_after_edge = 0;
-				}
-				break;
-			case GOTO:
-				if(goto_ignore_edge == 1){
-					robot_cmd_arm_position = SERVO_COLLECT_POSITION;
-					task_status = EDGE;
-				}
-				else if(goto_ignore_edge == 2){
-					if(ball_in_chamber_status == TRIGGERED){
-						task_status = DELIVER;
-						goto_ignore_edge = 0;
-					}
-					else{
-						robot_cmd_arm_position = 0; //open gate
-						task_status = SEARCH;
-						goto_ignore_edge = 0;
-					}
-				}
 				else{
-					opp_detected = opponent_detection(distance_sensor_top);
-					task_status = goto_task(robot_x, robot_y, robot_yaw, distance_sensor_left, distance_sensor_right, distance_sensor_mid, distance_sensor_top, opp_detected, detected_ball_yaw);
-					robot_cmd_linX = get_goto_linX();
-					robot_cmd_angZ = get_goto_angZ();
+					robot_cmd_arm_position = 0; //open gate
+					task_status = SEARCH;
+					goto_ignore_edge = 0;
 				}
-				break;
-			case COLLECT:
-				task_status = collect_task(robot_arm_position, distance_sensor_mid, distance_sensor_top, opp_detected, ball_in_chamber_status);
-				robot_cmd_linX = get_collect_linX();
-				robot_cmd_angZ = get_collect_angZ();
-				robot_cmd_arm_position = get_collect_servo();
-				break;
-			case DELIVER:
-				task_status = deliver_task(robot_yaw, robot_arm_position, ball_in_chamber_status, limit_switch_D, robot_line_BR, robot_line_BL);
-				robot_cmd_linX = get_deliver_linX();
-				robot_cmd_angZ = get_deliver_angZ();
-				robot_cmd_arm_position = get_deliver_servo();
-				if (get_reset_x() == TRIGGERED){
-					robot_x = 0.0;
-				}
-				break;
 			}
+			else{
+				opp_detected = opponent_detection(distance_sensor_top);
+				task_status = goto_task(robot_x, robot_y, robot_yaw, distance_sensor_left, distance_sensor_right, distance_sensor_mid, distance_sensor_top, opp_detected, detected_ball_yaw);
+				robot_cmd_linX = get_goto_linX();
+				robot_cmd_angZ = get_goto_angZ();
+			}
+			break;
+		case COLLECT:
+			task_status = collect_task(robot_arm_position, distance_sensor_mid, distance_sensor_top, opp_detected, ball_in_chamber_status);
+			robot_cmd_linX = get_collect_linX();
+			robot_cmd_angZ = get_collect_angZ();
+			robot_cmd_arm_position = get_collect_servo();
+			break;
+		case DELIVER:
+			task_status = deliver_task(robot_yaw, robot_arm_position, ball_in_chamber_status, limit_switch_D, robot_line_BR, robot_line_BL);
+			robot_cmd_linX = get_deliver_linX();
+			robot_cmd_angZ = get_deliver_angZ();
+			robot_cmd_arm_position = get_deliver_servo();
+			if (get_reset_x() == TRIGGERED){
+				robot_x = 0.0;
+			}
+			break;
+		}
 
 			// end of main loop
 			while (time1[T1] < DT_MAIN * 1000){}
-		}
 	}
+}

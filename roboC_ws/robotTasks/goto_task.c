@@ -34,11 +34,11 @@ static int goto_wall_detected;
 int get_ball_location(float left_sensor_dist, float right_sensor_dist, float mid_sensor_dist, float top_sensor_dist, int opp_detected, float yaw){
     // Returns the location of the detected ball
     // return 0 otherwise
-		//THE ORDER OF CHECK MATTERS!
-		goto_wall_detected = detect_back_wall(left_sensor_dist, right_sensor_dist, mid_sensor_dist);
-		if(detect_back_wall(left_sensor_dist, right_sensor_dist, mid_sensor_dist) == TRIGGERED && fabs(yaw) > 170.0){
-			return WALL;
-		}
+    //THE ORDER OF CHECK MATTERS!
+    goto_wall_detected = detect_back_wall(left_sensor_dist, right_sensor_dist, mid_sensor_dist);
+    if(detect_back_wall(left_sensor_dist, right_sensor_dist, mid_sensor_dist) == TRIGGERED && fabs(yaw) > 170.0){
+        return WALL;
+    }
     else if (mid_sensor_dist <= BALL_THRESHOLD_MID && !opp_detected){
         return FRONT;
     }
@@ -127,9 +127,9 @@ int goto_task(float x, float y, float yaw, float left_sensor_dist, float right_s
     //turn to ball_yaw when first started
     if(goto_startup_phase){
     	back_to_search_counter = 0;
-    	go_to_target_yaw(ball_yaw, yaw, 0);
+    	go_to_target_yaw(ball_yaw, yaw, 1);
 
-        //stop go_to_ball_yaw() when the robot has either faced towards ball_yaw or the ball is already detected
+        //stop go_to_target_yaw() when the robot has either faced towards ball_yaw or the ball is already detected
         ball_location = get_ball_location(left_sensor_dist, right_sensor_dist, mid_sensor_dist, top_sensor_dist, opp_detected, yaw);     //get latest ball location
 	    if(fabs(yaw-ball_yaw) <= YAW_TOLERANCE || ball_location != 0){
 	    	goto_startup_phase = 0;
@@ -157,7 +157,7 @@ int goto_task(float x, float y, float yaw, float left_sensor_dist, float right_s
     	go_to_target_yaw(0, yaw, 0);
 
     	if(fabs(yaw) < YAW_TOLERANCE){
-    		return SEARCH;
+    		return HOME;
     	}
     	return GOTO;
     }
@@ -201,7 +201,7 @@ int goto_task(float x, float y, float yaw, float left_sensor_dist, float right_s
         return GOTO;
     }
 
-    //Check if there is new detection that is different from the previous
+    Check if there is new detection that is different from the previous
     if(ball_location != 0 && prev_ball_location != ball_location){
         prev_ball_location = ball_location; //save prev ball location
     }
@@ -221,7 +221,9 @@ int goto_task(float x, float y, float yaw, float left_sensor_dist, float right_s
     else if(ball_location == WALL){
     	back_to_home_counter += 1;
 
-    	if(back_to_home_counter > round(0.3/DT_MAIN)){
+    	if(back_to_home_counter > round(0.5/DT_MAIN)){
+            back_to_search_counter = 0;
+            back_to_home_counter = 0;
     		activate_wall_protocol = 1;
     	}
     	return GOTO;
@@ -243,7 +245,8 @@ int goto_task(float x, float y, float yaw, float left_sensor_dist, float right_s
     }
     else if(ball_location == LEFT){ //Ball on the left
         //if ball previously detected on the right, now detected on to the left. Meaning the ball is too far for the middle sensor to pick up.
-        if(prev_ball_location == RIGHT){
+        //if(prev_ball_location == RIGHT){
+        if(0 == 1){ //testing code to deactivate correction_mode
             //activate correction mode
             goto_correction_mode = 1;
             goto_target_yaw = calculate_goto_target_yaw(goto_initial_yaw, yaw);
@@ -259,7 +262,8 @@ int goto_task(float x, float y, float yaw, float left_sensor_dist, float right_s
     }
     else if(ball_location == RIGHT){ //Ball on the right
         //if ball previously detected on the left, now detected on to the right. Meaning the ball is too far for the middle sensor to pick up.
-        if(prev_ball_location == LEFT){
+        //if(prev_ball_location == LEFT){
+        if(0 == 1){ //testing code to deactivate correction_mode
             //activate correction mode
             goto_correction_mode = 1;
             goto_target_yaw = calculate_goto_target_yaw(goto_initial_yaw, yaw);
