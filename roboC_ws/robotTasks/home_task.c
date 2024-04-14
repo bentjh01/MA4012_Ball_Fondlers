@@ -2,32 +2,37 @@
 
 static float home_linX = 0.0;
 static float home_angZ = 0.0;
-static float home_servo = 0.0;
 
 int home_task(float x, float y, float yaw, float arm_position, float sensor_mid, float sensor_top, float sensor_left, float sensor_right){
     static int home_startup = 1;
     static int home_initial_x = 0.0;
     static float home_count = 0.0;
-    home_servo = 0.0;
-    home_linX = MAX_SPEED;
-    home_angZ = -yaw;
-    home_angZ = 0.0;
-    
+
     if(home_startup == 1){
         home_count = 0.0;
         home_linX = 0.0;
         home_angZ = 0.0;
-        home_servo = 0.0;
         
     	home_initial_x = x;
     	home_startup = 0;
+    }
+
+    home_count ++;
+    if (fabs(yaw) > YAW_TOLERANCE){
+        home_linX = 0.0; 
+        home_angZ = -sgn(yaw) * MAX_TURN * HOME_TURN_KP;
+    }
+    else{
+        home_linX = MAX_SPEED;
+        home_angZ = -yaw * 1.5;
     }
 
     if (home_count >= HOME_TIMEOUT){
         home_startup = 1;
         return SEARCH;
     }
-    else if (arm_position == 0.0 && x - home_initial_x >= HOME_AWAY_DISTANCE){
+
+    if (arm_position == 0.0 && fabs(x - home_initial_x) >= HOME_AWAY_DISTANCE){
         home_startup = 1;
         return SEARCH;
     }
@@ -47,8 +52,4 @@ float get_home_linX(){
 /// @return angular velocity [deg/s]
 float get_home_angZ(){
     return home_angZ;
-}
-
-float get_home_servo(){
-    return home_servo;
 }

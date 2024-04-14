@@ -39,9 +39,16 @@ float filter_distance_R(float input){
   return output;
 }
 float filter_distance_mid(float input){
-	static float prev_dis_mid_val;
-	float output = low_pass_filter(input, prev_dis_mid_val, FILTER_GAIN_LONG_MID);
-	prev_dis_mid_val = output;
+	static float prev_mid_out;
+  static float prev_mid1;
+  static float prev_mid2;
+	// float output = low_pass_filter(input, prev_dis_mid_val, FILTER_GAIN_LONG_MID);
+	// prev_dis_mid_val = output;
+  float output = median_filtering(input, prev_mid1, prev_mid2);
+	output = low_pass_filter(output, prev_mid_out, FILTER_GAIN_LONG_MID);
+  prev_mid_out = output;
+  prev_mid1 = input;
+  prev_mid2 = prev_mid1;
 	return output;
 }
 float filter_distance_top(float input){

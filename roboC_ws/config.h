@@ -58,11 +58,11 @@ ________________________________________________________________________________
 #define LEFT_SENSOR_OFFSET 1.5
 #define RIGHT_SENSOR_OFFSET 1.9
 
-#define FILTER_GAIN_LONG_L 	    0.5 //(output = prev_input) 0 < FILTER_GAIN < 1 (output = new_input)
+#define FILTER_GAIN_LONG_L 	    0.50 //(output = prev_input) 0 < FILTER_GAIN < 1 (output = new_input)
 #define FILTER_GAIN_LONG_R 	    0.50 //(output = prev_input) 0 < FILTER_GAIN < 1 (output = new_input)
 #define FILTER_GAIN_LONG_MID 	0.5 //(output = prev_input) 0 < FILTER_GAIN < 1 (output = new_input)
 #define FILTER_GAIN_SHORT_TOP 	1.0 //(output = prev_input) 0 < FILTER_GAIN < 1 (output = new_input)
-#define BALL_IN_CHAMBER_DISTANCE -0.5 // [cm]
+#define BALL_IN_CHAMBER_DISTANCE -5 // [cm]
 #define BALL_THRESHOLD_LNR          	35.0 //cm wrt to edge of ramp
 #define BALL_THRESHOLD_MID          	28.0 //cm wrt to edge of ramp
 #define OPP_CLOSENESS_THRESHOLD     	35.0 //cm wrt to edge of ramp
@@ -70,8 +70,8 @@ ________________________________________________________________________________
 #define READY_TO_COLLECT_THRESHOLD  	4.0 //cm wrt to edge of ramp
 
 #define BALL_THRESHOLD_CHANGE 20.0 // cm
-#define LIMIT_DISTANCE_READINGS 40.0 //
-#define OPP_DETECT_THRESHOLD 15.0 // cm
+#define LIMIT_DISTANCE_READINGS 80.0 //
+#define OPP_DETECT_THRESHOLD 20.0 // cm
 #define FLAT_SURFACE_THRESHOLD 10.0 // cm
 
 // LINE SENSOR
@@ -103,12 +103,12 @@ ________________________________________________________________________________
 #define FILTER_ENCODER 0.5
 
 // DRIVE
-#define MOTOR_L_KP 0.9
-#define MOTOR_L_KI 0.005
+#define MOTOR_L_KP 0.8
+#define MOTOR_L_KI 0.007
 #define MOTOR_L_KD 0.00
 #define MOTOR_L_INTEGRAL_MAX 127
 
-#define MOTOR_R_KP 0.9
+#define MOTOR_R_KP 0.8
 #define MOTOR_R_KI 0.005
 #define MOTOR_R_KD 0.00
 #define MOTOR_R_INTEGRAL_MAX 127
@@ -146,8 +146,9 @@ ________________________________________________________________________________
 #define EDGE_YAW_KP 0.6
 
 // HOME TASK
-#define HOME_AWAY_DISTANCE (ARENA_X * 1.0 / 2.0)
+#define HOME_AWAY_DISTANCE (ARENA_X * 2.0 / 3.0)
 #define HOME_TIMEOUT 100 
+#define HOME_TURN_KP 0.6
 
 // SEARCH TASK
 #define SEARCH_COUNT_THRESHOLD      75
@@ -160,10 +161,10 @@ ________________________________________________________________________________
 #define GOTO_CURVE_LIN_SPEED    0.3
 #define GOTO_CURVE_ANG_SPEED    15.0
 #define BACK_TO_SEARCH_COUNT		30
-#define GOTO_TIMEOUT   100
+#define GOTO_TIMEOUT   100 // [s]
 
 // COLLECT TASK
-#define COLLECT_WAIT 5
+#define COLLECT_WAIT 100
 #define SERVO_COLLECT_POSITION 90.0
 
 // DELIVERY TASK
@@ -192,7 +193,7 @@ ________________________________________________________________________________
 #define MAX_POWER           127
 #define SUCCESS             1
 #define FAIL                0
-#define INVALID             9999
+#define INVALID             920010050/9
 
 // TASK PARAMETERS
 #define DT_MAIN                  0.05

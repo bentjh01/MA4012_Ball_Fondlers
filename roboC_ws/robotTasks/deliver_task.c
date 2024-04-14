@@ -21,7 +21,7 @@ int deliver_task(float yaw, float servo_position, int ball_in_chamber, int back_
     }
     else{
         deliver_set_linX = -MAX_SPEED;
-        deliver_set_angZ = -yaw;
+        deliver_set_angZ = -yaw * 2.0;
     }
 
     // Move the arm to the delivery position

@@ -91,3 +91,17 @@ float max(float x1, float x2){
 	}
 	return x2;
 }
+
+float median_filtering(float current, float prev1, float prev2){
+	float max_ = max(current, max(prev1, prev2));
+	float min_ = min(current, min(prev1, prev2));
+	if (prev2 > min_ && prev2 < max_){
+		return prev2;
+	}
+	else if (prev1 > min_ && prev1 < max_){
+		return prev1;
+	}
+	else{
+		return current
+	}
+}

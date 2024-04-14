@@ -260,12 +260,12 @@ int search_task_alt(){
   if (search_state == 0){
     if (move_360(MAX_TURN * 0.5 * rotate_direction) == FAIL){
       search_linX = 0.0;
-      search_angZ = MAX_TURN * 0.5;
+      search_angZ = rotate_direction * MAX_TURN * 0.5;
     }
     else{
       // switch to move forward cycle
       search_state = 1;
-      rotate_direction = -1.0;
+      rotate_direction = -rotate_direction;
     }
   }
   else{
