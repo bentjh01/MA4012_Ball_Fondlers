@@ -5,7 +5,7 @@ float collect_servo = 0.0;
 float collect_linX = 0.0;
 float collect_angZ = 0.0;
 
-int collect_task(float servo_position, float distance_sensor_mid, float distance_sensor_top, int opp_detected, int ball_in_chamber){
+int collect_task(float servo_position, float distance_sensor_mid, float distance_sensor_top, int ball_in_chamber){
     static int collect_startup = TRIGGERED;
     static int collect_wait;
 
@@ -26,7 +26,7 @@ int collect_task(float servo_position, float distance_sensor_mid, float distance
             return GOTO;
         }
     }
-    else if (servo_position >= SERVO_COLLECT_POSITION){
+    else if (servo_position == SERVO_COLLECT_POSITION){
         collect_linX = 0.0;
         collect_angZ = 0.0;
         collect_servo = SERVO_COLLECT_POSITION;
@@ -43,6 +43,7 @@ int collect_task(float servo_position, float distance_sensor_mid, float distance
                 collect_servo = 0.0; //open the gate
                 collect_linX = MAX_SPEED;
                 collect_angZ = 0.0;
+                return GOTO;
             }
         // }
     }

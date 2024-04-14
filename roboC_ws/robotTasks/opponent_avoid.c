@@ -17,7 +17,7 @@ int opponent_avoid_task(int prev_task, float rb_cmd_linX, float left_sensor, flo
     }
     opponent_avoid_count ++;
     opp_cmd_linX = initial_linear_direction * MAX_SPEED/2.0;
-    if (detect_thing(left_sensor, OPP_DETECT_THRESHOLD)){
+    if (check_threshold(left_sensor, OPP_DETECT_THRESHOLD)){
         opp_cmd_angZ = -MAX_TURN;
     }
     else{

@@ -27,17 +27,29 @@ float filter_line_FR(float input){
 }
 
 float filter_distance_L(float input){
-	static float prev_dis_L_val;
-	float output = low_pass_filter(input, prev_dis_L_val, FILTER_GAIN_LONG_L);
-	prev_dis_L_val = output;
+	static float prev_left_out;
+  static float prev_left1;
+  static float prev_left2;
+  float output = median_filtering(input, prev_left1, prev_left2);
+	output = low_pass_filter(output, prev_left_out, FILTER_GAIN_LONG_R);
+  prev_left_out = output;
+  prev_left1 = input;
+  prev_left2 = prev_left1;
 	return output;
 }
+
 float filter_distance_R(float input){
-	static float prev_dis_R_val;
-	float output = low_pass_filter(input, prev_dis_R_val, FILTER_GAIN_LONG_R);
-	prev_dis_R_val = output;
-  return output;
+	static float prev_right_out;
+  static float prev_right1;
+  static float prev_right2;
+  float output = median_filtering(input, prev_right1, prev_right2);
+	output = low_pass_filter(output, prev_right_out, FILTER_GAIN_LONG_R);
+  prev_right_out = output;
+  prev_right1 = input;
+  prev_right2 = prev_right1;
+	return output;
 }
+
 float filter_distance_mid(float input){
 	static float prev_mid_out;
   static float prev_mid1;
@@ -144,22 +156,10 @@ float calculate_short_distance(float sensor_val){
   return distance_cm;
 }
 
-/// @brief Checks for ball in chamber using the middle short distance sensor
-/// @param mid_sensor_distance
-/// @return TRIGGERED for ball in chamber, NOT_TRIGGERED for no ball in chamber
-int check_ball_in_chamber(float mid_sensor_distance){
-  if (mid_sensor_distance < BALL_IN_CHAMBER_DISTANCE){
-    return TRIGGERED;
-  }
-  else{
-    return NOT_TRIGGERED;
-  }
-}
-
 /// @brief Checks the threshold of a sensor
 /// @param sensor_val current sensor value
 /// @param threshold
-/// @return TRIGGERED if sensor_val > threshold, NOT_TRIGGERED otherwise
+/// @return TRIGGERED if sensor_val < threshold, NOT_TRIGGERED otherwise
 int check_threshold(float sensor_val, float threshold){
   if (sensor_val < threshold){
   // if (sensor_val > threshold){ // TESTING
@@ -206,46 +206,24 @@ int detect_ball(float left_sensor_dist, float right_sensor_dist, float mid_senso
   }
 }
 
-/// @brief Checks if sensor detects a ball if the distance is less than its limit
-/// @param sensor_dist
-/// @param limit_dist
-/// @return TRIGGERED if no detection, NOT_TRIGGERED if detection
-int detect_thing(float sensor_dist, float limit_dist){
-  sensor_dist = min(sensor_dist, limit_dist);
-  if (sensor_dist < limit_dist){
-    return TRIGGERED;
-  }
-  else{
-    return NOT_TRIGGERED;
-  }
-}
-
-/// @brief Checks if the back wall is detected or if a flat surface is detected by comparing the mean of the left and right sensors with the middle sensor.
-/// @param left_sensor
-/// @param right_sensor
-/// @param mid_sensor
-/// @return TRIGGERED if back wall is detected, NOT_TRIGGERED otherwise
-int detect_back_wall(float left_sensor, float right_sensor, float mid_sensor, float limit_dist){
- if (detect_thing(left_sensor, limit_dist) == TRIGGERED && detect_thing(right_sensor, limit_dist) == TRIGGERED){
-    return TRIGGERED;
-  }
-  else{
-    return NOT_TRIGGERED;
-  }
-  // left_sensor = min(left_sensor, limit_dist);
-  // right_sensor = min(right_sensor, limit_dist);
-  // mid_sensor = min(mid_sensor, limit_dist);
-
-  // float expected_mid_distance = (left_sensor + right_sensor)/2.0;
-  // if (fabs(mid_sensor - expected_mid_distance) < FLAT_SURFACE_THRESHOLD){
-  //   if (expected_mid_distance < limit_dist * 0.8){
-  //     return TRIGGERED;
-  //   }
-  // }
-  // return NOT_TRIGGERED;
-}
-
-int detect_ball_2(float left_sensor_dist, float right_sensor_dist, float mid_sensor_dist, float top_sensor_dist, float limit_dist){
+/**
+ * Checks for detection based on sensor readings.
+ * 
+ * @param yaw The yaw angle of the robot.
+ * @param left_sensor_dist The distance reading from the left sensor.
+ * @param right_sensor_dist The distance reading from the right sensor.
+ * @param mid_sensor_dist The distance reading from the middle sensor.
+ * @param top_sensor_dist The distance reading from the top sensor.
+ * @param limit_dist The maximum distance threshold.
+ * @return An integer representing the detection result:
+ *         - OPPONENT_DETECTED: If an opponent is detected.
+ *         - WALL_DETECTED: If a wall is detected.
+ *         - BALL_MIDDLE_DETECTED: If a ball is detected in the middle.
+ *         - BALL_LEFT_DETECTED: If a ball is detected on the left.
+ *         - BALL_RIGHT_DETECTED: If a ball is detected on the right.
+ *         - -1: If no detection is made.
+ */
+int check_detection(float yaw, float left_sensor_dist, float right_sensor_dist, float mid_sensor_dist, float top_sensor_dist, float limit_dist){
   left_sensor_dist = min(left_sensor_dist, limit_dist);
   right_sensor_dist = min(right_sensor_dist, limit_dist);
   mid_sensor_dist = min(mid_sensor_dist, limit_dist);
@@ -253,40 +231,63 @@ int detect_ball_2(float left_sensor_dist, float right_sensor_dist, float mid_sen
 
   float minimum = min(min(left_sensor_dist, right_sensor_dist), mid_sensor_dist);
 
-  int detectedLeft = detect_thing(left_sensor_dist, limit_dist);
-  int detectedRight = detect_thing(right_sensor_dist, limit_dist);
-  int detectedMid = detect_thing(mid_sensor_dist, limit_dist);
-  int detectedTop = detect_thing(top_sensor_dist, limit_dist);
+  int detectedLeft = check_threshold(left_sensor_dist, limit_dist);
+  int detectedRight = check_threshold(right_sensor_dist, limit_dist);
+  int detectedMid = check_threshold(mid_sensor_dist, limit_dist);
+  int detectedTop = check_threshold(top_sensor_dist, limit_dist);
 
-  /// check for wall
-  if (detectedLeft == TRIGGERED && detectedRight == TRIGGERED && detectedMid == TRIGGERED){
-    float expected_mid_distance = (left_sensor_dist + right_sensor_dist)/2.0;
-    if (fabs(mid_sensor_dist - expected_mid_distance) < FLAT_SURFACE_THRESHOLD){
-      return WALL_DETECTED;
-    }
-  }
   /// check for opponent
-  else if (detectedMid == TRIGGERED && detectedTop == TRIGGERED){
+  if (detectedMid == TRIGGERED && detectedTop == TRIGGERED){
     if (top_sensor_dist == minimum){
       return OPPONENT_DETECTED;
     }
   }
-  // check for ball
-  else if (detectedLeft == TRIGGERED || detectedRight == TRIGGERED || detectedMid == TRIGGERED){
+
+  if (detectedLeft == TRIGGERED || detectedRight == TRIGGERED || detectedMid == TRIGGERED){
+    // check for wall
+    if (fabs(yaw) > 135.0){
+      // robot is facing the back wall
+      if (detectedLeft == TRIGGERED && detectedRight == TRIGGERED && detectedMid == TRIGGERED){
+        // all 3 sensors are triggered
+        // the expected distance of the middle sensor is the distance reading from the middle sensor if the robot was facing a flat surface
+        float expected_mid_distance = (left_sensor_dist + right_sensor_dist)/2.0;
+        if (fabs(mid_sensor_dist - expected_mid_distance) < FLAT_SURFACE_THRESHOLD){
+          return WALL_DETECTED;
+        }
+      }
+    }
+    // check for opponent
+    if (detectedMid == TRIGGERED && detectedTop == TRIGGERED && top_sensor_dist <= OPP_CLOSENESS_THRESHOLD){
+      return OPPONENT_DETECTED;
+    }
+    // ball in middle
+    if (detectedMid == TRIGGERED && mid_sensor_dist == minimum){
+      return BALL_MIDDLE_DETECTED;
+    }
     // ball in left
-    if (detectedLeft == TRIGGERED && detectedLeft == minimum){
+    if (detectedLeft == TRIGGERED && left_sensor_dist == minimum){
       return BALL_LEFT_DETECTED;
     }
     // ball on right
-    else if (detectedRight == TRIGGERED && detectedRight == minimum){
+    if (detectedRight == TRIGGERED && right_sensor_dist == minimum){
       return BALL_RIGHT_DETECTED;
-    }
-    // ball in middle
-    else if (detectedMid == TRIGGERED && detectedMid == minimum){
-      return BALL_MIDDLE_DETECTED;
     }
   }
   else{
     return -1;
   }
+}
+
+/**
+ * Checks if a ball is in the chamber based on the arm angle and mid sensor distance.
+ *
+ * @param arm_angle The angle of the arm in degrees.
+ * @param mid_sensor_dist The distance measured by the mid sensor in centimeters.
+ * @return Returns TRIGGERED if a ball is in the chamber, otherwise returns NOT_TRIGGERED.
+ */
+int check_ball_in_chamber(float arm_angle, float mid_sensor_dist){
+  if (arm_angle == SERVO_COLLECT_POSITION && mid_sensor_dist <= BALL_IN_CHAMBER_DISTANCE){
+    return TRIGGERED;
+  }
+  return NOT_TRIGGERED;
 }

@@ -78,7 +78,8 @@ int limit_switch_D = 0;
 int task_status = HOME;
 
 // Detection
-// int opp_detected;
+int case_detected;
+int ball_in_chamber;
 
 // ball status
 
@@ -192,6 +193,8 @@ task robot_read(){
 		read_sensors(DT_READ);
 		update_robot_odom(DT_READ);
 		robot_execute(DT_READ);
+		case_detected = check_detection(robot_yaw, distance_sensor_left, distance_sensor_right, distance_sensor_mid, distance_sensor_top, LIMIT_DISTANCE_READINGS);
+		ball_in_chamber = check_ball_in_chamber(robot_arm_position, distance_sensor_mid);
 		while (time1[T2] < DT_READ * 1000){}
 	}
 }
@@ -199,11 +202,6 @@ task robot_read(){
 task main()
 {
 	int prev_task_status;
-	int case_detected;
-	int ball_detect_L = 0.0;
-	int ball_detect_R = 0.0;
-	int opp_detected;
-	int ball_in_chamber;
 
 	startTask(robot_read);
 	wait_to_go();
@@ -235,25 +233,16 @@ task main()
 			// wall_case_check(robot_yaw, robot_line_FL, robot_line_FR, robot_line_BL, robot_line_BR); @Unizz20
 			}
 
-			/// DETECT OPPONENT
-			opp_detected = opponent_detection(distance_sensor_top, OPP_DETECT_THRESHOLD);
-
-			/// DETECT BALL ON LEFT AND RIGHT
-			ball_in_chamber = detect_thing(distance_sensor_mid, BALL_IN_CHAMBER_DISTANCE);
-			case_detected = detect_ball_2(distance_sensor_left, distance_sensor_right, distance_sensor_mid, distance_sensor_top, LIMIT_DISTANCE_READINGS);
-
+			// DECTECTION CASES
 			if (case_detected == BALL_LEFT_DETECTED || case_detected == BALL_MIDDLE_DETECTED || case_detected == BALL_RIGHT_DETECTED){
-				if (ball_in_chamber == NOT_TRIGGERED){
+				if (task_status != COLLECT && task_status != DELIVER){
 					task_status = GOTO;
 				}
-			else if (case_detected == WALL_DETECTED){
-				task_status = HOME;
-			}
 			else if (case_detected == OPPONENT_DETECTED){
 				if (task_status != AVOID_OPPONENT){
 					prev_task_status = task_status;
 				}
-				if (task_status != DELIVER && task_status != COLLECT){
+				if (task_status != COLLECT && task_status != DELIVER){
 					task_status = AVOID_OPPONENT;
 				}
 			}
@@ -280,13 +269,13 @@ task main()
 				task_status = search_task_alt();
 				break;
 			case GOTO:
-				task_status = goto_task_alt(distance_sensor_left, distance_sensor_right, distance_sensor_mid, case_detected);
+				task_status = goto_task_alt(robot_yaw, distance_sensor_left, distance_sensor_right, distance_sensor_mid, case_detected);
 				robot_cmd_linX = get_goto_linX();
 				robot_cmd_angZ = get_goto_angZ();
 				robot_cmd_arm_position = 0.0;
 				break;
 			case COLLECT:
-				task_status = collect_task(robot_arm_position, distance_sensor_mid, distance_sensor_top, opp_detected, ball_in_chamber);
+				task_status = collect_task(robot_arm_position, distance_sensor_mid, distance_sensor_top, ball_in_chamber);
 				robot_cmd_linX = get_collect_linX();
 				robot_cmd_angZ = get_collect_angZ();
 				robot_cmd_arm_position = get_collect_servo();
