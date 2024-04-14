@@ -1,52 +1,79 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-// /*______________________________________________________________________________________________________________________
+/*______________________________________________________________________________________________________________________
 
-// TUNABLE TASK PARAMETERS
-// ______________________________________________________________________________________________________________________*/
+TUNABLE TASK PARAMETERS
+______________________________________________________________________________________________________________________*/
 
+// EDGE TASK
+#define EDGE_REVERSE_DISTANCE_SMALL 0.05 // [m] TODO
+#define EDGE_REVERSE_DISTANCE_BIG 0.15
+#define EDGE_YAW_KP 0.6
 
-// #define BALL_IN_CHAMBER_DISTANCE -0.5 // [cm]
-// #define BALL_THRESHOLD_LNR          	35.0 //cm wrt to edge of ramp
-// #define BALL_THRESHOLD_MID          	35.0 //cm wrt to edge of ramp
-// #define OPP_CLOSENESS_THRESHOLD     	35.0 //cm wrt to edge of ramp
-// #define OPP_DIFFERENTIATION_THRESHOLD	8.0 //cm
-// #define READY_TO_COLLECT_THRESHOLD  	4.0 //cm wrt to edge of ramp
+// HOME TASK
+#define HOME_AWAY_DISTANCE (ARENA_X * 2.0 / 3.0)
+#define HOME_TIMEOUT 100 
+#define HOME_TURN_KP 0.6
 
-// #define LIMIT_DISTANCE_READINGS 30.0 //
-// #define OPP_DETECT_THRESHOLD 15.0 // cm
-// #define FLAT_SURFACE_THRESHOLD 10.0 // cm
+// SEARCH TASK
+#define SEARCH_COUNT_THRESHOLD      75
+#define CHANGE_POSITION_DISTANCE    0.5
+//#define DISTANCE_CHANGE_THRESHOLD		10.0
 
+// GOTO TASK
+#define GOTO_SWEEP_TIME         3.0
+#define GOTO_ALIGN_BALL_GAIN    0.6
+#define GOTO_CURVE_LIN_SPEED    0.3
+#define GOTO_CURVE_ANG_SPEED    15.0
+#define BACK_TO_SEARCH_COUNT		30
+#define GOTO_TIMEOUT   100 // [s]
 
-// // EDGE TASK
-// #define EDGE_REVERSE_DISTANCE_SMALL 0.05 // [m] TODO
-// #define EDGE_REVERSE_DISTANCE_BIG 0.15
-// #define EDGE_YAW_KP 0.6
+// COLLECT TASK
+#define COLLECT_WAIT 100
+#define SERVO_COLLECT_POSITION 90.0
 
-// // HOME TASK
-// #define HOME_AWAY_DISTANCE (ARENA_X * 1.0 / 2.0)
+// DELIVERY TASK
+#define DELIVER_YAW_KP 0.6
+#define SERVO_DELIVER_POSITION 180.0 //TODO
+#define DELIVERY_WAIT   5 //TODO
 
-// // SEARCH TASK
-// #define SEARCH_COUNT_THRESHOLD      75
-// #define CHANGE_POSITION_DISTANCE    0.5
-// //#define DISTANCE_CHANGE_THRESHOLD		10.0
+// OPPONENT AVOID TASK
+#define OPP_AVOID_TIMER 50
 
-// // GOTO TASK
-// #define GOTO_SWEEP_TIME         3.0
-// #define GOTO_ALIGN_BALL_GAIN    0.6
-// #define GOTO_CURVE_LIN_SPEED    0.3
-// #define GOTO_CURVE_ANG_SPEED    15.0
-// #define BACK_TO_SEARCH_COUNT		30
+// BALL DETECTION
+#define OPPONENT_DETECTED 1
+#define WALL_DETECTED 2
+#define BALL_LEFT_DETECTED 3
+#define BALL_RIGHT_DETECTED 4
+#define BALL_MIDDLE_DETECTED 5
 
-// // COLLECT TASK
-// #define SERVO_COLLECT_POSITION 90.0
+/*______________________________________________________________________________________________________________________
 
-// // DELIVERY TASK
-// #define DELIVER_YAW_KP 0.6
-// #define SERVO_DELIVER_POSITION 180.0 //TODO
-// #define DELIVERY_SERVO_COUNTER   20 //TODO
+TUNING MOTOR PARAMETERS
+______________________________________________________________________________________________________________________*/
 
+// ENCODERS
+#define FILTER_ENCODER 0.5
+
+// DRIVE
+#define MOTOR_L_KP 0.8
+#define MOTOR_L_KI 0.007
+#define MOTOR_L_KD 0.00
+#define MOTOR_L_INTEGRAL_MAX 127
+
+#define MOTOR_R_KP 0.8
+#define MOTOR_R_KI 0.005
+#define MOTOR_R_KD 0.00
+#define MOTOR_R_INTEGRAL_MAX 127
+
+// SERVO
+#define SERVO_TOLERANCE 7.0 // [deg] TODO
+#define SERVO_POSITION_GAIN 7.50 // [deg] TODO
+#define SERVO_KP 0.85
+#define SWITCH_A_POSITION 0.0 //[deg] TODO
+#define SWITCH_B_POSITION 90.0 //[deg] TODO
+#define SWITCH_C_POSITION 180.0 //[deg] TODO
 
 /*______________________________________________________________________________________________________________________
 
@@ -72,7 +99,7 @@ ________________________________________________________________________________
 #define BALL_THRESHOLD_CHANGE 20.0 // cm
 #define LIMIT_DISTANCE_READINGS 80.0 //
 #define OPP_DETECT_THRESHOLD 20.0 // cm
-#define FLAT_SURFACE_THRESHOLD 10.0 // cm
+#define FLAT_SURFACE_THRESHOLD 20.0 // cm
 
 // LINE SENSOR
 #define LINE_FL_THRESHOLD       1329 // Midpoint of black point and yellow point
@@ -135,45 +162,7 @@ ________________________________________________________________________________
 
 #define MOTOR_ACCL_LIM 100.0 // [rpm]
 
-/*______________________________________________________________________________________________________________________
 
-TUNABLE TASK PARAMETERS
-______________________________________________________________________________________________________________________*/
-
-// EDGE TASK
-#define EDGE_REVERSE_DISTANCE_SMALL 0.05 // [m] TODO
-#define EDGE_REVERSE_DISTANCE_BIG 0.15
-#define EDGE_YAW_KP 0.6
-
-// HOME TASK
-#define HOME_AWAY_DISTANCE (ARENA_X * 2.0 / 3.0)
-#define HOME_TIMEOUT 100 
-#define HOME_TURN_KP 0.6
-
-// SEARCH TASK
-#define SEARCH_COUNT_THRESHOLD      75
-#define CHANGE_POSITION_DISTANCE    0.5
-//#define DISTANCE_CHANGE_THRESHOLD		10.0
-
-// GOTO TASK
-#define GOTO_SWEEP_TIME         3.0
-#define GOTO_ALIGN_BALL_GAIN    0.6
-#define GOTO_CURVE_LIN_SPEED    0.3
-#define GOTO_CURVE_ANG_SPEED    15.0
-#define BACK_TO_SEARCH_COUNT		30
-#define GOTO_TIMEOUT   100 // [s]
-
-// COLLECT TASK
-#define COLLECT_WAIT 100
-#define SERVO_COLLECT_POSITION 90.0
-
-// DELIVERY TASK
-#define DELIVER_YAW_KP 0.6
-#define SERVO_DELIVER_POSITION 180.0 //TODO
-#define DELIVERY_WAIT   5 //TODO
-
-// OPPONENT AVOID TASK
-#define OPP_AVOID_TIMER 50
 
 /*______________________________________________________________________________________________________________________
 

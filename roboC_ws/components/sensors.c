@@ -244,3 +244,49 @@ int detect_back_wall(float left_sensor, float right_sensor, float mid_sensor, fl
   // }
   // return NOT_TRIGGERED;
 }
+
+int detect_ball_2(float left_sensor_dist, float right_sensor_dist, float mid_sensor_dist, float top_sensor_dist, float limit_dist){
+  left_sensor_dist = min(left_sensor_dist, limit_dist);
+  right_sensor_dist = min(right_sensor_dist, limit_dist);
+  mid_sensor_dist = min(mid_sensor_dist, limit_dist);
+  top_sensor_dist = min(top_sensor_dist, limit_dist);
+
+  float minimum = min(min(left_sensor_dist, right_sensor_dist), mid_sensor_dist);
+
+  int detectedLeft = detect_thing(left_sensor_dist, limit_dist);
+  int detectedRight = detect_thing(right_sensor_dist, limit_dist);
+  int detectedMid = detect_thing(mid_sensor_dist, limit_dist);
+  int detectedTop = detect_thing(top_sensor_dist, limit_dist);
+
+  /// check for wall
+  if (detectedLeft == TRIGGERED && detectedRight == TRIGGERED && detectedMid == TRIGGERED){
+    float expected_mid_distance = (left_sensor_dist + right_sensor_dist)/2.0;
+    if (fabs(mid_sensor_dist - expected_mid_distance) < FLAT_SURFACE_THRESHOLD){
+      return WALL_DETECTED;
+    }
+  }
+  /// check for opponent
+  else if (detectedMid == TRIGGERED && detectedTop == TRIGGERED){
+    if (top_sensor_dist == minimum){
+      return OPPONENT_DETECTED;
+    }
+  }
+  // check for ball
+  else if (detectedLeft == TRIGGERED || detectedRight == TRIGGERED || detectedMid == TRIGGERED){
+    // ball in left
+    if (detectedLeft == TRIGGERED && detectedLeft == minimum){
+      return BALL_LEFT_DETECTED;
+    }
+    // ball on right
+    else if (detectedRight == TRIGGERED && detectedRight == minimum){
+      return BALL_RIGHT_DETECTED;
+    }
+    // ball in middle
+    else if (detectedMid == TRIGGERED && detectedMid == minimum){
+      return BALL_MIDDLE_DETECTED;
+    }
+  }
+  else{
+    return -1;
+  }
+}

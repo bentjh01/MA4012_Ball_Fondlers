@@ -11,7 +11,7 @@
 float goto_linX;
 float goto_angZ;
 
-int goto_task_alt(float distanceL, float distanceR, float distanceM){
+int goto_task_alt(float distanceL, float distanceR, float distanceM, float case_num){
     /// GOTO Task
     /// 1. Limits the goto distance to the initial detected ball distance
     /// 2. Uses the distance sensors to detect the ball within this limit 
@@ -21,40 +21,40 @@ int goto_task_alt(float distanceL, float distanceR, float distanceM){
     static int goto_startup = 1;
     static float goto_limit;
     static float goto_timeout;
-    static int last_ball_position; // 1 for left, 2 for right
+    static int last_ball_position; 
 
     if (goto_startup == 1){
         goto_timeout = 0;
         goto_startup = 0;
-        if (detect_thing(distanceL, LIMIT_DISTANCE_READINGS) == TRIGGERED){
-            last_ball_position = 1;
+        if (case_num == BALL_LEFT_DETECTED){
+            last_ball_position = BALL_LEFT_DETECTED;
             goto_limit = distanceL * 1.2;
         }
-        if (detect_thing(distanceR, LIMIT_DISTANCE_READINGS) == TRIGGERED){
-            last_ball_position = 2;
+        if (case_num == BALL_RIGHT_DETECTED){
+            last_ball_position = BALL_RIGHT_DETECTED;
             goto_limit = distanceR * 1.2;
         }
     }
     
     // check if ball is detected
-    int detectM = detect_thing(distanceM, goto_limit);
-    int test_L = detect_thing(distanceL, goto_limit);
-    int test_R =  detect_thing(distanceR, goto_limit);
+    int test_detect = detect_ball_2(distanceL, distanceR, distanceM, distanceM, goto_limit);
     // Last ball location on LEFT
-    if (last_ball_position == 1 && test_R == TRIGGERED){
-        last_ball_position = 2;
+    if (last_ball_position == BALL_LEFT_DETECTED && test_detect == BALL_RIGHT_DETECTED){
+        last_ball_position = BALL_RIGHT_DETECTED;
     }
     // Last ball location on RIGHT
-    else if (last_ball_position == 2 && test_L == TRIGGERED){
-        last_ball_position = 1;
+    else if (last_ball_position == BALL_RIGHT_DETECTED && test_detect == BALL_LEFT_DETECTED){
+        last_ball_position = BALL_LEFT_DETECTED;
+    }
+
+    if (case_num == WALL_DETECTED || case_num == OPPONENT_DETECTED){
+        goto_startup = 1;
+        return HOME;
     }
 
     goto_timeout++;
     if (goto_timeout > GOTO_TIMEOUT){
         goto_startup = 1;
-        if (detect_back_wall(distanceL, distanceR, distanceR, goto_limit) == TRIGGERED){
-            return HOME;
-        }
         return SEARCH;
     }
 
@@ -63,13 +63,13 @@ int goto_task_alt(float distanceL, float distanceR, float distanceM){
     // Moves the robot to whatever direction the ball is detected
     // __________
 
-    if (distanceM <= READY_TO_COLLECT_THRESHOLD){
+    if (distanceM < READY_TO_COLLECT_THRESHOLD){
         goto_linX = MAX_SPEED;
         goto_angZ = 0.0;
         goto_startup = 1;
         return COLLECT;
     }
-    else if (detectM == TRIGGERED){
+    else if (test_detect == BALL_MIDDLE_DETECTED){
         // ball detected in middle, go straight
         goto_linX = MAX_SPEED;
         goto_angZ = 0.0;
@@ -77,11 +77,11 @@ int goto_task_alt(float distanceL, float distanceR, float distanceM){
     else {
         // ball detected on the sides, turn towards the ball
         float turning_direction = 1.0;
-        if (last_ball_position == 1){
+        if (last_ball_position == BALL_LEFT_DETECTED){
             // ball on left, turn left
             turning_direction = 1.0;
         }
-        else if (last_ball_position == 2){
+        else if (last_ball_position == BALL_RIGHT_DETECTED){
             // ball on right, turn right
             turning_direction = -1.0;
         }
