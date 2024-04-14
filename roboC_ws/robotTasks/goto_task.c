@@ -201,7 +201,7 @@ int goto_task(float x, float y, float yaw, float left_sensor_dist, float right_s
         return GOTO;
     }
 
-    Check if there is new detection that is different from the previous
+    //Check if there is new detection that is different from the previous
     if(ball_location != 0 && prev_ball_location != ball_location){
         prev_ball_location = ball_location; //save prev ball location
     }

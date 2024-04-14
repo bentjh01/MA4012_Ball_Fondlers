@@ -22,7 +22,7 @@ int collect_task(float servo_position, float distance_sensor_mid, float distance
     	collect_angZ = 0.0;
     	collect_servo = SERVO_COLLECT_POSITION;
     }
-    else if(detect_ball(99.9 ,99.9 , distance_sensor_mid, distance_sensor_top, opp_detected) == 1 && distance_sensor_mid <= BALL_THRESHOLD_MID){
+    else if(detect_ball(99.9 ,99.9 , distance_sensor_mid, distance_sensor_top, opp_detected, 0.0) == 1 && distance_sensor_mid <= BALL_THRESHOLD_MID){
     	collect_linX = 0.2;
     	collect_angZ = 0.0;
     	return COLLECT;

@@ -135,7 +135,7 @@ void read_sensors(float dt){
 }
 
 //void check_for_ball(){
-// ball_detected = detect_ball(distance_sensor_left, distance_sensor_right, distance_sensor_mid, distance_sensor_top, opp_detected);
+// ball_detected = detect_ball(distance_sensor_left, distance_sensor_right, distance_sensor_mid, distance_sensor_top, opp_detected, robot_yaw);
 // if (ball_detected == TRIGGERED){
 // 	ball_x_memory = robot_x;
 // 	ball_y_memory = robot_y;

@@ -23,7 +23,7 @@ int home_task(float x, float y, float yaw, float arm_position, float sensor_mid,
     	home_startup_phase = 0;
     }
 
-    if (detect_ball(sensor_left, sensor_right, sensor_mid, sensor_top, opp_detected)==1){
+    if (detect_ball(sensor_left, sensor_right, sensor_mid, sensor_top, opp_detected, yaw)==1){
         home_startup_phase = 1;
         return SEARCH;
     }

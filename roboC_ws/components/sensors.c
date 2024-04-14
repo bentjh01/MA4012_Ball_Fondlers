@@ -173,30 +173,6 @@ int opponent_detection(float short_sensor_dist){
   }
 }
 
-int detect_ball(float left_sensor_dist, float right_sensor_dist, float mid_sensor_dist, float top_sensor_dist, int opp_detected){
-  // Returns 1 if a something that is not an opponent is detected, 0 otherwise
-  // return 0 when there is no detection
-	//THE ORDER OF CHECK MATTERS!
-  if(detect_back_wall(left_sensor_dist, right_sensor_dist, mid_sensor_dist) == TRIGGERED && fabs(yaw) > 170.0){
-    return 0;
-  }
-  else if (mid_sensor_dist <= BALL_THRESHOLD_MID && !opp_detected){
-    return 1;
-  }
-  else if(mid_sensor_dist <= BALL_THRESHOLD_MID && opp_detected && fabs(mid_sensor_dist-top_sensor_dist) > OPP_DIFFERENTIATION_THRESHOLD){
-    return 1;
-  }
-  else if(mid_sensor_dist <= BALL_THRESHOLD_MID && opp_detected && fabs(mid_sensor_dist-top_sensor_dist) <= OPP_DIFFERENTIATION_THRESHOLD){
-    return 0;
-  }
-  else if(left_sensor_dist <= BALL_THRESHOLD_LNR || right_sensor_dist <= BALL_THRESHOLD_LNR){
-  	return 1;
-  }
-  else{
-    return 0;
-  }
-}
-
 /// @brief Checks if sensor detects a ball
 /// @param left_sensor_dist
 /// @return 0 if no detection, 1 if detection
@@ -242,4 +218,28 @@ int detect_back_wall(float left_sensor, float right_sensor, float mid_sensor){
   // else{
   //   return NOT_TRIGGERED;
   // }
+}
+
+int detect_ball(float left_sensor_dist, float right_sensor_dist, float mid_sensor_dist, float top_sensor_dist, int opp_detected, float yaw){
+  // Returns 1 if a something that is not an opponent is detected, 0 otherwise
+  // return 0 when there is no detection
+	//THE ORDER OF CHECK MATTERS!
+  if(detect_back_wall(left_sensor_dist, right_sensor_dist, mid_sensor_dist) == TRIGGERED && fabs(yaw) > 170.0){
+    return 0;
+  }
+  else if (mid_sensor_dist <= BALL_THRESHOLD_MID && !opp_detected){
+    return 1;
+  }
+  else if(mid_sensor_dist <= BALL_THRESHOLD_MID && opp_detected && fabs(mid_sensor_dist-top_sensor_dist) > OPP_DIFFERENTIATION_THRESHOLD){
+    return 1;
+  }
+  else if(mid_sensor_dist <= BALL_THRESHOLD_MID && opp_detected && fabs(mid_sensor_dist-top_sensor_dist) <= OPP_DIFFERENTIATION_THRESHOLD){
+    return 0;
+  }
+  else if(left_sensor_dist <= BALL_THRESHOLD_LNR || right_sensor_dist <= BALL_THRESHOLD_LNR){
+  	return 1;
+  }
+  else{
+    return 0;
+  }
 }
