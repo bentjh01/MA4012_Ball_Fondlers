@@ -114,13 +114,9 @@ void read_sensors(float dt){
 	robot_line_FR = check_threshold(filter_line_FR(SensorValue[line_FR_pin]), LINE_FR_THRESHOLD);
 
 	distance_sensor_mid = calculate_long_distance(filter_distance_mid(SensorValue[long_distance_M_pin])) - MID_SENSOR_OFFSET;
-	// distance_sensor_mid = min(distance_sensor_mid, LIMIT_DISTANCE_READINGS);
 	distance_sensor_top = calculate_short_distance(filter_distance_top(SensorValue[short_distance_T_pin])) - TOP_SENSOR_OFFSET;
-	// distance_sensor_top = min(distance_sensor_top, LIMIT_DISTANCE_READINGS);
 	distance_sensor_left = calculate_long_distance(filter_distance_L(SensorValue[long_distance_L_pin])) - LEFT_SENSOR_OFFSET;
-	// distance_sensor_left = min(distance_sensor_left, LIMIT_DISTANCE_READINGS);
 	distance_sensor_right = calculate_long_distance(filter_distance_R(SensorValue[long_distance_R_pin])) - RIGHT_SENSOR_OFFSET;
-	// distance_sensor_right = min(distance_sensor_right, LIMIT_DISTANCE_READINGS);
 
 	ball_in_chamber_status = check_ball_in_chamber(distance_sensor_mid);
 
@@ -134,21 +130,10 @@ void read_sensors(float dt){
 	return;
 }
 
-//void check_for_ball(){
-// ball_detected = detect_ball(distance_sensor_left, distance_sensor_right, distance_sensor_mid, distance_sensor_top, opp_detected, robot_yaw);
-// if (ball_detected == TRIGGERED){
-// 	ball_x_memory = robot_x;
-// 	ball_y_memory = robot_y;
-// 	ball_yaw_memory = robot_yaw;
-// }
-// return;
-//}
-
 void update_robot_odom(float dt){
     robot_x = update_odometry_x(robot_x, robot_yaw, robot_linX, robot_en_rpmL, robot_en_rpmR, dt);
     robot_y = update_odometry_y(robot_y, robot_yaw, robot_linX, robot_en_rpmL, robot_en_rpmR, dt);
     robot_yaw = update_odometry_yaw(robot_yaw, robot_angZ, robot_en_rpmL, robot_en_rpmR, magnetometer_yaw, dt);
-    // robot_yaw = magnetometer_yaw;
     robot_linX = update_odometry_linX(robot_cmd_linX, robot_en_rpmL, robot_en_rpmR, dt);
     robot_angZ = update_odometry_angZ(robot_cmd_angZ, robot_en_rpmL, robot_en_rpmR, dt);
     return;
@@ -212,7 +197,6 @@ task robot_read(){
 	while(1){
 		clearTimer(T2);
 		read_sensors(DT_READ);
-		// check_for_ball();
 		update_robot_odom(DT_READ);
 		robot_execute(DT_READ);
 		while (time1[T2] < DT_READ * 1000){}
@@ -251,9 +235,9 @@ task main()
 				}
 				else if (line_case == 1101 || line_case == 1011){
 					// if (robot_x <= 0.05){
-					if (fabs(robot_yaw) <= YAW_TOLERANCE){
+					// if (fabs(robot_yaw) <= YAW_TOLERANCE){
 						task_status = DELIVER;
-					}
+					// }
 				}
 			}
 			else{
@@ -284,7 +268,7 @@ task main()
 			task_status = home_task(robot_x, robot_y, robot_yaw, robot_arm_position, distance_sensor_mid, distance_sensor_top, opp_detected, distance_sensor_left, distance_sensor_right);
 			robot_cmd_linX = get_home_linX();
 			robot_cmd_angZ = get_home_angZ();
-			robot_cmd_arm_position = get_home_servo();
+			robot_cmd_arm_position = 0.0;
 			break;
 		case SEARCH:
 			// task_status = GOTO;
@@ -296,7 +280,7 @@ task main()
 			robot_cmd_angZ = get_search_angZ();
 			detected_ball_yaw = get_ball_yaw();
 
-			if(search_after_edge){
+			if(search_after_edge == 1){
 				search_after_edge = 0;
 			}
 			break;
