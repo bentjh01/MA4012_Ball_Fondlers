@@ -240,14 +240,23 @@ task main()
 
 			/// DETECT BALL ON LEFT AND RIGHT
 			ball_in_chamber = detect_thing(distance_sensor_mid, BALL_IN_CHAMBER_DISTANCE);
+			case_detected = detect_ball_2(distance_sensor_left, distance_sensor_right, distance_sensor_mid, distance_sensor_top, LIMIT_DISTANCE_READINGS);
 
-			if (ball_in_chamber == NOT_TRIGGERED && task_status != COLLECT && task_status != DELIVER){
-				case_detected = detect_ball_2(distance_sensor_left, distance_sensor_right, distance_sensor_mid, distance_sensor_top, LIMIT_DISTANCE_READINGS);
-				if (case_detected == BALL_LEFT_DETECTED || case_detected == BALL_MIDDLE_DETECTED || case_detected == BALL_RIGHT_DETECTED){
+			if (case_detected == BALL_LEFT_DETECTED || case_detected == BALL_MIDDLE_DETECTED || case_detected == BALL_RIGHT_DETECTED){
+				if (ball_in_chamber == NOT_TRIGGERED){
 					task_status = GOTO;
 				}
+			else if (case_detected == WALL_DETECTED){
+				task_status = HOME;
 			}
-			
+			else if (case_detected == OPPONENT_DETECTED){
+				if (task_status != AVOID_OPPONENT){
+					prev_task_status = task_status;
+				}
+				if (task_status != DELIVER && task_status != COLLECT){
+					task_status = AVOID_OPPONENT;
+				}
+			}
 			/// ROBOT TASKS
 			switch (task_status){
 			case EDGE:
@@ -293,7 +302,7 @@ task main()
 				}
 				break;
 			case AVOID_OPPONENT:
-				// task_status = opponent_avoid_task(prev_task_status, distance_sensor_left, distance_sensor_right);
+				task_status = opponent_avoid_task(prev_task_status, robot_cmd_linX, distance_sensor_left, distance_sensor_right);
 				robot_cmd_linX = get_opp_linX();
 				robot_cmd_angZ = get_opp_angZ();
 				break;
