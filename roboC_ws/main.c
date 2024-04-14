@@ -246,6 +246,7 @@ task main()
 					task_status = AVOID_OPPONENT;
 				}
 			}
+
 			/// ROBOT TASKS
 			switch (task_status){
 			case EDGE:
