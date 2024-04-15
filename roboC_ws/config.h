@@ -64,7 +64,7 @@ ________________________________________________________________________________
 // SERVO
 #define SERVO_TOLERANCE 7.0 // [deg] TODO
 #define SERVO_POSITION_GAIN 7.50 // [deg] TODO
-#define SERVO_KP 1.0
+#define SERVO_KP 0.850
 #define SWITCH_A_POSITION 0.0 //[deg] TODO
 #define SWITCH_B_POSITION 90.0 //[deg] TODO
 #define SWITCH_C_POSITION 180.0 //[deg] TODO

@@ -8,19 +8,23 @@ int reset_x = NOT_TRIGGERED;
 /// @brief Uses a counter to check if enough time steps have passed to complete the desired linear displacement
 /// @return either SUCCESS if motion is completed or FAIL if motion is not completed
 int count_move_del(float linear_displacement, float angular_displacement, float linear_speed, float angular_speed){
-  static float move_forward_count = 0.0;
-  static float move_angular_count = 0.0;
+    static int move_dep = 0;
+  static float depmove_forward_count = 0.0;
+  static float depmove_angular_count = 0.0;
   // Startup of the forward movement
-  if (move_forward_count >= 0.0 || move_angular_count >= 0.0){
+//   if (depmove_forward_count >= 0.0 || depmove_angular_count >= 0.0){
+    if (move_dep ==0){
     // Initialize the count
-    move_forward_count = linear_displacement/linear_speed/DT_MAIN;
-    move_angular_count = angular_displacement/angular_speed/DT_MAIN;
+    depmove_forward_count = linear_displacement/linear_speed/DT_MAIN;
+    depmove_angular_count = angular_displacement/angular_speed/DT_MAIN;
+    move_dep = 1;
     return FAIL;
   }
   // Decrement the count
-  move_forward_count --;
-  move_angular_count --;
-  if (move_forward_count <= 0.0 && move_angular_count <= 0.0){
+  depmove_forward_count --;
+  depmove_angular_count --;
+  if (depmove_forward_count <= 0.0 && depmove_angular_count <= 0.0){
+    move_dep=0;
     return SUCCESS;
   }
   return FAIL;
@@ -48,7 +52,7 @@ int deliver_task(float rb_x, float yaw, float servo_position, int ball_in_chambe
     }
 
     // Move the arm to the delivery position
-    if (back_limit_switch == TRIGGERED && rb_x <= ARENA_X /8.0) {
+    if (back_limit_switch == TRIGGERED && fabs(yaw) < YAW_TOLERANCE && lineBL == TRIGGERED && lineBR ==TRIGGERED) {
         deliver_set_servo = SERVO_DELIVER_POSITION;
         reset_x = TRIGGERED;
     }

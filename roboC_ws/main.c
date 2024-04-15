@@ -211,7 +211,7 @@ task main()
 		clearTimer(T1);
 		// main Loop
 		if (edge_detected(robot_line_FL, robot_line_BL, robot_line_BR, robot_line_FR) == TRIGGERED){
-		//if (1 == 2){
+		// if (1 == 2){
 			if (task_status != EDGE){
 				prev_task_status = task_status;
 				if(prev_task_status == SEARCH){
