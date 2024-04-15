@@ -262,7 +262,20 @@ int edge_avoid_alt_task(float rb_x, float rb_y, float rb_yaw, int prev_task){
 		edge_angZ = 0.0;
 	}
 	else{
-		if (count_move_rotate(90.0, MAX_TURN) == FAIL){
+		float rt;
+		if (prev_task == DELIVER){
+			rt = 0.0;
+			return prev_task;
+		}
+
+		if (rb_x >= ARENA_X * 3.0/4.0){
+			rt = 180;
+		}
+		else{
+			rt = 90;
+		}
+
+		if (count_move_rotate(rt, MAX_TURN) == FAIL){
 			edge_linX = 0.0;
 			edge_angZ = edge_sgn_angZ * MAX_TURN;
 		}
