@@ -227,6 +227,9 @@ task main()
 				else if(fabs(robot_yaw) < YAW_TOLERANCE/4.0){
 					task_status = DELIVER;
 				}
+				else if (robot_x <= ARENA_X /4.0){
+					task_status = DELIVER;
+				}
 				else{
 					task_status = EDGE;
 				}
@@ -243,18 +246,6 @@ task main()
 				//else{
 				//	task_status == EDGE;
 				//}
-			}
-			else if(task_status == DELIVER && fabs(robot_yaw) < YAW_TOLERANCE){
-				int line_case = get_edge_line_case();
-				if (line_case == 1001){
-					task_status = DELIVER;
-				}
-				else if (line_case == 1101 || line_case == 1011){
-					// if (robot_x <= 0.05){
-					// if (fabs(robot_yaw) <= YAW_TOLERANCE){
-						task_status = DELIVER;
-					// }
-				}
 			}
 			else{
 				task_status = EDGE;
