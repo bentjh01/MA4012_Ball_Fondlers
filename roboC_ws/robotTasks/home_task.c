@@ -1,11 +1,11 @@
 #include "../config.h"
 
-static float home_linX = 0.0;
-static float home_angZ = 0.0;
-static float home_detected_ball_yaw = 0;
+float home_linX = 0.0;
+float home_angZ = 0.0;
+float home_detected_ball_yaw = 0;
+int home_startup_phase = 1;
 
 int home_task(float x, float y, float yaw, float arm_position, float sensor_mid, float sensor_top, int opp_detected, float sensor_left, float sensor_right){
-    static int home_startup_phase = 1;
     static int home_initial_x = 0.0;
     static float home_count = 0.0;
     if(home_startup_phase == 1){
@@ -56,4 +56,8 @@ float get_home_angZ(){
 
 float home_ball_yaw(){
     return home_detected_ball_yaw;
+}
+
+float get_home_startup_status(){
+    return home_startup_phase;
 }

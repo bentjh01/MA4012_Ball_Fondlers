@@ -282,6 +282,9 @@ task main()
 			// task_status = SEARCH;
 			opp_detected = opponent_detection(distance_sensor_top);
 			task_status = home_task(robot_x, robot_y, robot_yaw, robot_arm_position, distance_sensor_mid, distance_sensor_top, opp_detected, distance_sensor_left, distance_sensor_right);
+			if (get_home_startup_status() ==1){
+				robot_x = 0.0;
+			}
 			robot_cmd_linX = get_home_linX();
 			robot_cmd_angZ = get_home_angZ();
 			robot_cmd_arm_position = 0.0;
