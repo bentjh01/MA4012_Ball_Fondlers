@@ -220,17 +220,16 @@ task main()
 			}
 
 			
-			if(task_status == DELIVER && fabs(robot_yaw)<YAW_TOLERANCE/4.0){
-				// int line_case = get_edge_line_case();
-				// if (line_case == 1001){
+			if(task_status == DELIVER){
+				if (robot_cmd_arm_position == SERVO_DELIVER_POSITION){
 					task_status = DELIVER;
-				// }
-				// else if (line_case == 1101 || line_case == 1011){
-				// 	// if (robot_x <= 0.05){
-				// 	// if (fabs(robot_yaw) <= YAW_TOLERANCE){
-				// 		task_status = DELIVER;
-				// 	// }
-				// }
+				}
+				else if(fabs(robot_yaw) < YAW_TOLERANCE/4.0){
+					task_status = DELIVER;
+				}
+				else{
+					task_status = EDGE;
+				}
 			}
 			else if (task_status == HOME && fabs(robot_yaw)<YAW_TOLERANCE/2.0){
 				task_status = HOME;
