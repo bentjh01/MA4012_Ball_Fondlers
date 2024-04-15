@@ -104,7 +104,7 @@ ________________________________________________________________________________
 #define GOTO_SWEEP_TIME         3.0
 #define GOTO_ALIGN_BALL_GAIN    0.6
 #define GOTO_CURVE_LIN_SPEED    0.3
-#define GOTO_CURVE_ANG_SPEED    15.0
+#define GOTO_CURVE_ANG_SPEED    20.0
 #define BACK_TO_SEARCH_COUNT		30
 
 // COLLECT TASK

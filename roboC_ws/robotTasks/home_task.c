@@ -2,6 +2,7 @@
 
 static float home_linX = 0.0;
 static float home_angZ = 0.0;
+static float home_detected_ball_yaw = 0;
 
 int home_task(float x, float y, float yaw, float arm_position, float sensor_mid, float sensor_top, int opp_detected, float sensor_left, float sensor_right){
     static int home_startup_phase = 1;
@@ -19,8 +20,7 @@ int home_task(float x, float y, float yaw, float arm_position, float sensor_mid,
     float yaw_error = -yaw;
     if (fabs(yaw_error) > YAW_TOLERANCE){
         home_linX = 0.0;
-        // home_angZ = yaw_error * DELIVER_YAW_KP;
-        home_angZ = sgn(yaw_error) * MAX_TURN;
+        home_angZ = yaw_error * DELIVER_YAW_KP;
     }
     else {
         home_linX = MAX_SPEED;
@@ -29,10 +29,10 @@ int home_task(float x, float y, float yaw, float arm_position, float sensor_mid,
 
     if (detect_ball(sensor_left, sensor_right, sensor_mid, sensor_top, opp_detected, yaw)==1){
         home_startup_phase = 1;
-        return SEARCH;
+        home_detected_ball_yaw = yaw;
+        return GOTO;
     }
     else if (arm_position == 0.0 && x - home_initial_x >= HOME_AWAY_DISTANCE){
-    // if (arm_position == 0.0 && x - home_initial_x >= HOME_AWAY_DISTANCE){
         home_startup_phase = 1;
         return SEARCH;
     }
@@ -52,4 +52,8 @@ float get_home_linX(){
 /// @return angular velocity [deg/s]
 float get_home_angZ(){
     return home_angZ;
+}
+
+float home_ball_yaw(){
+    return home_detected_ball_yaw;
 }

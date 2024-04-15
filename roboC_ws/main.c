@@ -244,6 +244,18 @@ task main()
 				//	task_status == EDGE;
 				//}
 			}
+			else if(task_status == DELIVER && fabs(robot_yaw) < YAW_TOLERANCE){
+				int line_case = get_edge_line_case();
+				if (line_case == 1001){
+					task_status = DELIVER;
+				}
+				else if (line_case == 1101 || line_case == 1011){
+					// if (robot_x <= 0.05){
+					// if (fabs(robot_yaw) <= YAW_TOLERANCE){
+						task_status = DELIVER;
+					// }
+				}
+			}
 			else{
 				task_status = EDGE;
 			}
@@ -273,6 +285,7 @@ task main()
 			robot_cmd_linX = get_home_linX();
 			robot_cmd_angZ = get_home_angZ();
 			robot_cmd_arm_position = 0.0;
+			detected_ball_yaw = home_ball_yaw();
 			break;
 		case SEARCH:
 			// task_status = GOTO;

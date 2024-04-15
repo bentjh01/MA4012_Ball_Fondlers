@@ -11,7 +11,7 @@
 #define FRONT   1
 #define LEFT    2
 #define RIGHT   3
-#define WALL		9
+#define WALL    9
 
 static int ball_location;
 static int prev_ball_location;
