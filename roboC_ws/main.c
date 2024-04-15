@@ -307,7 +307,13 @@ task main()
 				}
 				else{
 					robot_cmd_arm_position = 0; //open gate
-					task_status = SEARCH;
+
+					if(get_goto_wall_status()){
+						task_status = GOTO;
+					}
+					else{
+						task_status = SEARCH;
+					}
 					goto_ignore_edge = 0;
 				}
 			}

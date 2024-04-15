@@ -154,9 +154,10 @@ int goto_task(float x, float y, float yaw, float left_sensor_dist, float right_s
 
     //WALL
     if(activate_wall_protocol){
-    	go_to_target_yaw(0, yaw, -1);
+    	go_to_target_yaw(0, yaw, 0);
 
     	if(fabs(yaw) < YAW_TOLERANCE){
+            activate_wall_protocol = 0;
     		return HOME;
     	}
     	return GOTO;
@@ -302,4 +303,8 @@ float get_goto_linX(){
 /// @return angular velocity in deg/s
 float get_goto_angZ(){
     return goto_angZ;
+}
+
+float get_goto_wall_status(){
+    return activate_wall_protocol;
 }
