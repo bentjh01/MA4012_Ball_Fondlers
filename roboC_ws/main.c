@@ -234,7 +234,7 @@ task main()
 					task_status = EDGE;
 				}
 			}
-			else if (task_status == HOME){// && robot_x >= ARENA_X/4.0){
+			else if (task_status == HOME && robot_x <= ARENA_X/4.0){
 				task_status = HOME;
 			}
 			else if (task_status == GOTO && goto_ignore_edge == 0){
