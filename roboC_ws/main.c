@@ -218,7 +218,23 @@ task main()
 					search_after_edge = 1;
 				}
 			}
-			if (task_status == GOTO && goto_ignore_edge == 0){
+
+			
+			if(task_status == DELIVER){
+				if (robot_cmd_arm_position == SERVO_DELIVER_POSITION){
+					task_status = DELIVER;
+				}
+				else if(fabs(robot_yaw) < YAW_TOLERANCE/4.0){
+					task_status = DELIVER;
+				}
+				else{
+					task_status = EDGE;
+				}
+			}
+			else if (task_status == HOME && fabs(robot_yaw)<YAW_TOLERANCE/2.0){
+				task_status = HOME;
+			}
+			else if (task_status == GOTO && goto_ignore_edge == 0){
 				goto_ignore_edge = 1;
 				//goto_ignore_edge += 1;
 				//if(goto_ignore_edge < round(0.2/DT_MAIN)){
@@ -266,6 +282,9 @@ task main()
 			// task_status = SEARCH;
 			opp_detected = opponent_detection(distance_sensor_top);
 			task_status = home_task(robot_x, robot_y, robot_yaw, robot_arm_position, distance_sensor_mid, distance_sensor_top, opp_detected, distance_sensor_left, distance_sensor_right);
+			if (get_home_startup_status() ==1){
+				robot_x = 0.0;
+			}
 			robot_cmd_linX = get_home_linX();
 			robot_cmd_angZ = get_home_angZ();
 			robot_cmd_arm_position = 0.0;

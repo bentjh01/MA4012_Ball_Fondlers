@@ -31,6 +31,7 @@ int collect_task(float servo_position, float distance_sensor_mid, float distance
     }
     else{
         collect_reset_wait --;
+        collect_servo = 0.0;
         if (collect_reset_wait <= 0){
     	    return SEARCH;
         }
