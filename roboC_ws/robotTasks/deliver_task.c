@@ -5,9 +5,31 @@ float deliver_set_angZ = 0.0;
 float deliver_set_servo = SERVO_COLLECT_POSITION;
 int reset_x = NOT_TRIGGERED;
 
-int deliver_task(float yaw, float servo_position, int ball_in_chamber, int back_limit_switch, int lineBL, int lineBR) {
+/// @brief Uses a counter to check if enough time steps have passed to complete the desired linear displacement
+/// @return either SUCCESS if motion is completed or FAIL if motion is not completed
+int count_move_del(float linear_displacement, float angular_displacement, float linear_speed, float angular_speed){
+  static float move_forward_count = 0.0;
+  static float move_angular_count = 0.0;
+  // Startup of the forward movement
+  if (move_forward_count >= 0.0 || move_angular_count >= 0.0){
+    // Initialize the count
+    move_forward_count = linear_displacement/linear_speed/DT_MAIN;
+    move_angular_count = angular_displacement/angular_speed/DT_MAIN;
+    return FAIL;
+  }
+  // Decrement the count
+  move_forward_count --;
+  move_angular_count --;
+  if (move_forward_count <= 0.0 && move_angular_count <= 0.0){
+    return SUCCESS;
+  }
+  return FAIL;
+}
+
+int deliver_task(float rb_x, float yaw, float servo_position, int ball_in_chamber, int back_limit_switch, int lineBL, int lineBR) {
     static int delivery_startup = TRIGGERED;
     static int delivery_wait;
+    static int avd_opponent = 0;
 
     /// Reset the delivery task
     if (delivery_startup == TRIGGERED){
@@ -26,9 +48,23 @@ int deliver_task(float yaw, float servo_position, int ball_in_chamber, int back_
     }
 
     // Move the arm to the delivery position
-    if (back_limit_switch == TRIGGERED) {
+    if (back_limit_switch == TRIGGERED && rb_x <= ARENA_X /8.0) {
         deliver_set_servo = SERVO_DELIVER_POSITION;
         reset_x = TRIGGERED;
+    }
+    else if (back_limit_switch == TRIGGERED && rb_x > ARENA_X/8.0){
+        avd_opponent = 1;
+    }
+
+    if (avd_opponent == 1){
+        if (count_move_del(0.1, 45.0, MAX_SPEED/2.0, MAX_TURN/4.0) == FAIL){
+            deliver_set_linX = MAX_SPEED/2.0;
+            deliver_set_angZ = MAX_TURN/2.0;
+            return DELIVER;
+        }
+        else{
+            avd_opponent = 0;
+        }
     }
     
     // CHECK SUCCESS CRITERIA
@@ -61,3 +97,4 @@ float get_deliver_angZ(){
 float get_deliver_servo(){
     return deliver_set_servo;
 }
+

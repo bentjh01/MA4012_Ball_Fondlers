@@ -227,14 +227,14 @@ task main()
 				else if(fabs(robot_yaw) < YAW_TOLERANCE/4.0){
 					task_status = DELIVER;
 				}
-				else if (robot_x <= ARENA_X /4.0){
+				else if (robot_x <= ARENA_X /8.0){
 					task_status = DELIVER;
 				}
 				else{
 					task_status = EDGE;
 				}
 			}
-			else if (task_status == HOME && fabs(robot_yaw)<YAW_TOLERANCE/2.0){
+			else if (task_status == HOME){// && robot_x >= ARENA_X/4.0){
 				task_status = HOME;
 			}
 			else if (task_status == GOTO && goto_ignore_edge == 0){
@@ -325,7 +325,7 @@ task main()
 			robot_cmd_arm_position = get_collect_servo();
 			break;
 		case DELIVER:
-			task_status = deliver_task(robot_yaw, robot_arm_position, ball_in_chamber_status, limit_switch_D, robot_line_BR, robot_line_BL);
+			task_status = deliver_task(robot_x, robot_yaw, robot_arm_position, ball_in_chamber_status, limit_switch_D, robot_line_BR, robot_line_BL);
 			robot_cmd_linX = get_deliver_linX();
 			robot_cmd_angZ = get_deliver_angZ();
 			robot_cmd_arm_position = get_deliver_servo();
