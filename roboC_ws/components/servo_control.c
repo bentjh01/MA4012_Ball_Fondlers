@@ -73,7 +73,7 @@ float robot_arm_move(float set_position, float arm_position, int current_task){
 		set_servo_power = err_arm * SERVO_KP;
         // set_servo_power = err_arm/90.0 * MAX_POWER;
         if (current_task == DELIVER){
-            set_servo_power = 127;
+            set_servo_power = 127.0 * 0.75;
         }
         else{
             set_servo_power = limit_byte(set_servo_power);
