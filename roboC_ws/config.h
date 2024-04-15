@@ -19,8 +19,8 @@ ________________________________________________________________________________
 #define BALL_THRESHOLD_MID          	28.0 //cm wrt to edge of ramp
 #define OPP_CLOSENESS_THRESHOLD     	35.0 //cm wrt to edge of ramp
 #define OPP_DIFFERENTIATION_THRESHOLD	8.0 //cm
-#define READY_TO_COLLECT_THRESHOLD  	2.0 //cm wrt to edge of ramp
-#define WALL_THRESHOLD_LNR              12.5
+#define READY_TO_COLLECT_THRESHOLD  	1.0 //cm wrt to edge of ramp
+#define WALL_THRESHOLD_LNR              15.0
 
 #define BALL_THRESHOLD_CHANGE 20.0 // cm
 #define LIMIT_DISTANCE_READINGS 40.0 //

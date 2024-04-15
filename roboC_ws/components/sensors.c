@@ -191,7 +191,8 @@ float detect_generic(float sensor_dist, float limit_dist){
 /// @param mid_sensor
 /// @return TRIGGERED if back wall is detected, NOT_TRIGGERED otherwise
 int detect_back_wall(float left_sensor, float right_sensor, float mid_sensor){
-  if (detect_generic(left_sensor, WALL_THRESHOLD_LNR) == 1 && detect_generic(right_sensor, WALL_THRESHOLD_LNR)==1){
+  //if (detect_generic(left_sensor, WALL_THRESHOLD_LNR) == 1 && detect_generic(right_sensor, WALL_THRESHOLD_LNR)==1){
+  if(left_sensor <= WALL_THRESHOLD_LNR && right_sensor <= WALL_THRESHOLD_LNR){
     return TRIGGERED;
   }
   else{
