@@ -36,7 +36,7 @@ int get_ball_location(float left_sensor_dist, float right_sensor_dist, float mid
     // return 0 otherwise
     //THE ORDER OF CHECK MATTERS!
     goto_wall_detected = detect_back_wall(left_sensor_dist, right_sensor_dist, mid_sensor_dist);
-    if(detect_back_wall(left_sensor_dist, right_sensor_dist, mid_sensor_dist) == TRIGGERED && fabs(yaw) > 170.0){
+    if(detect_back_wall(left_sensor_dist, right_sensor_dist, mid_sensor_dist) == TRIGGERED && fabs(yaw) > 130.0){
         return WALL;
     }
     else if (mid_sensor_dist <= BALL_THRESHOLD_MID && !opp_detected){

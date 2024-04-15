@@ -62,7 +62,7 @@ float get_arm_position(float arm_position, float set_cmd, float servo_direction,
  * @param set_position desired position of the servo in DEG
  * @return direction of the arm
 */
-float robot_arm_move(float set_position, float arm_position){
+float robot_arm_move(float set_position, float arm_position, int current_task){
     static float prev_direction;
     float err_arm = set_position - arm_position;
     float set_servo_power = 0;
@@ -72,7 +72,12 @@ float robot_arm_move(float set_position, float arm_position){
 		// set_servo_power = sgn(err_arm) * MAX_POWER * SERVO_GAIN;
 		set_servo_power = err_arm * SERVO_KP;
         // set_servo_power = err_arm/90.0 * MAX_POWER;
-    set_servo_power = limit_byte(set_servo_power);
+        if (current_task == DELIVER){
+            set_servo_power = 127;
+        }
+        else{
+            set_servo_power = limit_byte(set_servo_power);
+        }
 	}
     motor[servo] = -set_servo_power;
     if (sgn(err_arm) == 0){

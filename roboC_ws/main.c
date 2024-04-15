@@ -150,7 +150,7 @@ void robot_execute(float dt){
 	robot_cmd_angZ = calculate_angular_z(robot_cmd_rpmL, robot_cmd_rpmR);
 
 	robot_arm_position = get_arm_position(robot_arm_position, robot_cmd_arm_position , robot_arm_direction, limit_switch_A, limit_switch_B, limit_switch_C);
-	robot_arm_direction = robot_arm_move(robot_cmd_arm_position, robot_arm_position);
+	robot_arm_direction = robot_arm_move(robot_cmd_arm_position, robot_arm_position, task_status);
 	return;
 }
 
@@ -234,7 +234,7 @@ task main()
 					task_status = EDGE;
 				}
 			}
-			else if (task_status == HOME){// && robot_x >= ARENA_X/4.0){
+			else if (task_status == HOME && robot_x >= ARENA_X/4.0){
 				task_status = HOME;
 			}
 			else if (task_status == GOTO && goto_ignore_edge == 0){

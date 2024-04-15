@@ -192,7 +192,7 @@ float detect_generic(float sensor_dist, float limit_dist){
 /// @return TRIGGERED if back wall is detected, NOT_TRIGGERED otherwise
 int detect_back_wall(float left_sensor, float right_sensor, float mid_sensor){
   //if (detect_generic(left_sensor, WALL_THRESHOLD_LNR) == 1 && detect_generic(right_sensor, WALL_THRESHOLD_LNR)==1){
-  if(left_sensor <= WALL_THRESHOLD_LNR && right_sensor <= WALL_THRESHOLD_LNR){
+  if(left_sensor <= WALL_THRESHOLD_LNR && right_sensor <= WALL_THRESHOLD_LNR && mid_sensor <= WALL_THRESHOLD_LNR){
     return TRIGGERED;
   }
   else{
@@ -225,7 +225,7 @@ int detect_ball(float left_sensor_dist, float right_sensor_dist, float mid_senso
   // Returns 1 if a something that is not an opponent is detected, 0 otherwise
   // return 0 when there is no detection
 	//THE ORDER OF CHECK MATTERS!
-  if(detect_back_wall(left_sensor_dist, right_sensor_dist, mid_sensor_dist) == TRIGGERED && fabs(yaw) > 170.0){
+  if(detect_back_wall(left_sensor_dist, right_sensor_dist, mid_sensor_dist) == TRIGGERED && fabs(yaw) > 165.0){
     return 0;
   }
   else if (mid_sensor_dist <= BALL_THRESHOLD_MID && !opp_detected){
