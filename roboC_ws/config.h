@@ -109,6 +109,7 @@ ________________________________________________________________________________
 
 // COLLECT TASK
 #define COLLECT_WAIT 5
+#define COLLECT_RESET_WAIT 5
 #define SERVO_COLLECT_POSITION 90.0
 
 // DELIVERY TASK

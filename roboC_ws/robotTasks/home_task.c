@@ -19,7 +19,8 @@ int home_task(float x, float y, float yaw, float arm_position, float sensor_mid,
     float yaw_error = -yaw;
     if (fabs(yaw_error) > YAW_TOLERANCE){
         home_linX = 0.0;
-        home_angZ = yaw_error * DELIVER_YAW_KP;
+        // home_angZ = yaw_error * DELIVER_YAW_KP;
+        home_angZ = sgn(yaw_error) * MAX_TURN;
     }
     else {
         home_linX = MAX_SPEED;
@@ -31,6 +32,7 @@ int home_task(float x, float y, float yaw, float arm_position, float sensor_mid,
         return SEARCH;
     }
     else if (arm_position == 0.0 && x - home_initial_x >= HOME_AWAY_DISTANCE){
+    // if (arm_position == 0.0 && x - home_initial_x >= HOME_AWAY_DISTANCE){
         home_startup_phase = 1;
         return SEARCH;
     }

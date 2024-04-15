@@ -16,12 +16,13 @@ int deliver_task(float yaw, float servo_position, int ball_in_chamber, int back_
     }
 
     if (fabs(yaw) > YAW_TOLERANCE){
-        deliver_set_angZ = -yaw * DELIVER_YAW_KP;
+        // deliver_set_angZ = -sgn(yaw) * DELIVER_YAW_KP;
+        deliver_set_angZ = -sgn(yaw) * MAX_TURN;
         deliver_set_linX = 0.0;
     }
     else{
         deliver_set_linX = -MAX_SPEED;
-        deliver_set_angZ = -yaw;
+        deliver_set_angZ = -yaw * DELIVER_YAW_KP;
     }
 
     // Move the arm to the delivery position

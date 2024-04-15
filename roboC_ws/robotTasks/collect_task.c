@@ -8,9 +8,11 @@ static float collect_angZ = 0.0;
 int collect_task(float servo_position, float distance_sensor_mid, float distance_sensor_top, int opp_detected, int ball_in_chamber){
     static int collect_startup = TRIGGERED;
     static int collect_wait;
+    static int collect_reset_wait;
 
     if (collect_startup == TRIGGERED){
         collect_wait = COLLECT_WAIT;
+        collect_reset_wait = COLLECT_RESET_WAIT;
         collect_startup = NOT_TRIGGERED;
     }
 
@@ -28,8 +30,10 @@ int collect_task(float servo_position, float distance_sensor_mid, float distance
     	return COLLECT;
     }
     else{
-    	return SEARCH;
-    	//return COLLECT;
+        collect_reset_wait --;
+        if (collect_reset_wait <= 0){
+    	    return SEARCH;
+        }
     }
 
     if (servo_position == SERVO_COLLECT_POSITION){

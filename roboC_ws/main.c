@@ -218,7 +218,24 @@ task main()
 					search_after_edge = 1;
 				}
 			}
-			if (task_status == GOTO && goto_ignore_edge == 0){
+
+			
+			if(task_status == DELIVER && fabs(robot_yaw)<YAW_TOLERANCE/4.0){
+				// int line_case = get_edge_line_case();
+				// if (line_case == 1001){
+					task_status = DELIVER;
+				// }
+				// else if (line_case == 1101 || line_case == 1011){
+				// 	// if (robot_x <= 0.05){
+				// 	// if (fabs(robot_yaw) <= YAW_TOLERANCE){
+				// 		task_status = DELIVER;
+				// 	// }
+				// }
+			}
+			else if (task_status == HOME && fabs(robot_yaw)<YAW_TOLERANCE/2.0){
+				task_status = HOME;
+			}
+			else if (task_status == GOTO && goto_ignore_edge == 0){
 				goto_ignore_edge = 1;
 				//goto_ignore_edge += 1;
 				//if(goto_ignore_edge < round(0.2/DT_MAIN)){
@@ -227,18 +244,6 @@ task main()
 				//else{
 				//	task_status == EDGE;
 				//}
-			}
-			else if(task_status == DELIVER && fabs(robot_yaw) < YAW_TOLERANCE){
-				int line_case = get_edge_line_case();
-				if (line_case == 1001){
-					task_status = DELIVER;
-				}
-				else if (line_case == 1101 || line_case == 1011){
-					// if (robot_x <= 0.05){
-					// if (fabs(robot_yaw) <= YAW_TOLERANCE){
-						task_status = DELIVER;
-					// }
-				}
 			}
 			else{
 				task_status = EDGE;

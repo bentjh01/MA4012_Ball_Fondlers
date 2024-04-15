@@ -165,13 +165,19 @@ int edge_avoid_task(float rb_x, float rb_y, float rb_yaw, int prev_task){
 		edge_angZ = 0.0;
 	}
 	else{
-		if (count_move_rotate(rotate_ang, MAX_TURN) == FAIL){
-			edge_linX = 0.0;
-			edge_angZ = sgn(rotate_ang) * MAX_TURN;
-		}
-		else {
+		if (prev_task == DELIVER){
 			return prev_task;
 		}
+		else{
+			if (count_move_rotate(rotate_ang, MAX_TURN) == FAIL){
+				edge_linX = 0.0;
+				edge_angZ = sgn(rotate_ang) * MAX_TURN;
+			}
+			else {
+				return prev_task;
+			}
+		}
+
 	}
 	return EDGE;
 
