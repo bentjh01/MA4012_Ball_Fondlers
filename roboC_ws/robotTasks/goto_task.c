@@ -219,13 +219,17 @@ int goto_task(float x, float y, float yaw, float left_sensor_dist, float right_s
         return SEARCH;*/
     }
     else if(ball_location == WALL){
-    	back_to_home_counter += 1;
 
-    	if(back_to_home_counter > round(0.2/DT_MAIN)){
-            back_to_search_counter = 0;
-            back_to_home_counter = 0;
-    		activate_wall_protocol = 1;
-    	}
+        back_to_search_counter = 0;
+        back_to_home_counter = 0;
+        activate_wall_protocol = 1;
+    	// back_to_home_counter += 1;
+
+    	// if(back_to_home_counter > round(0.2/DT_MAIN)){
+        //     back_to_search_counter = 0;
+        //     back_to_home_counter = 0;
+    	// 	activate_wall_protocol = 1;
+    	// }
     	return GOTO;
     }
     else if(ball_location == FRONT){ //Ball in front, check if need to move forward to get closer to the ball
