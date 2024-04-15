@@ -154,7 +154,7 @@ int goto_task(float x, float y, float yaw, float left_sensor_dist, float right_s
 
     //WALL
     if(activate_wall_protocol){
-    	go_to_target_yaw(0, yaw, 0);
+    	go_to_target_yaw(0, yaw, -1);
 
     	if(fabs(yaw) < YAW_TOLERANCE){
     		return HOME;
@@ -221,7 +221,7 @@ int goto_task(float x, float y, float yaw, float left_sensor_dist, float right_s
     else if(ball_location == WALL){
     	back_to_home_counter += 1;
 
-    	if(back_to_home_counter > round(0.5/DT_MAIN)){
+    	if(back_to_home_counter > round(0.2/DT_MAIN)){
             back_to_search_counter = 0;
             back_to_home_counter = 0;
     		activate_wall_protocol = 1;
