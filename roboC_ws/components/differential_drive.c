@@ -20,7 +20,7 @@ float calculate_linear_x(float rpmL, float rpmR){
  * @return The angular velocity in the z-direction.
  */
 float calculate_angular_z(float rpmL, float rpmR){
-	float angZ = radiansToDegrees((rpmR - rpmL) * WHEEL_DIAMETER / ROBOT_TRACK / RADIAN_T0_RPM / 2.0);
+	float angZ = ((rpmR - rpmL)/RADIAN_T0_RPM * WHEEL_DIAMETER/2.0 / ROBOT_TRACK) / DEGREE_TO_RADIAN;
 	return angZ;
 }
 

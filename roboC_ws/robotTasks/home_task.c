@@ -1,23 +1,43 @@
 #include "../config.h"
 
-// @Unizz20
+float home_linX = 0.0;
+float home_angZ = 0.0;
+float home_detected_ball_yaw = 0;
+int home_startup_phase = 1;
 
-/*
-1. Opens the claw to collect the ball
-2. Moves to middle of the field
-sucess == claw_opened && middle_of_field
-*/
+int home_task(float x, float y, float yaw, float arm_position, float sensor_mid, float sensor_top, int opp_detected, float sensor_left, float sensor_right){
+    static int home_initial_x = 0.0;
+    static float home_count = 0.0;
+    if(home_startup_phase == 1){
+        home_count = 0.0;
+        home_linX = 0.0;
+        home_angZ = 0.0;
+        
+    	home_initial_x = x;
+    	home_startup_phase = 0;
+    }
 
-static float home_linX = 0.0;
-static float home_angZ = 0.0;
-static float home_servo = 0.0;
+    float yaw_error = -yaw;
+    if (fabs(yaw_error) > YAW_TOLERANCE){
+        home_linX = 0.0;
+        home_angZ = yaw_error * DELIVER_YAW_KP;
+    }
+    else {
+        home_linX = MAX_SPEED;
+        home_angZ = 0.0;
+    }
 
-int home_task(float x, float y, float yaw, float sensor_A, float sensor_B){
-    int success = 0;
-    if (success == 1){
+    if (detect_ball(sensor_left, sensor_right, sensor_mid, sensor_top, opp_detected, yaw)==1 && x >= ARENA_X/4.0){
+        home_startup_phase = 1;
+        home_detected_ball_yaw = yaw;
+        return GOTO;
+    }
+    else if (arm_position == 0.0 && x - home_initial_x >= HOME_AWAY_DISTANCE){
+        home_startup_phase = 1;
         return SEARCH;
     }
     else{
+        home_count ++;
         return HOME;
     }
 }
@@ -32,4 +52,12 @@ float get_home_linX(){
 /// @return angular velocity [deg/s]
 float get_home_angZ(){
     return home_angZ;
+}
+
+float home_ball_yaw(){
+    return home_detected_ball_yaw;
+}
+
+float get_home_startup_status(){
+    return home_startup_phase;
 }

@@ -26,7 +26,7 @@ float wrap_to_pi(float angle){
 }
 
 /**
- * @brief Fast inverse square root. Trust Trust if not then do refer online on how it works cuz it makes no sense when you read it. 
+ * @brief Fast inverse square root. Trust Trust if not then do refer online on how it works cuz it makes no sense when you read it.
  * @param x value to squareroot
  * @return square root of x
 */
@@ -54,6 +54,9 @@ float low_pass_filter(float input, float prev_input, float alpha){
 	return alpha*input + (1-alpha)*prev_input;
 }
 
+
+
+
 /**
  * @brief Discretise the yaw reading into bins of 45 [deg] each
  * @param yaw the yaw reading to discretise
@@ -69,8 +72,15 @@ float discretise_yaw(float yaw){
 * @param y1 y coordinate of point 1
 * @param x2 x coordinate of point 2
 * @param y2 y coordinate of point 2
-* @return distance between 2 points 
+* @return distance between 2 points
 */
 float calculate_distance(float x1, float y1, float x2, float y2){
 	return sqrt(pow((x2-x1),2)+pow((y2-y1),2));
+}
+
+float min(float x1, float x2){
+	if (x1 <= x2){
+		return x1;
+	}
+	return x2;
 }

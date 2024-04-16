@@ -77,12 +77,13 @@ int limit_switch_B = 0;
 int limit_switch_C = 0;
 int limit_switch_D = 0;
 
+int loop_ms = 0;
 
 /* _____________________________________________________________________________________________________________________
 
 SENSORS
 _____________________________________________________________________________________________________________________ */
-void read_sensors(){
+void read_sensors(float dt){
     magnetometer_yaw = read_compass(SensorValue[magneto_north_pin], SensorValue[magneto_south_pin], SensorValue[magneto_east_pin], SensorValue[magneto_west_pin]);
     magnetometer_yaw = wrap_to_pi(magnetometer_yaw - MAGNETOMETER_OFFSET);
 
@@ -91,47 +92,46 @@ void read_sensors(){
     limit_switch_C = SensorValue[limit_switch_C_pin];
     limit_switch_D = SensorValue[limit_switch_D_pin];
 
-	robot_line_FL = filter_line_FL(SensorValue[line_FL_pin]);
-	robot_line_BL = filter_line_BL(SensorValue[line_BL_pin]);
-	robot_line_BR = filter_line_BR(SensorValue[line_BR_pin]);
-	robot_line_FR = filter_line_FR(SensorValue[line_FR_pin]);
+	robot_line_FL = check_threshold(filter_line_FL(SensorValue[line_FL_pin]), LINE_FL_THRESHOLD);
+	robot_line_BL = check_threshold(filter_line_BL(SensorValue[line_BL_pin]), LINE_BL_THRESHOLD);
+	robot_line_BR = check_threshold(filter_line_BR(SensorValue[line_BR_pin]), LINE_BR_THRESHOLD);
+	robot_line_FR = check_threshold(filter_line_FR(SensorValue[line_FR_pin]), LINE_FR_THRESHOLD);
 
 	distance_sensor_mid = calculate_long_distance(filter_distance_mid(SensorValue[long_distance_M_pin])) - MID_SENSOR_OFFSET;
 	distance_sensor_top = calculate_short_distance(filter_distance_top(SensorValue[short_distance_T_pin])) - TOP_SENSOR_OFFSET;
 	distance_sensor_left = calculate_long_distance(filter_distance_L(SensorValue[long_distance_L_pin])) - LEFT_SENSOR_OFFSET;
 	distance_sensor_right = calculate_long_distance(filter_distance_R(SensorValue[long_distance_R_pin])) - RIGHT_SENSOR_OFFSET;
 
-    robot_en_rpmL = getMotorEncoder(motor_L) * 60/DT /ENCODER_RESOLUTION;
-	robot_en_rpmR = getMotorEncoder(motor_R) * 60/DT /ENCODER_RESOLUTION;
+    robot_en_rpmL = getMotorEncoder(motor_L) * 60/dt /ENCODER_RESOLUTION;
+	robot_en_rpmR = getMotorEncoder(motor_R) * 60/dt /ENCODER_RESOLUTION;
 
     // TEST CODE BEGIN
     robot_en_linX = calculate_linear_x(robot_en_rpmL, robot_en_rpmR);
     robot_en_angZ = calculate_angular_z(robot_en_rpmL, robot_en_rpmR);
     // TEST CODE END
 
-	robot_arm_position = get_arm_position(robot_arm_position,robot_arm_direction, SensorValue[limit_switch_A_pin], SensorValue[limit_switch_B_pin], SensorValue[limit_switch_C_pin]);
+	robot_arm_position = get_arm_position(robot_arm_position,robot_cmd_arm_position, robot_arm_direction, SensorValue[limit_switch_A_pin], SensorValue[limit_switch_B_pin], SensorValue[limit_switch_C_pin]);
 
 	resetMotorEncoder(motor_R);
 	resetMotorEncoder(motor_L);
 	return;
 }
 
-void update_robot_odom(){
-    robot_x = update_odometry_x(robot_x, robot_yaw, robot_linX, robot_en_rpmL, robot_en_rpmR, DT);
-    robot_y = update_odometry_y(robot_y, robot_yaw, robot_linX, robot_en_rpmL, robot_en_rpmR, DT);
-    robot_yaw = update_odometry_yaw(robot_yaw, robot_angZ, robot_en_rpmL, robot_en_rpmR, magnetometer_yaw, DT);
-    // robot_yaw = magnetometer_yaw;
-    robot_linX = update_odometry_linX(robot_linX, robot_en_rpmL, robot_en_rpmR, DT);
-    robot_angZ = update_odometry_angZ(robot_cmd_angZ, robot_en_rpmL, robot_en_rpmR, DT);
+void update_robot_odom(float dt){
+    robot_x = update_odometry_x(robot_x, robot_yaw, robot_linX, robot_en_rpmL, robot_en_rpmR, dt);
+    robot_y = update_odometry_y(robot_y, robot_yaw, robot_linX, robot_en_rpmL, robot_en_rpmR, dt);
+    robot_yaw = update_odometry_yaw(robot_yaw, robot_angZ, robot_en_rpmL, robot_en_rpmR, magnetometer_yaw, dt);
+    robot_linX = update_odometry_linX(robot_linX, robot_en_rpmL, robot_en_rpmR, dt);
+    robot_angZ = update_odometry_angZ(robot_cmd_angZ, robot_en_rpmL, robot_en_rpmR, dt);
     return;
 }
 
-void robot_execute(){
+void robot_execute(float dt){
 	robot_cmd_rpmL = calculate_rpmL(robot_cmd_linX, robot_cmd_angZ);
 	robot_cmd_rpmR = calculate_rpmR(robot_cmd_linX, robot_cmd_angZ);
 	robot_cmd_rpmL = limit_rpmL(robot_cmd_rpmL, robot_cmd_rpmR);
 	robot_cmd_rpmR = limit_rpmR(robot_cmd_rpmL, robot_cmd_rpmR);
-	robot_move_closed(robot_cmd_rpmL, robot_cmd_rpmR, robot_en_rpmL, robot_en_rpmR);
+	robot_move_closed(robot_cmd_rpmL, robot_cmd_rpmR, robot_en_rpmL, robot_en_rpmR, dt);
 	robot_cmd_linX = calculate_linear_x(robot_cmd_rpmL, robot_cmd_rpmR);
 	robot_cmd_angZ = calculate_angular_z(robot_cmd_rpmL, robot_cmd_rpmR);
 
@@ -154,6 +154,7 @@ void init_robot(){
 	robot_yaw = 0.0;
 	robot_linX = 0.0;
 	robot_angZ = 0.0;
+	robot_arm_position;
 	return;
 }
 
@@ -185,21 +186,54 @@ float rotate_angle(float desired_yaw){
 }
 // TEST CODE END
 
+task robot_read(){
+	while(1){
+		clearTimer(T2);
+		read_sensors(DT_READ);
+		update_robot_odom(DT_READ);
+        robot_execute(DT_READ);
+		while (time1[T2] < DT_READ * 1000){}
+	}
+}
+
 task main()
 {
 	init_robot();
-	robot_x = 0.0;
+	clearTimer(T3);
+	int dir = 1;
+	float osc = 90.0;
+	float Kp = 0.80;
+	startTask(robot_read);
 	while(1){
 		clearTimer(T1);
-        read_sensors();
-        update_robot_odom();
-        robot_execute();
 		// main Loop
 
-        robot_cmd_linX = move_distance(-0.3);
+        // robot_cmd_linX = move_distance(-0.3);
         // robot_cmd_angZ = rotate_angle(0.0);
 
+		// robot_cmd_linX = 0.0;
+
+		// osc == oscillation
+		// if (robot_yaw < osc && dir == 1){
+		// 	robot_cmd_angZ = Kp * (osc - robot_yaw);
+		// }
+		// if (robot_yaw > osc){
+		// 	dir = -1;
+		// }
+
+		// if (robot_yaw > -osc && dir == -1){
+		// 	robot_cmd_angZ = Kp * (-osc - robot_yaw);
+		// }
+		
+		// if (robot_yaw < -osc){
+		// 	dir = 1;
+		// }
+
+		// robot_move_closed(-60, 60, robot_en_rpmL, robot_cmd_rpmR);
+		robot_cmd_arm_position = 90.0;
+
         // end of main loop
-		while (time1[T1] < DT * 1000){}
+		loop_ms = time1[T1];
+		while (time1[T1] < DT_MAIN * 1000){}
 	}
 }

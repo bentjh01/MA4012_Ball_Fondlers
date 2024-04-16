@@ -6,5 +6,6 @@
 #include "sensors.c"
 #include "odometry.c"
 #include "support.c"
+#include "robot_control.c"
 
 #endif // COMPONENTS_H

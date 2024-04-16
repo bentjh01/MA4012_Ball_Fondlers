@@ -68,6 +68,7 @@ float update_odometry_y(float y, float yaw, float linX, float rpmL, float rpmR, 
  * @return The updated yaw angle of the robot's odometry.
  */
 float update_odometry_yaw(float yaw, float angZ, float rpmL, float rpmR, float magneto_yaw, float dt) {
+    float output_yaw;
     // Predict the state of the robot
     float state_yaw = yaw + angZ * dt;
 
@@ -76,8 +77,16 @@ float update_odometry_yaw(float yaw, float angZ, float rpmL, float rpmR, float m
 
     float encoder_yaw_innovation = encoder_yaw - state_yaw;
     float magnetometer_yaw_innovation = magneto_yaw - discretise_yaw(state_yaw);
-    float output_yaw = state_yaw + ENCODER_FILTER * encoder_yaw_innovation + MAGNETO_FILTER * magnetometer_yaw_innovation;
-    // float output_yaw = state_yaw + ENCODER_FILTER * encoder_yaw_innovation;
+    if (abs(magnetometer_yaw_innovation) > 0.0){
+        output_yaw = state_yaw + MAGNETO_FILTER * magnetometer_yaw_innovation;
+    }
+    else{
+        output_yaw = state_yaw + ENCODER_FILTER * encoder_yaw_innovation;
+    }
+
+    // output_yaw = state_yaw + ENCODER_FILTER * encoder_yaw_innovation;
+    // output_yaw = state_yaw + (ENCODER_FILTER * encoder_yaw_innovation + MAGNETO_FILTER * magnetometer_yaw_innovation)/(ENCODER_FILTER + MAGNETO_FILTER);
+
     output_yaw = wrap_to_pi(output_yaw);
 
     return output_yaw;
