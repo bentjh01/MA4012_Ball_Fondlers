@@ -27,28 +27,55 @@ float filter_line_FR(float input){
 }
 
 float filter_distance_L(float input){
-	static float prev_dis_L_val;
-	float output = low_pass_filter(input, prev_dis_L_val, FILTER_GAIN_LONG_L);
-	prev_dis_L_val = output;
+	static float prev_left_out;
+  static float prev_left1;
+  static float prev_left2;
+  float output = median_filtering(input, prev_left1, prev_left2);
+	output = low_pass_filter(output, prev_left_out, FILTER_GAIN_LONG_R);
+  prev_left_out = output;
+  prev_left1 = input;
+  prev_left2 = prev_left1;
 	return output;
 }
+
 float filter_distance_R(float input){
-	static float prev_dis_R_val;
-	float output = low_pass_filter(input, prev_dis_R_val, FILTER_GAIN_LONG_R);
-	prev_dis_R_val = output;
-  return output;
-}
-float filter_distance_mid(float input){
-	static float prev_dis_mid_val;
-	float output = low_pass_filter(input, prev_dis_mid_val, FILTER_GAIN_LONG_MID);
-	prev_dis_mid_val = output;
+	static float prev_right_out;
+  static float prev_right1;
+  static float prev_right2;
+  float output = median_filtering(input, prev_right1, prev_right2);
+	output = low_pass_filter(output, prev_right_out, FILTER_GAIN_LONG_R);
+  prev_right_out = output;
+  prev_right1 = input;
+  prev_right2 = prev_right1;
 	return output;
 }
+
+float filter_distance_mid(float input){
+	static float prev_mid_out;
+  static float prev_mid1;
+  static float prev_mid2;
+  float output = median_filtering(input, prev_mid1, prev_mid2);
+	output = low_pass_filter(output, prev_mid_out, FILTER_GAIN_LONG_MID);
+  prev_mid_out = output;
+  prev_mid1 = input;
+  prev_mid2 = prev_mid1;
+	return output;
+}
+
 float filter_distance_top(float input){
 	static float prev_dis_top_val;
 	float output = low_pass_filter(input, prev_dis_top_val, FILTER_GAIN_SHORT_TOP);
 	prev_dis_top_val = output;
   return output;
+	static float prev_top_out;
+  static float prev_top1;
+  static float prev_top2;
+  float output = median_filtering(input, prev_top1, prev_top2);
+	output = low_pass_filter(output, prev_top_out, FILTER_GAIN_LONG_MID);
+  prev_top_out = output;
+  prev_top1 = input;
+  prev_top2 = prev_top1;
+	return output;
 }
 
 float filter_encoderL(float en_rpmL){
