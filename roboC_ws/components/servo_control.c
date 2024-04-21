@@ -71,9 +71,8 @@ float robot_arm_move(float set_position, float arm_position, int current_task){
 	if (fabs(err_arm) > SERVO_TOLERANCE){
 		// set_servo_power = sgn(err_arm) * MAX_POWER * SERVO_GAIN;
 		set_servo_power = err_arm * SERVO_KP;
-        // set_servo_power = err_arm/90.0 * MAX_POWER;
         if (current_task == DELIVER){
-            set_servo_power = 127.0 * 0.5;
+            set_servo_power = 127.0 * SERVO_KP * sgn(err_arm);
         }
         else{
             set_servo_power = limit_byte(set_servo_power);
@@ -86,3 +85,4 @@ float robot_arm_move(float set_position, float arm_position, int current_task){
     prev_direction = sgn(err_arm);
     return sgn(err_arm);
 }
+
